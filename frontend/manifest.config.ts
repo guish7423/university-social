@@ -1,0 +1,17 @@
+import { defineManifestConfig } from "@uni-helper/vite-plugin-uni-manifest"
+
+export default defineManifestConfig({
+  name: "校园社",
+  appid: "__UNI__UNIVERSITY_SOCIAL",
+  description: "大学社交平台",
+  versionName: "0.1.0",
+  versionCode: "100",
+  "app-plus": {},
+  "mp-weixin": {
+    appid: "",
+    setting: {
+      urlCheck: true,
+    },
+    usingComponents: true,
+  },
+})

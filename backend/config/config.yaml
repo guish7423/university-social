@@ -1,0 +1,15 @@
+server:
+  addr: ":8080"
+
+database:
+  url: "postgres://postgres:postgres@localhost:5432/university_social?sslmode=disable"
+
+redis:
+  addr: "localhost:6379"
+
+jwt:
+  secret: "change-me-in-production"
+
+wechat:
+  app_id: ""
+  secret: ""

@@ -1,0 +1,6 @@
+allowBuilds:
+  '[': true
+  ']': true
+  core-js: false
+  esbuild: false
+  vue-demi: false
