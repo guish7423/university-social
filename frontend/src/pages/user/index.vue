@@ -40,149 +40,180 @@ function handleLogout() {
     },
   })
 }
+
+function goSquare() { uni.switchTab({ url: '/pages/square/index' }) }
+function goFriends() { uni.navigateTo({ url: '/pages/friend/index' }) }
+function goCircles() { uni.navigateTo({ url: '/pages/circle/list' }) }
 </script>
 
 <template>
   <view class="container">
-    <view class="profile-card">
-      <image v-if="userStore.avatar" class="avatar" :src="userStore.avatar" mode="aspectFill" />
-      <view v-else class="avatar-placeholder">{{ userStore.nickname?.[0] || "我" }}</view>
-      <text class="nickname">{{ userStore.nickname || "未登录" }}</text>
-      <view v-if="userStore.isVerified" class="verified-badge">已认证</view>
-      <text v-if="userStore.school" class="school">{{ userStore.school }}</text>
-    </view>
-
-    <view class="menu-list">
-      <view class="menu-item" @click="openEdit">
-        <text>学校信息</text>
-        <text class="menu-right">
-          <text class="menu-value">{{ userStore.school || "未设置" }}</text>
-          <text class="arrow">›</text>
-        </text>
-      </view>
-      <view class="menu-item" @click="uni.switchTab({ url: '/pages/square/index' })">
-        <text>我的动态</text>
-        <text class="arrow">›</text>
-      </view>
-      <view class="menu-item" @click="uni.navigateTo({ url: '/pages/friend/index' })">
-        <text>我的好友</text>
-        <text class="arrow">›</text>
-      </view>
-      <view class="menu-item" @click="uni.navigateTo({ url: '/pages/circle/list' })">
-        <text>我的圈子</text>
-        <text class="arrow">›</text>
-      </view>
-      <view class="menu-item" @click="handleLogout">
-        <text class="logout-text">退出登录</text>
-      </view>
-    </view>
-
-    <uni-popup v-model="showEdit" type="bottom">
-      <view class="edit-popup">
-        <text class="edit-title">设置学校</text>
-        <input v-model="editSchool" class="edit-input" placeholder="请输入学校名称" />
-        <view class="edit-actions">
-          <button @click="showEdit = false" class="cancel-btn">取消</button>
-          <button @click="saveSchool" type="primary" class="save-btn">保存</button>
+    <view class="profile-header">
+      <view class="profile-bg" />
+      <view class="profile-info">
+        <u-avatar
+          :src="userStore.avatar"
+          :text="userStore.nickname?.[0] || '我'"
+          size="120"
+          shape="circle"
+          fontSize="48"
+          bgColor="#667eea"
+        />
+        <text class="nickname">{{ userStore.nickname || "未登录" }}</text>
+        <view class="profile-meta">
+          <u-tag v-if="userStore.isVerified" text="已认证" type="success" shape="circle" size="mini" />
+          <text v-if="userStore.school" class="school">{{ userStore.school }}</text>
         </view>
       </view>
-    </uni-popup>
+    </view>
+
+    <view class="section">
+      <u-cell-group>
+        <u-cell-item
+          title="学校信息"
+          :value="userStore.school || '未设置'"
+          :arrow="true"
+          @click="openEdit"
+        />
+        },
+        u-cell-item(
+          title="编辑资料"
+          :arrow="true"
+          @click="uni.navigateTo({ url: '/pages/user/edit' })"
+        )
+      </u-cell-group>
+    </view>
+
+    <view class="section">
+      <u-cell-group>
+        <u-cell-item
+          title="我的动态"
+          :arrow="true"
+          @click="goSquare"
+        />
+        <u-cell-item
+          title="我的好友"
+          :arrow="true"
+          @click="goFriends"
+        />
+        <u-cell-item
+          title="我的圈子"
+          :arrow="true"
+          @click="goCircles"
+        />
+      </u-cell-group>
+    </view>
+
+    <view class="section">
+      <u-cell-group>
+        <u-cell-item
+          title="退出登录"
+          :arrow="false"
+          @click="handleLogout"
+        >
+          <template #title>
+            <text style="color: #e74c3c;">退出登录</text>
+          </template>
+        </u-cell-item>
+      </u-cell-group>
+    </view>
+
+    <u-popup :show="showEdit" mode="bottom" round="20" @close="showEdit = false">
+      <view class="edit-popup">
+        <text class="edit-title">设置学校</text>
+        <u-input
+          v-model="editSchool"
+          placeholder="请输入学校名称"
+          :border="true"
+          shape="square"
+          :customStyle="{ padding: '20rpx 24rpx', fontSize: '28rpx', height: '88rpx', marginBottom: '30rpx' }"
+        />
+        <view class="edit-actions">
+          <u-button
+            shape="circle"
+            :customStyle="{ flex: 1, height: '88rpx' }"
+            @click="showEdit = false"
+          >取消</u-button>
+          <u-button
+            type="primary"
+            shape="circle"
+            :customStyle="{ flex: 1, height: '88rpx' }"
+            @click="saveSchool"
+          >保存</u-button>
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
 <style scoped>
 .container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: var(--u-bg-color, #f3f4f6);
 }
-.profile-card {
+
+.profile-header {
+  position: relative;
+  padding-bottom: 40rpx;
+}
+
+.profile-bg {
+  position: absolute;
+  inset: 0;
+  height: 280rpx;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-radius: 0 0 48rpx 48rpx;
+}
+
+.profile-info {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60rpx 0;
-  background: #fff;
+  padding-top: 60rpx;
 }
-.avatar, .avatar-placeholder {
-  width: 140rpx;
-  height: 140rpx;
-  border-radius: 50%;
-}
-.avatar-placeholder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #fff;
-  font-size: 48rpx;
-}
+
 .nickname {
-  margin-top: 20rpx;
   font-size: 36rpx;
-  font-weight: 600;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 20rpx;
 }
-.verified-badge {
-  margin-top: 10rpx;
-  padding: 4rpx 16rpx;
-  background: #e8f5e9;
-  color: #2e7d32;
-  border-radius: 20rpx;
-  font-size: 22rpx;
+
+.profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 12rpx;
 }
+
 .school {
-  margin-top: 8rpx;
   font-size: 26rpx;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);
 }
-.menu-list {
-  margin-top: 20rpx;
-  background: #fff;
+
+.section {
+  margin: 20rpx 30rpx 0;
+  border-radius: 20rpx;
+  overflow: hidden;
 }
-.menu-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 30rpx;
-  border-bottom: 1rpx solid #eee;
-  font-size: 28rpx;
-}
-.menu-right {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-.menu-value {
-  color: #999;
-  font-size: 26rpx;
-}
-.arrow {
-  color: #ccc;
-  font-size: 36rpx;
-}
-.logout-text {
-  color: #e74c3c;
-}
+
 .edit-popup {
   padding: 40rpx;
-  background: #fff;
-  border-radius: 20rpx 20rpx 0 0;
 }
+
 .edit-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  margin-bottom: 30rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #303133;
+  display: block;
+  margin-bottom: 32rpx;
+  text-align: center;
 }
-.edit-input {
-  border: 1rpx solid #ddd;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  font-size: 28rpx;
-  margin-bottom: 30rpx;
-}
+
 .edit-actions {
   display: flex;
   gap: 20rpx;
-}
-.cancel-btn, .save-btn {
-  flex: 1;
 }
 </style>

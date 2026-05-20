@@ -38,3 +38,11 @@ export function updateProfile(data: { nickname?: string; avatar?: string; school
     data,
   })
 }
+
+export function devLogin(nickname: string) {
+  return request<LoginResponse>({
+    url: "/auth/dev-login",
+    method: "POST",
+    data: { nickname },
+  })
+}
