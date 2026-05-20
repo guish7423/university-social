@@ -42,8 +42,8 @@ function getTypeText(type: string) {
       <text v-if="unreadCount" class="unread-badge">{{ unreadCount }} 条未读</text>
     </view>
 
-    <view v-if="notes.length === 0" class="empty">暂无通知</view>
-    <view v-for="n in notes" :key="n.id" :class="['note-item', !n.is_read && 'unread']">
+    <view v-if="notes && notes.length === 0" class="empty">暂无通知</view>
+    <view v-for="n in (notes || [])" :key="n.id" :class="['note-item', !n.is_read && 'unread']">
       <image v-if="n.from_user?.avatar" class="avatar" :src="n.from_user.avatar" mode="aspectFill" />
       <view class="note-body">
         <text class="note-name">{{ n.from_user?.nickname || "系统" }}</text>

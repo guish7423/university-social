@@ -1,43 +1,45 @@
 <template>
-  <view class="min-h-screen bg-gray-50">
-    <view class="p-4 flex justify-between items-center">
-      <text class="text-lg font-bold">校园社团</text>
-      <button class="text-sm text-white bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-1 rounded-full"
-              @click="goCreate" v-if="!loading">创建圈子</button>
+  <view class="container">
+    <view v-if="loading" class="loading-state">
+      <u-loading mode="flower" size="60" />
+      <text class="loading-text">加载中...</text>
     </view>
 
-    <view v-if="loading" class="flex justify-center py-20">
-      <text class="text-gray-400">加载中...</text>
-    </view>
+    <template v-else-if="circles.length === 0">
+      <u-empty mode="data" text="还没有圈子，来创建一个吧" />
+      <view class="empty-action">
+        <u-button type="primary" shape="circle" @click="goCreate">创建圈子</u-button>
+      </view>
+    </template>
 
-    <view v-else-if="circles.length === 0" class="flex flex-col items-center py-20">
-      <text class="text-5xl mb-4">🏛️</text>
-      <text class="text-gray-400">还没有圈子，来创建一个吧</text>
-    </view>
-
-    <view v-else class="px-4 space-y-3">
-      <view v-for="c in circles" :key="c.id"
-            class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-3 active:opacity-70"
-            @click="goDetail(c.id)">
-        <view class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xl shrink-0">
-          {{ c.icon || c.name[0] }}
-        </view>
-        <view class="flex-1 min-w-0">
-          <text class="font-bold text-base block truncate">{{ c.name }}</text>
-          <text class="text-xs text-gray-400 block truncate mt-0.5">{{ c.description || '暂无简介' }}</text>
-          <view class="flex gap-4 mt-1">
-            <text class="text-xs text-gray-400">{{ c.member_count }} 成员</text>
-            <text class="text-xs text-gray-400">{{ c.post_count }} 帖子</text>
+    <view v-else class="circle-list">
+      <view
+        v-for="c in circles"
+        :key="c.id"
+        class="circle-card"
+        @click="goDetail(c.id)"
+      >
+        <u-avatar
+          :text="c.icon || c.name[0]"
+          size="96"
+          shape="square"
+          fontSize="40"
+          bgColor="linear-gradient(135deg, #667eea, #764ba2)"
+        >
+        </u-avatar>
+        <view class="circle-info">
+          <text class="circle-name">{{ c.name }}</text>
+          <text class="circle-desc">{{ c.description || '暂无简介' }}</text>
+          <view class="circle-meta">
+            <text class="meta-text">{{ c.member_count }} 成员</text>
+            <text class="meta-text">{{ c.post_count }} 帖子</text>
           </view>
         </view>
-        <view v-if="c.is_member"
-              class="text-xs text-indigo-500 border border-indigo-500 rounded-full px-3 py-0.5 shrink-0">
-          已加入
-        </view>
+        <view v-if="c.is_member" class="member-badge">已加入</view>
       </view>
     </view>
 
-    <view class="h-safe-area" />
+    <u-safe-bottom />
   </view>
 </template>
 
@@ -67,3 +69,84 @@ function goDetail(id: number) {
   uni.navigateTo({ url: `/pages/circle/detail?id=${id}` })
 }
 </script>
+
+<style scoped>
+.container {
+  min-height: 100vh;
+  background: var(--u-bg-color, #f3f4f6);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 200rpx 0;
+  gap: 20rpx;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: #909399;
+}
+
+.circle-list {
+  padding: 20rpx;
+}
+
+.circle-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.circle-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.circle-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #303133;
+  display: block;
+}
+
+.circle-desc {
+  font-size: 24rpx;
+  color: #909399;
+  display: block;
+  margin-top: 6rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.circle-meta {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 10rpx;
+}
+
+.meta-text {
+  font-size: 22rpx;
+  color: #c0c4cc;
+}
+
+.member-badge {
+  font-size: 22rpx;
+  color: #667eea;
+  border: 1rpx solid #667eea;
+  border-radius: 30rpx;
+  padding: 6rpx 20rpx;
+  white-space: nowrap;
+}
+
+.empty-action {
+  padding: 40rpx 60rpx;
+}
+</style>
