@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
-import { searchUsers, sendFriendRequest, type UserInfo } from "@/api/social"
+import { searchUsers, sendFriendRequest, type SearchUserResult } from "@/api/social"
 import { useUserStore } from "@/store/user"
 
 const userStore = useUserStore()
 const query = ref("")
-const results = ref<UserInfo[]>([])
+const results = ref<SearchUserResult[]>([])
 const loading = ref(false)
 
 async function handleSearch() {
@@ -17,10 +17,17 @@ async function handleSearch() {
   loading.value = false
 }
 
+const statusMap: Record<string, string> = {
+  friend: "已是好友",
+  pending_sent: "已发送",
+  pending_received: "待同意",
+}
+
 async function addFriend(id: number) {
   await sendFriendRequest(id)
-  uni.showToast({ title: "请求已发送", icon: "success" })
-}
+  const u = results.value.find(r => r.id === id)
+  if (u) u.friend_status = "pending_sent"
+  }
 </script>
 
 <template>
@@ -41,7 +48,9 @@ async function addFriend(id: number) {
         <text class="name">{{ u.nickname }}</text>
         <text v-if="u.school" class="school">{{ u.school }}</text>
       </view>
-      <button v-if="u.id !== userStore.id" class="add-btn" @click="addFriend(u.id)">加好友</button>
+      <view v-if="u.id === userStore.id" class="add-btn disabled">自己</view>
+      <view v-else-if="u.friend_status" class="add-btn disabled">{{ statusMap[u.friend_status] }}</view>
+      <button v-else class="add-btn" @click="addFriend(u.id)">加好友</button>
     </view>
   </view>
 </template>
@@ -59,4 +68,5 @@ async function addFriend(id: number) {
 .name { font-size: 28rpx; font-weight: 600; display: block; }
 .school { font-size: 22rpx; color: #999; }
 .add-btn { font-size: 24rpx; padding: 8rpx 24rpx; background: #667eea; color: #fff; border-radius: 24rpx; }
+.add-btn.disabled { background: #ccc; color: #fff; }
 </style>

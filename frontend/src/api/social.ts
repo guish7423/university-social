@@ -1,10 +1,13 @@
 import { request } from "./request"
 import type { UserInfo } from "./user"
 
-export function searchUsers(q: string) {
-  return request<UserInfo[]>({ url: "/users/search", method: "GET", data: { q } })
+export interface SearchUserResult extends UserInfo {
+  friend_status: string
 }
 
+export function searchUsers(q: string) {
+  return request<SearchUserResult[]>({ url: "/users/search", method: "GET", data: { q } })
+}
 export function listFriends() {
   return request<UserInfo[]>({ url: "/friends", method: "GET" })
 }
@@ -19,6 +22,9 @@ export function sendFriendRequest(id: number) {
 
 export function acceptFriendRequest(id: number) {
   return request<{ message: string }>({ url: `/friends/accept/${id}`, method: "POST" })
+}
+export function rejectFriendRequest(id: number) {
+  return request<{ message: string }>({ url: `/friends/reject/${id}`, method: "POST" })
 }
 
 export function removeFriend(id: number) {
