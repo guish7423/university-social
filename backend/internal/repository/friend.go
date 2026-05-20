@@ -6,6 +6,10 @@ import (
 
 	"github.com/guish/university-social/internal/model"
 )
+type UserSearchResult struct {
+	model.User
+	FriendStatus string `json:"friend_status"`
+}
 
 type FriendRepository struct {
 	db *sql.DB
@@ -64,6 +68,13 @@ func (r *FriendRepository) Remove(userID, friendID int64) error {
 	return err
 }
 
+func (r *FriendRepository) RejectRequest(userID, friendID int64) error {
+	_, err := r.db.Exec(
+		`DELETE FROM friends WHERE user_id=$1 AND friend_id=$2 AND status='pending'`,
+		friendID, userID,
+	)
+	return err
+}
 func (r *FriendRepository) ListFriends(userID int64) ([]*model.User, error) {
 	rows, err := r.db.Query(
 		`SELECT u.id, u.open_id, u.nickname, u.avatar, u.school, u.is_verified, u.role
@@ -114,24 +125,33 @@ func (r *FriendRepository) ListRequests(userID int64) ([]*model.User, error) {
 	return users, nil
 }
 
-func (r *FriendRepository) SearchUsers(query string, limit int) ([]*model.User, error) {
-	rows, err := r.db.Query(
-		`SELECT id, open_id, nickname, avatar, school, is_verified, role
-		FROM users WHERE nickname ILIKE $1 LIMIT $2`,
-		"%"+query+"%", limit,
-	)
+func (r *FriendRepository) SearchUsers(query string, limit int, currentUserID int64) ([]*UserSearchResult, error) {
+	rows, err := r.db.Query(`
+		SELECT u.id, u.open_id, u.nickname, u.avatar, u.school, u.is_verified, u.role,
+		CASE
+			WHEN f1.status = 'accepted' THEN 'friend'
+			WHEN f2.id IS NOT NULL THEN 'pending_sent'
+			WHEN f3.id IS NOT NULL THEN 'pending_received'
+			ELSE ''
+		END as friend_status
+		FROM users u
+		LEFT JOIN friends f1 ON ((f1.user_id = $2 AND f1.friend_id = u.id) OR (f1.user_id = u.id AND f1.friend_id = $2)) AND f1.status = 'accepted'
+		LEFT JOIN friends f2 ON f2.user_id = $2 AND f2.friend_id = u.id AND f2.status = 'pending'
+		LEFT JOIN friends f3 ON f3.user_id = u.id AND f3.friend_id = $2 AND f3.status = 'pending'
+		WHERE u.id != $2 AND u.nickname ILIKE $1 LIMIT $3
+	`, "%"+query+"%", currentUserID, limit)
 	if err != nil {
 		return nil, fmt.Errorf("search users: %w", err)
 	}
 	defer rows.Close()
 
-	var users []*model.User
+	var users []*UserSearchResult
 	for rows.Next() {
-		var u model.User
-		if err := rows.Scan(&u.ID, &u.OpenID, &u.Nickname, &u.Avatar, &u.School, &u.IsVerified, &u.Role); err != nil {
+		var r UserSearchResult
+		if err := rows.Scan(&r.ID, &r.OpenID, &r.Nickname, &r.Avatar, &r.School, &r.IsVerified, &r.Role, &r.FriendStatus); err != nil {
 			return nil, err
 		}
-		users = append(users, &u)
+		users = append(users, &r)
 	}
 	return users, nil
 }

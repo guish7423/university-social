@@ -74,15 +74,15 @@ export function createCirclePost(circleId: number, data: { content: string; imag
 }
 
 export function toggleCirclePostLike(postId: number) {
-  return request<{ liked: boolean }>({ url: `/circles/${postId}/like`, method: "POST" })
+  return request<{ liked: boolean }>({ url: `/circles/posts/${postId}/like`, method: "POST" })
 }
 
 export function createCirclePostComment(postId: number, content: string) {
-  return request<{ id: number }>({ url: `/circles/${postId}/comments`, method: "POST", data: { content } })
+  return request<{ id: number }>({ url: `/circles/posts/${postId}/comments`, method: "POST", data: { content } })
 }
 
 export function listCirclePostComments(postId: number) {
   return request<{ id: number; user_id: number; content: string; created_at: string; author: UserInfo }[]>({
-    url: `/circles/${postId}/comments`, method: "GET",
+    url: `/circles/posts/${postId}/comments`, method: "GET",
   })
 }

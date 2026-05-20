@@ -184,7 +184,7 @@ func (h *CircleHandler) ListPosts(c *gin.Context) {
 
 func (h *CircleHandler) TogglePostLike(c *gin.Context) {
 	userID := c.GetInt64("user_id")
-	postID, err := strconv.ParseInt(c.Param("postId"), 10, 64)
+	postID, err := strconv.ParseInt(c.Param("pid"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
 		return
@@ -200,7 +200,7 @@ func (h *CircleHandler) TogglePostLike(c *gin.Context) {
 
 func (h *CircleHandler) CreateComment(c *gin.Context) {
 	userID := c.GetInt64("user_id")
-	postID, err := strconv.ParseInt(c.Param("postId"), 10, 64)
+	postID, err := strconv.ParseInt(c.Param("pid"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
 		return
@@ -223,7 +223,7 @@ func (h *CircleHandler) CreateComment(c *gin.Context) {
 }
 
 func (h *CircleHandler) ListComments(c *gin.Context) {
-	postID, err := strconv.Atoi(c.Param("postId"))
+	postID, err := strconv.Atoi(c.Param("pid"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
 		return

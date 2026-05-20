@@ -23,7 +23,7 @@ func (h *FriendHandler) SearchUsers(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "请输入搜索关键词"})
 		return
 	}
-	users, err := h.repo.SearchUsers(query, 20)
+	users, err := h.repo.SearchUsers(query, 20, c.GetInt64("user_id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "搜索失败"})
 		return
@@ -73,6 +73,19 @@ func (h *FriendHandler) RemoveFriend(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ok"})
+}
+func (h *FriendHandler) RejectRequest(c *gin.Context) {
+	userID := c.GetInt64("user_id")
+	friendID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	if err := h.repo.RejectRequest(userID, friendID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "操作失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已拒绝"})
 }
 
 func (h *FriendHandler) ListFriends(c *gin.Context) {
