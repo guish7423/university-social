@@ -18,7 +18,17 @@ onHide(() => {
 
 <style>
 page {
-  background-color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+view {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 </style>
