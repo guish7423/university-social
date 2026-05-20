@@ -62,3 +62,33 @@ export function toggleLike(postId: number) {
 export function listTopics() {
   return request<TopicData[]>({ url: "/topics", method: "GET" })
 }
+
+export interface UploadResult {
+  url: string
+}
+
+export function uploadImage(tempFilePath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const token = uni.getStorageSync("token")
+    uni.uploadFile({
+      url: (import.meta.env.VITE_API_BASE || "http://localhost:8081/api/v1") + "/upload",
+      filePath: tempFilePath,
+      name: "file",
+      header: { Authorization: "Bearer " + token },
+      success: (res) => {
+        if (res.statusCode === 200) {
+          const data = JSON.parse(res.data as string)
+          const base = (import.meta.env.VITE_API_BASE || "http://localhost:8081/api/v1").replace("/api/v1", "")
+          resolve(base + data.url)
+        } else {
+          reject(new Error("上传失败"))
+        }
+      },
+      fail: (err) => reject(err),
+    })
+  })
+}
+
+export function uploadImages(tempFilePaths: string[]): Promise<string[]> {
+  return Promise.all(tempFilePaths.map(uploadImage))
+}

@@ -1,16 +1,32 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import { createPost, listTopics, type TopicData } from "@/api/post"
+import { createPost, listTopics, uploadImages, type TopicData } from "@/api/post"
 
 const content = ref("")
 const topics = ref<TopicData[]>([])
 const selectedTopic = ref<number>()
 const submitting = ref(false)
+const imageFiles = ref<string[]>([])
 
 async function loadTopics() {
   try { topics.value = await listTopics() } catch {}
 }
 loadTopics()
+
+async function chooseImage() {
+  if (imageFiles.value.length >= 9) {
+    uni.showToast({ title: "最多9张图片", icon: "none" })
+    return
+  }
+  try {
+    const res = await uni.chooseImage({ count: 9 - imageFiles.value.length })
+    imageFiles.value = [...imageFiles.value, ...res.tempFilePaths]
+  } catch {}
+}
+
+function removeImage(index: number) {
+  imageFiles.value.splice(index, 1)
+}
 
 async function handleSubmit() {
   if (!content.value.trim()) {
@@ -18,13 +34,27 @@ async function handleSubmit() {
     return
   }
   submitting.value = true
+  let images: string[] = []
+  if (imageFiles.value.length > 0) {
+    uni.showLoading({ title: "上传图片中..." })
+    try {
+      images = await uploadImages(imageFiles.value)
+    } catch {
+      uni.hideLoading()
+      submitting.value = false
+      uni.showToast({ title: "图片上传失败", icon: "none" })
+      return
+    }
+    uni.hideLoading()
+  }
   try {
     await createPost({
       content: content.value,
+      images,
       topic_id: selectedTopic.value,
     })
-    uni.showToast({ title: "发布成功", icon: "success" })
-    setTimeout(() => uni.navigateBack(), 1000)
+    uni.$emit('post-created')
+    uni.switchTab({ url: '/pages/square/index' })
   } catch {
     uni.showToast({ title: "发布失败", icon: "none" })
   } finally {
@@ -35,16 +65,40 @@ async function handleSubmit() {
 
 <template>
   <view class="container">
-    <view class="form">
-      <textarea
+    <view class="form-card">
+      <u-textarea
         v-model="content"
-        class="textarea"
         placeholder="分享你的校园生活..."
         maxlength="2000"
+        height="300"
+        count
+        :autoHeight="false"
+        :customStyle="{ fontSize: '30rpx', padding: '24rpx', borderRadius: '16rpx', background: '#f8f9fa' }"
       />
-      <view class="char-count">{{ content.length }}/2000</view>
 
-      <view v-if="topics.length" class="topic-section">
+      <view class="image-section">
+        <text class="section-label">添加图片</text>
+        <view class="image-grid">
+          <view
+            v-for="(img, idx) in imageFiles"
+            :key="idx"
+            class="image-item"
+          >
+            <image :src="img" mode="aspectFill" class="preview-img" />
+            <view class="remove-btn" @click="removeImage(idx)">&times;</view>
+          </view>
+          <view
+            v-if="imageFiles.length < 9"
+            class="image-picker"
+            @click="chooseImage"
+          >
+            <text class="picker-icon">+</text>
+            <text class="picker-text">添加图片</text>
+          </view>
+        </view>
+      </view>
+
+      <view v-if="topics?.length" class="topic-section">
         <text class="section-label">选择话题</text>
         <scroll-view class="topic-list" scroll-x>
           <view
@@ -58,26 +112,135 @@ async function handleSubmit() {
         </scroll-view>
       </view>
 
-      <button
-        class="submit-btn"
-        type="primary"
-        :loading="submitting"
-        :disabled="submitting || !content.trim()"
-        @click="handleSubmit"
-      >
-        发布
-      </button>
+      <view class="submit-area">
+        <u-button
+          type="primary"
+          shape="circle"
+          size="large"
+          :loading="submitting"
+          :disabled="submitting || !content.trim()"
+          :customStyle="{ height: '88rpx', fontSize: '32rpx', fontWeight: '600' }"
+          @click="handleSubmit"
+        >
+          发布动态
+        </u-button>
+      </view>
     </view>
   </view>
 </template>
 
 <style scoped>
-.container { min-height: 100vh; background: #fff; padding: 30rpx; }
-.textarea { width: 100%; height: 400rpx; font-size: 30rpx; line-height: 1.6; }
-.char-count { text-align: right; font-size: 24rpx; color: #999; margin-bottom: 30rpx; }
-.section-label { font-size: 28rpx; color: #666; margin-bottom: 16rpx; display: block; }
-.topic-list { display: flex; gap: 16rpx; white-space: nowrap; margin-bottom: 40rpx; }
-.topic-tag { display: inline-block; padding: 12rpx 28rpx; background: #f0f0f0; border-radius: 30rpx; font-size: 26rpx; }
-.topic-tag.active { background: #667eea; color: #fff; }
-.submit-btn { width: 100%; height: 88rpx; border-radius: 44rpx; font-size: 32rpx; }
+.container {
+  min-height: 100vh;
+  background: var(--u-bg-color, #f3f4f6);
+  padding: 20rpx;
+}
+
+.form-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.image-section {
+  margin-top: 24rpx;
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 12rpx;
+}
+
+.image-item {
+  position: relative;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 4rpx;
+  right: 4rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-picker {
+  width: 180rpx;
+  height: 180rpx;
+  border: 2rpx dashed #ccc;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+
+.picker-icon {
+  font-size: 48rpx;
+  color: #999;
+  line-height: 1;
+}
+
+.picker-text {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.section-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #606266;
+  display: block;
+}
+
+.topic-section {
+  margin-top: 24rpx;
+}
+
+.topic-list {
+  display: flex;
+  gap: 16rpx;
+  white-space: nowrap;
+  margin-top: 12rpx;
+  margin-bottom: 32rpx;
+}
+
+.topic-tag {
+  display: inline-block;
+  padding: 14rpx 32rpx;
+  background: #f0f0f0;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  color: #606266;
+  transition: all 0.2s;
+}
+
+.topic-tag.active {
+  background: #667eea;
+  color: #fff;
+}
+
+.submit-area {
+  margin-top: 8rpx;
+}
 </style>
