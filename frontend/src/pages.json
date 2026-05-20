@@ -1,5 +1,19 @@
 {
-  "pages": [
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^u-(.*)": "uview-pro/components/u-$1/u-$1.vue"
+    }
+  },
+    "pages": [
+    {
+      "path": "pages/square/index",
+      "style": {
+        "navigationBarTitleText": "动态广场",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
     {
       "path": "pages/index/index",
       "style": {
@@ -13,14 +27,6 @@
       "style": {
         "navigationStyle": "custom",
         "navigationBarTitleText": "登录"
-      }
-    },
-    {
-      "path": "pages/square/index",
-      "style": {
-        "navigationBarTitleText": "动态广场",
-        "navigationBarBackgroundColor": "#667eea",
-        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -46,7 +52,7 @@
         "navigationBarBackgroundColor": "#667eea",
         "navigationBarTextStyle": "white"
       }
-    }
+    },
     {
       "path": "pages/friend/index",
       "style": {
@@ -64,20 +70,21 @@
       }
     },
     {
+      "path": "pages/friend/requests",
+      "style": {
+        "navigationBarTitleText": "好友请求",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/notification/index",
       "style": {
         "navigationBarTitleText": "通知",
         "navigationBarBackgroundColor": "#667eea",
         "navigationBarTextStyle": "white"
       }
-    }
-  ],
-  "globalStyle": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "校园社",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
-  },
+    },
     {
       "path": "pages/circle/list",
       "style": {
@@ -102,6 +109,21 @@
         "navigationBarTextStyle": "white"
       }
     }
+  },
+  {
+    "path": "pages/user/edit",
+    "style": {
+      "navigationBarTitleText": "编辑资料",
+      "navigationBarBackgroundColor": "#667eea",
+      "navigationBarTextStyle": "white"
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "校园社",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
   "tabBar": {
     "color": "#999",
     "selectedColor": "#667eea",
@@ -109,12 +131,12 @@
     "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "text": "首页"
-      },
-      {
         "pagePath": "pages/square/index",
         "text": "广场"
+      },
+      {
+        "pagePath": "pages/circle/list",
+        "text": "圈子"
       },
       {
         "pagePath": "pages/user/index",
