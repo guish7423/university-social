@@ -70,6 +70,46 @@ func (h *AuthHandler) WxLogin(c *gin.Context) {
 	})
 }
 
+func (h *AuthHandler) DevLogin(c *gin.Context) {
+	var req struct {
+		Nickname string `json:"nickname"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	nickname := req.Nickname
+	if nickname == "" {
+		nickname = "测试用户"
+	}
+	openID := "dev_" + nickname
+	user, err := h.repo.FindByOpenID(openID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "服务器错误"})
+		return
+	}
+	if user == nil {
+		id, err := h.repo.Create(&model.User{
+			OpenID:   openID,
+			Nickname: nickname,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "创建用户失败"})
+			return
+		}
+		user, _ = h.repo.FindByID(id)
+	}
+	token, err := h.generateToken(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "生成令牌失败"})
+		return
+	}
+	c.JSON(http.StatusOK, model.LoginResponse{
+		Token: token,
+		User:  user,
+	})
+}
+
 func (h *AuthHandler) GetProfile(c *gin.Context) {
 	userID := c.GetInt64("user_id")
 	user, err := h.repo.FindByID(userID)

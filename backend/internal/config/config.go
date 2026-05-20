@@ -10,6 +10,7 @@ type Config struct {
 	WechatAppID  string
 	WechatSecret string
 	AdminUserIDs string
+	UploadDir    string
 }
 
 func Load() *Config {
@@ -21,6 +22,7 @@ func Load() *Config {
 		WechatAppID:  getEnv("WECHAT_APP_ID", ""),
 		WechatSecret: getEnv("WECHAT_SECRET", ""),
 		AdminUserIDs: getEnv("ADMIN_USER_IDS", ""),
+		UploadDir:    getEnv("UPLOAD_DIR", "./uploads"),
 	}
 }
 

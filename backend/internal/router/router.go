@@ -21,12 +21,16 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 	circleRepo := repository.NewCircleRepository(db)
 	circleHandler := handler.NewCircleHandler(circleRepo)
 	adminHandler := handler.NewAdminHandler(db)
+	uploadHandler := handler.NewUploadHandler(cfg.UploadDir)
 
 	r := gin.Default()
+	r.Use(middleware.CORS())
+	r.Static("/uploads", cfg.UploadDir)
 
 	api := r.Group("/api/v1")
 	{
 		api.POST("/auth/login", authHandler.WxLogin)
+		api.POST("/auth/dev-login", authHandler.DevLogin)
 
 		auth := api.Group("")
 		auth.Use(middleware.AuthRequired(cfg))
@@ -47,6 +51,7 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 			auth.POST("/friends/request/:id", friendHandler.SendRequest)
 			auth.POST("/friends/accept/:id", friendHandler.AcceptRequest)
 			auth.DELETE("/friends/:id", friendHandler.RemoveFriend)
+			auth.POST("/friends/reject/:id", friendHandler.RejectRequest)
 			auth.GET("/notifications", friendHandler.ListNotifications)
 			auth.POST("/notifications/read", friendHandler.MarkRead)
 			auth.GET("/circles", circleHandler.List)
@@ -58,9 +63,10 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 			auth.GET("/circles/:id/members", circleHandler.ListMembers)
 			auth.GET("/circles/:id/posts", circleHandler.ListPosts)
 			auth.POST("/circles/:id/posts", circleHandler.CreatePost)
-			auth.POST("/circles/:postId/like", circleHandler.TogglePostLike)
-			auth.POST("/circles/:postId/comments", circleHandler.CreateComment)
-			auth.GET("/circles/:postId/comments", circleHandler.ListComments)
+			auth.POST("/circles/posts/:pid/like", circleHandler.TogglePostLike)
+			auth.POST("/circles/posts/:pid/comments", circleHandler.CreateComment)
+			auth.GET("/circles/posts/:pid/comments", circleHandler.ListComments)
+			auth.POST("/upload", uploadHandler.UploadImage)
 		}
 
 		admin := api.Group("/admin")
