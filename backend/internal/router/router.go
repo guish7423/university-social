@@ -51,6 +51,9 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 
 	lostItemRepo := repository.NewLostItemRepository(db)
 	lostItemHandler := handler.NewLostItemHandler(lostItemRepo)
+	msgRepo := repository.NewMessageRepository(db)
+	chatHandler := handler.NewChatHandler(msgRepo)
+	wsHub := handler.NewWsHub(msgRepo)
 
 
 	r := gin.Default()
@@ -168,6 +171,14 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 			auth.DELETE("/lost-items/:id", lostItemHandler.Delete)
 			auth.PUT("/lost-items/:id/status", lostItemHandler.UpdateStatus)
 
+			auth.GET("/ws", func(c *gin.Context) {
+				handler.WsHandler(wsHub)(c)
+			})
+			auth.POST("/chat/send", chatHandler.Send)
+			auth.GET("/chat/conversations", chatHandler.Conversations)
+			auth.GET("/chat/messages/:userId", chatHandler.Messages)
+			auth.POST("/chat/read/:userId", chatHandler.MarkRead)
+			auth.GET("/chat/unread", chatHandler.UnreadCount)
 		}
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthRequired(cfg))
