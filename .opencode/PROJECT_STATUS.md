@@ -25,13 +25,13 @@ last_updated: 2026-05-21
 - [x] uView Pro UI 框架（6+页面改造）
 - [x] 图片上传后端（/upload + /uploads/ static）
 - [x] opencode-graphiti 图谱记忆插件（配置就绪，需重启生效）
+- [x] 后台管理面板（总览统计、用户/帖子/圈子/举报/敏感词管理）
 
 ## 待办功能
 
-- [x] 搜索性能优化（PostgreSQL pg_trgm 全文检索）
-- [ ] WebSocket/IM 实时消息
-- [ ] DB schema 审查与索引优化
-- [ ] 后台管理面板完善
+- [x] WebSocket/IM 实时消息（gorilla/websocket + 私信聊天）
+- [x] DB schema 审查与索引优化
+- [x] 后台管理面板完善
 - [ ] 自动化测试
 - [ ] 部署到服务器
 
@@ -48,5 +48,3 @@ last_updated: 2026-05-21
 
 - 图片上传的绝对路径需在前端拼接 base URL
 - Redis 已安装本地，但未用于业务缓存（仅 graphiti 插件热层）
-- 搜索仅 LIMIT 10，无分页
-- 无 WebSocket，消息靠轮询
