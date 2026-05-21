@@ -1,0 +1,25 @@
+# Env
+.env
+backend/.env
+
+# Dependencies
+frontend/node_modules/
+admin/node_modules/
+
+# Build output
+frontend/dist/
+admin/dist/
+backend/server
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
