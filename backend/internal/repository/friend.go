@@ -138,8 +138,9 @@ func (r *FriendRepository) SearchUsers(query string, limit int, currentUserID in
 		LEFT JOIN friends f1 ON ((f1.user_id = $2 AND f1.friend_id = u.id) OR (f1.user_id = u.id AND f1.friend_id = $2)) AND f1.status = 'accepted'
 		LEFT JOIN friends f2 ON f2.user_id = $2 AND f2.friend_id = u.id AND f2.status = 'pending'
 		LEFT JOIN friends f3 ON f3.user_id = u.id AND f3.friend_id = $2 AND f3.status = 'pending'
-		WHERE u.id != $2 AND u.nickname ILIKE $1 LIMIT $3
-	`, "%"+query+"%", currentUserID, limit)
+		WHERE u.id != $2 AND u.nickname ILIKE $1
+		ORDER BY similarity(u.nickname, $4) DESC LIMIT $3
+	`, "%"+query+"%", currentUserID, limit, query)
 	if err != nil {
 		return nil, fmt.Errorf("search users: %w", err)
 	}

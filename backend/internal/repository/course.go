@@ -19,8 +19,8 @@ func (r *CourseRepository) SearchCourses(query string, offset, limit int) ([]*mo
 	like := "%" + query + "%"
 	rows, err := r.db.Query(
 		`SELECT id, name, teacher, school, department, created_at FROM courses
-		 WHERE name ILIKE $1 OR teacher ILIKE $1 OR school ILIKE $1
-		 ORDER BY name LIMIT $2 OFFSET $3`, like, limit, offset)
+		WHERE name ILIKE $1 OR teacher ILIKE $1 OR school ILIKE $1
+		ORDER BY similarity(name, $4) DESC, name LIMIT $2 OFFSET $3`, like, limit, offset, query)
 	if err != nil {
 		return nil, fmt.Errorf("search courses: %w", err)
 	}

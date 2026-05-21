@@ -164,20 +164,20 @@ func (r *LostItemRepository) ListByUser(userID int64, offset, limit int) ([]*mod
 
 func (r *LostItemRepository) Search(query, category string, offset, limit int) ([]*model.LostItem, error) {
 	like := "%" + query + "%"
-	args := []interface{}{like, limit, offset}
+	args := []interface{}{like, limit, offset, query}
 	querySQL := `SELECT l.id, l.user_id, l.title, l.description, l.category, l.item_type,
 	                    l.location, l.contact, l.images, l.status, l.created_at, l.updated_at,
 	                    COALESCE(u.nickname, ''), COALESCE(u.avatar, '')
 	             FROM lost_items l
 	             LEFT JOIN users u ON l.user_id = u.id
 	             WHERE (l.title ILIKE $1 OR l.description ILIKE $1 OR l.item_type ILIKE $1 OR l.location ILIKE $1)`
-	argIdx := 4
+	argIdx := 5
 	if category == "lost" || category == "found" {
 		querySQL += fmt.Sprintf(" AND l.category = $%d", argIdx)
 		args = append(args, category)
 		argIdx++
 	}
-	querySQL += fmt.Sprintf(" ORDER BY l.created_at DESC LIMIT $%d OFFSET $%d", argIdx, argIdx+1)
+	querySQL += fmt.Sprintf(" ORDER BY similarity(l.title, $4) DESC, l.created_at DESC LIMIT $%d OFFSET $%d", argIdx, argIdx+1)
 	args = append(args, limit, offset)
 
 	rows, err := r.db.Query(querySQL, args...)

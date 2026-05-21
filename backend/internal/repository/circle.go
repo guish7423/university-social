@@ -277,8 +277,8 @@ func (r *CircleRepository) Search(query string, offset, limit int) ([]*model.Cir
 			u.nickname, u.avatar
 		FROM circles c JOIN users u ON u.id = c.creator_id
 		WHERE c.name ILIKE $1 OR c.description ILIKE $1
-		ORDER BY c.member_count DESC LIMIT $2 OFFSET $3`,
-		"%"+query+"%", limit, offset)
+		ORDER BY similarity(c.name, $4) DESC, c.member_count DESC LIMIT $2 OFFSET $3`,
+		"%"+query+"%", limit, offset, query)
 	if err != nil {
 		return nil, fmt.Errorf("search circles: %w", err)
 	}

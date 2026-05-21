@@ -175,10 +175,10 @@ func (r *ProductRepository) ListByUser(userID, currentUserID int64, offset, limi
 }
 
 func (r *ProductRepository) SearchProducts(query string, offset, limit int, currentUserID int64) ([]*model.Product, error) {
-	q := fmt.Sprintf(`SELECT %s %s WHERE p.status = 0 AND (p.title ILIKE $2 OR p.description ILIKE $2) ORDER BY p.created_at DESC LIMIT $3 OFFSET $4`,
+	q := fmt.Sprintf(`SELECT %s %s WHERE p.status = 0 AND (p.title ILIKE $2 OR p.description ILIKE $2) ORDER BY similarity(p.title, $5) DESC, p.created_at DESC LIMIT $3 OFFSET $4`,
 		productSelectCols, productFromJoins)
 	pattern := "%" + query + "%"
-	rows, err := r.db.Query(q, currentUserID, pattern, limit, offset)
+	rows, err := r.db.Query(q, currentUserID, pattern, limit, offset, query)
 	if err != nil {
 		return nil, fmt.Errorf("search products: %w", err)
 	}

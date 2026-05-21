@@ -232,7 +232,7 @@ func (r *PostRepository) CreateNotification(userID, fromUserID int64, ntype, con
 }
 
 func (r *PostRepository) SearchPosts(query string, offset, limit int, currentUserID int64) ([]*model.Post, error) {
-	args := []interface{}{currentUserID, limit, offset, "%" + query + "%"}
+	args := []interface{}{currentUserID, limit, offset, "%" + query + "%", query}
 	rows, err := r.db.Query(
 		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
 			p.like_count, p.comment_count, p.created_at, p.updated_at,
@@ -242,7 +242,7 @@ func (r *PostRepository) SearchPosts(query string, offset, limit int, currentUse
 		JOIN users u ON u.id = p.user_id
 		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
 		WHERE p.content ILIKE $4
-		ORDER BY p.like_count DESC, p.created_at DESC LIMIT $2 OFFSET $3`, args...)
+		ORDER BY similarity(p.content, $5) DESC, p.like_count DESC, p.created_at DESC LIMIT $2 OFFSET $3`, args...)
 	if err != nil {
 		return nil, fmt.Errorf("search posts: %w", err)
 	}
