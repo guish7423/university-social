@@ -17,7 +17,11 @@ func NewPostRepository(db *sql.DB) *PostRepository {
 }
 
 func (r *PostRepository) Create(userID int64, req *model.CreatePostRequest) (int64, error) {
-	imagesJSON, _ := json.Marshal(req.Images)
+	var imagesJSON interface{}
+	if len(req.Images) > 0 {
+		j, _ := json.Marshal(req.Images)
+		imagesJSON = j
+	}
 	var id int64
 	err := r.db.QueryRow(
 		`INSERT INTO posts (user_id, content, images, topic_id, created_at, updated_at)
@@ -39,9 +43,10 @@ type PostRow struct {
 func scanPost(scanner interface {
 	Scan(dest ...interface{}) error
 }, includeAuthor bool) (*model.Post, error) {
+	var imagesBytes []byte
 	if includeAuthor {
 		var p PostRow
-		err := scanner.Scan(&p.ID, &p.UserID, &p.Content, &p.Images,
+		err := scanner.Scan(&p.ID, &p.UserID, &p.Content, &imagesBytes,
 			&p.TopicID, &p.School, &p.LikeCount, &p.CommentCount,
 			&p.CreatedAt, &p.UpdatedAt,
 			&p.AuthorNickname, &p.AuthorAvatar,
@@ -49,15 +54,21 @@ func scanPost(scanner interface {
 		if err != nil {
 			return nil, err
 		}
+		if len(imagesBytes) > 0 {
+			json.Unmarshal(imagesBytes, &p.Images)
+		}
 		p.Author = &model.User{Nickname: p.AuthorNickname, Avatar: p.AuthorAvatar}
 		return &p.Post, nil
 	}
 	var p model.Post
-	err := scanner.Scan(&p.ID, &p.UserID, &p.Content, &p.Images,
+	err := scanner.Scan(&p.ID, &p.UserID, &p.Content, &imagesBytes,
 		&p.TopicID, &p.School, &p.LikeCount, &p.CommentCount,
 		&p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, err
+	}
+	if len(imagesBytes) > 0 {
+		json.Unmarshal(imagesBytes, &p.Images)
 	}
 	return &p, nil
 }
