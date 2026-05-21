@@ -210,4 +210,16 @@ page { background: #f5f7fa; }
   from { opacity: 0; transform: translateY(20rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@media (min-width: 1024px) {
+.activity-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+  padding: 32rpx;
+}
+.activity-card { margin-bottom: 0; }
+.fab { display: none; }
+.container { max-width: 1400rpx; margin: 0 auto; }
+}
 </style>

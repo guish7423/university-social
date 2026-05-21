@@ -339,3 +339,17 @@ function goLostItems() { uni.navigateTo({ url: '/pages/found/list' }) }
   margin-top: 8rpx;
   display: block;
 }
+
+@media (min-width: 1024px) {
+.feature-grid {
+  grid-template-columns: repeat(4, 1fr);
+  padding: 48rpx 60rpx;
+  max-width: 1400rpx;
+  margin: 0 auto;
+}
+.hero {
+  padding: 160rpx 60rpx 120rpx;
+}
+.login-card, .welcome-card { max-width: 600rpx; margin: -60rpx auto 0; }
+.logo { font-size: 96rpx; }
+}

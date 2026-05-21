@@ -413,3 +413,8 @@ function goMyLostItems() { uni.navigateTo({ url: '/pages/found/mine' }) }
 	color: #c0c4cc;
 }
 </style>
+
+@media (min-width: 1024px) {
+.container { max-width: 960px; margin: 0 auto; }
+.profile-header { border-radius: 0 0 56rpx 56rpx; }
+}

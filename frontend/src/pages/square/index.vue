@@ -380,3 +380,16 @@ function formatTime(t: string) {
   padding: 40rpx 60rpx;
 }
 </style>
+
+@media (min-width: 1024px) {
+.post-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx;
+  padding: 32rpx;
+}
+.post-card { margin-bottom: 0; }
+.post-image { width: 280rpx; height: 280rpx; }
+.fab { display: none; }
+.container { max-width: 1400rpx; margin: 0 auto; }
+}

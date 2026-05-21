@@ -263,3 +263,20 @@ function formatTime(t: string) {
   z-index: 100;
 }
 </style>
+
+@media (min-width: 1024px) {
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32rpx 0 120rpx;
+}
+.post-card { border-radius: 22rpx; margin: 0 0 16rpx; }
+.comment-section { border-radius: 22rpx; }
+.comment-input-bar {
+  max-width: 960px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 999rpx;
+  bottom: 32rpx;
+}
+}
