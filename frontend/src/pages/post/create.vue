@@ -132,15 +132,15 @@ async function handleSubmit() {
 <style scoped>
 .container {
   min-height: 100vh;
-  background: var(--u-bg-color, #f3f4f6);
+  background: var(--color-canvas, #f8f6f3);
   padding: 20rpx;
 }
 
 .form-card {
-  background: #fff;
-  border-radius: 20rpx;
+  background: var(--color-surface, #fefcfb);
+  border-radius: 24rpx;
   padding: 30rpx;
-  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2rpx 16rpx rgba(#2d2b28, 0.04);
 }
 
 .image-section {
@@ -185,13 +185,13 @@ async function handleSubmit() {
 .image-picker {
   width: 180rpx;
   height: 180rpx;
-  border: 2rpx dashed #ccc;
+  border: 2rpx dashed var(--ink-tertiary, #c4c0ba);
   border-radius: 12rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #fafafa;
+  background: var(--color-surface-1, #fcfaf7);
 }
 
 .picker-icon {
@@ -236,7 +236,7 @@ async function handleSubmit() {
 }
 
 .topic-tag.active {
-  background: #667eea;
+  background: var(--brand-primary, #FF6B6B);
   color: #fff;
 }
 

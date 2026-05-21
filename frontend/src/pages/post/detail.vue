@@ -160,7 +160,7 @@ function formatTime(t: string) {
 <style scoped>
 .container {
   min-height: 100vh;
-  background: var(--u-bg-color, #f3f4f6);
+  background: var(--color-canvas, #f8f6f3);
   padding-bottom: 120rpx;
 }
 .loading-state {
@@ -169,7 +169,7 @@ function formatTime(t: string) {
   padding: 200rpx 0;
 }
 .post-card {
-  background: #fff;
+  background: var(--color-surface, #fefcfb);
   padding: 30rpx;
   margin-bottom: 16rpx;
 }
@@ -188,19 +188,19 @@ function formatTime(t: string) {
 .author-name {
   font-size: 28rpx;
   font-weight: 600;
-  color: #303133;
+  color: var(--ink, #2d2b28);
   display: block;
 }
 .post-time {
   font-size: 22rpx;
-  color: #999;
+  color: var(--ink-muted, #6b6760);
   margin-top: 4rpx;
   display: block;
 }
 .post-content {
   font-size: 30rpx;
   line-height: 1.6;
-  color: #303133;
+  color: var(--ink, #2d2b28);
   white-space: pre-wrap;
 }
 .post-images {
@@ -214,16 +214,16 @@ function formatTime(t: string) {
 .post-stats {
   margin-top: 20rpx;
   font-size: 24rpx;
-  color: #999;
+  color: var(--ink-muted, #6b6760);
 }
 .comment-section {
-  background: #fff;
+  background: var(--color-surface, #fefcfb);
   padding: 30rpx;
 }
 .section-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #303133;
+  color: var(--ink, #2d2b28);
   margin-bottom: 20rpx;
   display: block;
 }
@@ -231,7 +231,7 @@ function formatTime(t: string) {
   display: flex;
   gap: 12rpx;
   padding: 16rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid var(--hairline-light, #f0ede8);
 }
 .comment-body {
   flex: 1;
@@ -242,11 +242,11 @@ function formatTime(t: string) {
 .comment-author {
   font-size: 24rpx;
   font-weight: 600;
-  color: #606266;
+  color: var(--ink-muted, #6b6760);
 }
 .comment-content {
   font-size: 28rpx;
-  color: #303133;
+  color: var(--ink, #2d2b28);
   line-height: 1.5;
 }
 .comment-input-bar {
@@ -257,9 +257,9 @@ function formatTime(t: string) {
   display: flex;
   gap: 16rpx;
   align-items: center;
-  background: #fff;
+  background: var(--color-surface, #fefcfb);
   padding: 16rpx 30rpx;
-  border-top: 1rpx solid #eee;
+  border-top: 1rpx solid var(--hairline, #e8e4df);
   z-index: 100;
 }
 </style>
