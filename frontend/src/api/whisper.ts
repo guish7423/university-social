@@ -22,7 +22,7 @@ export interface WhisperComment {
   user_id: number
   content: string
   created_at: string
-  author?: { nickname: string; avatar: string }
+  codename?: string
 }
 
 export function createWhisper(data: {

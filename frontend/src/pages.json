@@ -42,6 +42,14 @@
       }
     },
     {
+      "path": "pages/whisper/detail",
+      "style": {
+        "navigationBarTitleText": "树洞详情",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/user/index",
       "style": {
         "navigationStyle": "custom",

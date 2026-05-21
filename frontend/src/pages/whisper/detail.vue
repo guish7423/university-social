@@ -9,28 +9,31 @@ const comments = ref<WhisperComment[]>([])
 const commentText = ref("")
 const submitting = ref(false)
 
-const id = Number(
-  (uni as any).getSystemInfoSync
-    ? ((uni as any).getApp()?.$route?.query?.id ?? 0)
-    : 0
-)
+const whisperId = ref(0)
 
-onMounted(async () => {
-  const params = new URLSearchParams(window.location.search)
-  const whisperId = Number(params.get("id")) || id
-  if (!whisperId) {
+onMounted(() => {
+  const pages = getCurrentPages()
+  const page = pages[pages.length - 1] as any
+  whisperId.value = Number(page?.options?.id || 0)
+  if (!whisperId.value) {
     uni.showToast({ title: "参数错误", icon: "error" })
     return
   }
-  try {
-    const [w, c] = await Promise.all([
-      getWhisper(whisperId),
-      listWhisperComments(whisperId),
-    ])
-    whisper.value = w
-    comments.value = c
-  } catch {}
+  loadWhisper(whisperId.value)
+  loadComments(whisperId.value)
 })
+
+async function loadWhisper(id: number) {
+  try {
+    whisper.value = await getWhisper(id)
+  } catch {}
+}
+
+async function loadComments(id: number) {
+  try {
+    comments.value = await listWhisperComments(id)
+  } catch {}
+}
 
 async function handleLike() {
   if (!userStore.isLogin || !whisper.value) return
@@ -111,12 +114,12 @@ function formatTime(t: string) {
         <view v-for="c in comments" :key="c.id" class="comment-item">
           <u-avatar
             :src="c.author?.avatar"
-            :text="c.author?.nickname?.[0] || '匿'"
+            :text="c.codename?.[0] || '匿'"
             size="56"
             shape="circle"
           />
           <view class="comment-body">
-            <text class="comment-author">{{ c.author?.nickname || "匿名" }}</text>
+            <text class="comment-author">{{ c.codename || "匿名" }}</text>
             <text class="comment-content">{{ c.content }}</text>
             <text class="comment-time">{{ formatTime(c.created_at) }}</text>
           </view>

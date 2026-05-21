@@ -53,6 +53,10 @@ function handleMore(item: WhisperData) {
   })
 }
 
+function goDetail(id: number) {
+  uni.navigateTo({ url: `/pages/whisper/detail?id=${id}` })
+}
+
 function handleTab(idx: number) {
   tabCurrent.value = idx
 }
