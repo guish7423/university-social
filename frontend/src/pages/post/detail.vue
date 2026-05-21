@@ -223,7 +223,7 @@ function formatTime(t: string) {
 .section-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: var(--ink, #2d2b28);
+  color: var(--ink, #1E2A3A);
   margin-bottom: 20rpx;
   display: block;
 }
@@ -231,7 +231,7 @@ function formatTime(t: string) {
   display: flex;
   gap: 12rpx;
   padding: 16rpx 0;
-  border-bottom: 1rpx solid var(--hairline-light, #f0ede8);
+  border-bottom: 1rpx solid var(--hairline-light, #EAE6E0);
 }
 .comment-body {
   flex: 1;
@@ -242,11 +242,11 @@ function formatTime(t: string) {
 .comment-author {
   font-size: 24rpx;
   font-weight: 600;
-  color: var(--ink-muted, #6b6760);
+  color: var(--ink-muted, #5C6B7E);
 }
 .comment-content {
   font-size: 28rpx;
-  color: var(--ink, #2d2b28);
+  color: var(--ink, #1E2A3A);
   line-height: 1.5;
 }
 .comment-input-bar {
@@ -257,9 +257,9 @@ function formatTime(t: string) {
   display: flex;
   gap: 16rpx;
   align-items: center;
-  background: var(--color-surface, #fefcfb);
+  background: var(--color-surface, #ffffff);
   padding: 16rpx 30rpx;
-  border-top: 1rpx solid var(--hairline, #e8e4df);
+  border-top: 1rpx solid var(--hairline, #E0DBD4);
   z-index: 100;
 }
 </style>

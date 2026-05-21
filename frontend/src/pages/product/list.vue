@@ -151,7 +151,7 @@ page { background: #f5f7fa; }
   color: #666;
   transition: all 0.2s;
   &.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #C67A6A, #1E2A3A);
     color: #fff;
     font-weight: 600;
   }
@@ -213,7 +213,7 @@ page { background: #f5f7fa; }
 }
 .product-img { width: 100%; height: 340rpx; }
 .placeholder-img {
-  background: linear-gradient(135deg, #667eea22, #764ba222);
+  background: linear-gradient(135deg, #C67A6A22, #1E2A3A22);
 }
 .product-body { padding: 16rpx; }
 .product-title {
@@ -258,11 +258,11 @@ page { background: #f5f7fa; }
   width: 100rpx;
   height: 100rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 20rpx rgba(102,126,234,0.4);
+  box-shadow: 0 4rpx 20rpx rgba(198,122,106,0.4);
   z-index: 100;
   &:active { transform: scale(0.9); }
 }

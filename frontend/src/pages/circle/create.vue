@@ -1,36 +1,3 @@
-<template>
-  <view class="min-h-screen bg-gray-50 p-4">
-    <view class="bg-white rounded-xl p-5 shadow-sm">
-      <text class="text-lg font-bold block mb-6">创建圈子</text>
-
-      <view class="mb-4">
-        <text class="text-sm text-gray-500 mb-1 block">圈子名称 *</text>
-        <input v-model="name" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-               placeholder="给圈子起个名字" maxlength="32" />
-      </view>
-
-      <view class="mb-4">
-        <text class="text-sm text-gray-500 mb-1 block">圈子简介</text>
-        <textarea v-model="description" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm h-24"
-                  placeholder="介绍一下这个圈子" maxlength="200" />
-      </view>
-
-      <view class="mb-4">
-        <text class="text-sm text-gray-500 mb-1 block">圈子图标</text>
-        <input v-model="icon" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-               placeholder="输入 emoji 或文字（可选）" maxlength="4" />
-      </view>
-
-      <view class="flex gap-3 mt-6">
-        <button class="flex-1 py-2.5 rounded-lg text-sm border border-gray-300 text-gray-600"
-                @click="uni.navigateBack()">取消</button>
-        <button class="flex-1 py-2.5 rounded-lg text-sm text-white bg-gradient-to-r from-indigo-500 to-purple-600"
-                :disabled="!name" :class="name ? '' : 'opacity-50'" @click="handleCreate">创建</button>
-      </view>
-    </view>
-  </view>
-</template>
-
 <script setup lang="ts">
 import { ref } from "vue"
 import { createCircle } from "@/api/circle"
@@ -57,3 +24,94 @@ async function handleCreate() {
   }
 }
 </script>
+
+<template>
+  <view class="page">
+    <view class="card">
+      <text class="card-title">创建圈子</text>
+
+      <view class="field">
+        <text class="label">圈子名称</text>
+        <input v-model="name" class="input" placeholder="给圈子起个名字" maxlength="32" />
+      </view>
+
+      <view class="field">
+        <text class="label">圈子简介</text>
+        <textarea v-model="description" class="textarea" placeholder="介绍一下这个圈子" maxlength="200" />
+      </view>
+
+      <view class="field">
+        <text class="label">圈子图标</text>
+        <input v-model="icon" class="input" placeholder="输入 emoji 或文字（可选）" maxlength="4" />
+      </view>
+
+      <view class="actions">
+        <view class="btn btn-cancel" @click="uni.navigateBack()">取消</view>
+        <view class="btn btn-primary" :class="{ disabled: !name }" @click="handleCreate">创建</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.page {
+  min-height: 100vh;
+  background: var(--color-canvas, #F7F4F0);
+  padding: 40rpx 32rpx;
+}
+.card {
+  background: var(--color-surface, #fff);
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 20rpx rgba(30,42,58,0.04);
+}
+.card-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--ink, #1E2A3A);
+  margin-bottom: 32rpx;
+}
+.field { margin-bottom: 28rpx; }
+.label {
+  font-size: 26rpx;
+  color: var(--ink-muted, #5C6B7E);
+  display: block;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+.input, .textarea {
+  width: 100%;
+  border: 1.5rpx solid var(--hairline, #E0DBD4);
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  color: var(--ink, #1E2A3A);
+  background: var(--color-surface-1, #F0EDE8);
+  box-sizing: border-box;
+}
+.input:focus, .textarea:focus {
+  border-color: var(--brand-primary, #C67A6A);
+}
+.textarea { height: 200rpx; }
+.actions { display: flex; gap: 20rpx; margin-top: 40rpx; }
+.btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 14rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:active { transform: scale(0.97); }
+}
+.btn-cancel {
+  background: var(--color-surface-1, #F0EDE8);
+  color: var(--ink-muted, #5C6B7E);
+}
+.btn-primary {
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
+  color: #fff;
+  &.disabled { opacity: 0.5; }
+}
+</style>

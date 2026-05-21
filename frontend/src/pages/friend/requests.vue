@@ -5,15 +5,12 @@ import { listFriendRequests, acceptFriendRequest, rejectFriendRequest, type User
 const requests = ref<UserInfo[]>([])
 const loading = ref(true)
 
-onMounted(() => loadRequests())
-
-async function loadRequests() {
-  loading.value = true
+onMounted(async () => {
   try {
     requests.value = await listFriendRequests()
   } catch {}
   loading.value = false
-}
+})
 
 async function accept(id: number) {
   try {
@@ -37,7 +34,7 @@ async function reject(id: number) {
 </script>
 
 <template>
-  <view class="container">
+  <view class="page">
     <u-loading v-if="loading" mode="circle" size="36" class="loading" />
     <u-empty v-else-if="requests.length === 0" text="暂无好友请求" icon="character" />
 
@@ -48,24 +45,23 @@ async function reject(id: number) {
         <text v-if="r.school" class="school">{{ r.school }}</text>
       </view>
       <view class="actions">
-        <u-button size="small" type="primary" class="action-btn" @click="accept(r.id)">接受</u-button>
-        <u-button size="small" type="default" class="action-btn" @click="reject(r.id)">拒绝</u-button>
+        <u-button size="small" type="primary" @click="accept(r.id)">接受</u-button>
+        <u-button size="small" type="default" @click="reject(r.id)">拒绝</u-button>
       </view>
     </view>
   </view>
 </template>
 
-<style scoped>
-.container { min-height: 100vh; background: #f5f5f5; }
+<style lang="scss" scoped>
+.page { min-height: 100vh; background: var(--color-canvas, #F7F4F0); }
 .loading { margin-top: 200rpx; }
 .request-item {
   display: flex; align-items: center; gap: 20rpx;
-  padding: 24rpx 30rpx; background: #fff;
-  border-bottom: 1rpx solid #eee;
+  padding: 24rpx 30rpx; background: var(--color-surface, #fff);
+  border-bottom: 1rpx solid var(--hairline-light, #EAE6E0);
 }
 .info { flex: 1; }
-.name { font-size: 28rpx; font-weight: 600; display: block; }
-.school { font-size: 22rpx; color: #999; }
+.name { font-size: 28rpx; font-weight: 600; color: var(--ink, #1E2A3A); display: block; }
+.school { font-size: 22rpx; color: var(--ink-tertiary, #B8C2CE); }
 .actions { display: flex; gap: 12rpx; }
-.action-btn { min-width: 100rpx; }
 </style>

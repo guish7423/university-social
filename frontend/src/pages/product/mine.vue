@@ -121,9 +121,9 @@ page { background: #f5f7fa; }
 }
 .action-link {
   font-size: 24rpx;
-  color: #667eea;
+  color: #C67A6A;
   padding: 8rpx 16rpx;
-  border: 1rpx solid #667eea;
+  border: 1rpx solid #C67A6A;
   border-radius: 8rpx;
   text-align: center;
   &.danger { color: #e74c3c; border-color: #e74c3c; }

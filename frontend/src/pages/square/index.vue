@@ -6,9 +6,10 @@ import ReportPopup from "@/components/ReportPopup.vue"
 
 const userStore = useUserStore()
 const posts = ref<PostData[]>([])
-const loading = ref(true)
+const loading = ref(false)
 const currentTab = ref(0)
 const tabs = ["全部", "关注"]
+
 const showReport = ref(false)
 const reportContentId = ref(0)
 const reportContentType = ref("post")
@@ -23,11 +24,13 @@ onMounted(() => {
   if (userStore.isLogin) fetchFollowing()
 })
 
-onUnmounted(() => { if (typeof unsub === 'function') unsub() })
+onUnmounted(() => {
+  if (typeof unsub === 'function') unsub()
+})
 
 async function fetchPosts() {
   loading.value = true
-  try { posts.value = await listPosts() } catch { posts.value = [] }
+  try { posts.value = await listPosts() } catch {}
   loading.value = false
 }
 
@@ -86,242 +89,134 @@ function formatTime(t: string) {
 </script>
 
 <template>
-  <view class="page-glow-top" />
-  <view class="page-glow-bottom" />
   <view class="container">
-    <view class="tab-bar glass-card">
-      <view
-        v-for="(tab, i) in tabs"
-        :key="i"
+    <view class="tab-bar">
+      <view v-for="(tab, i) in tabs" :key="i"
         :class="['tab-item', currentTab === i && 'tab-active']"
-        @click="onTabChange(i)"
-      >
+        @click="onTabChange(i)">
         <text class="tab-text">{{ tab }}</text>
         <view v-if="currentTab === i" class="tab-indicator" />
       </view>
     </view>
 
     <view v-if="loading" class="loading-state">
-      <view v-for="n in 3" :key="n" class="skeleton-card glass-card" :style="{ animationDelay: `${(n-1)*0.1}s` }">
-        <view class="skeleton-header">
-          <view class="skeleton-avatar" />
-          <view class="skeleton-lines">
-            <view class="skeleton-line w-60" />
-            <view class="skeleton-line w-40" />
-          </view>
-        </view>
-        <view class="skeleton-body">
-          <view class="skeleton-line w-90" />
-          <view class="skeleton-line w-70" />
-        </view>
-      </view>
+      <u-loading mode="flower" size="48" />
     </view>
 
     <template v-else-if="posts && posts.length">
       <view class="post-list">
-        <view
-          v-for="(post, idx) in posts"
-          :key="post.id"
-          :class="['post-card glass-card', 'animate-fade-in-up', 'stagger-' + Math.min(idx + 1, 8)]"
-          @click="goDetail(post.id)"
-        >
+        <view v-for="(post, idx) in posts" :key="post.id"
+          :class="['post-card', 'animate-fade-in-up', 'stagger-' + Math.min(idx + 1, 8)]"
+          @click="goDetail(post.id)">
           <view class="post-header">
-            <view class="author-avatar-wrap">
-              <image class="author-avatar" :src="post.author?.avatar || ''" mode="aspectFill" />
-            </view>
+            <u-avatar :src="post.author?.avatar" :text="post.author?.nickname?.[0]" size="64" shape="circle" />
             <view class="post-author">
               <text class="author-name">{{ post.author?.nickname || "匿名" }}</text>
               <text class="post-time">{{ formatTime(post.created_at) }}</text>
             </view>
-            <view class="more-btn" @click.stop="handleMore(post)">
-              <text class="more-dot" />
-            </view>
+            <u-icon name="more" color="#B8C2CE" size="28" @click.stop="handleMore(post)" />
           </view>
 
           <view class="post-body">
             <text class="post-content">{{ post.content }}</text>
             <view v-if="post?.images?.length" class="post-images">
-              <image v-for="(img, i) in post.images.slice(0, 3)" :key="i" class="post-image" :src="img" mode="aspectFill" />
+              <image v-for="(img, i) in post.images.slice(0, 3)" :key="i"
+                class="post-image" :src="img" mode="aspectFill" />
             </view>
           </view>
 
           <view class="post-actions">
             <view :class="['action-btn', post.is_liked && 'is-liked']" @click.stop="handleLike(post)">
-              <view class="like-icon-wrap">
-                <text :class="['like-icon', post.is_liked && 'is-liked-icon']">{{ post.is_liked ? '❤️' : '♡' }}</text>
-              </view>
+              <u-icon :name="post.is_liked ? 'heart-fill' : 'heart'" :color="post.is_liked ? '#C67A6A' : '#B8C2CE'" :size="32" />
               <text :class="['action-count', post.is_liked && 'liked']">{{ post.like_count || 0 }}</text>
             </view>
             <view class="action-btn">
-              <text class="action-emoji">💬</text>
+              <u-icon name="chat" color="#B8C2CE" size="32" />
               <text class="action-count">{{ post.comment_count || 0 }}</text>
             </view>
           </view>
         </view>
       </view>
 
-      <view class="fab glass-card" @click="goCreate">
-        <text class="fab-icon">✏️</text>
-      </view>
+      <view class="fab" @click="goCreate"><text class="fab-icon">+</text></view>
     </template>
 
     <template v-else-if="currentTab === 0">
-      <view class="empty-state animate-fade-in-up">
-        <text class="empty-icon">🌸</text>
-        <text class="empty-title">还没有动态</text>
-        <text class="empty-desc">成为第一个分享的人吧~</text>
-        <view class="empty-btn" @click="goCreate">发布第一条动态</view>
+      <u-empty mode="data" text="还没有动态，快来发第一条吧" />
+      <view class="empty-create">
+        <u-button type="primary" shape="circle" @click="goCreate">发布第一条动态</u-button>
       </view>
     </template>
 
     <template v-else>
-      <view class="empty-state animate-fade-in-up">
-        <text class="empty-icon">🌿</text>
-        <text class="empty-title">关注的人还没有动态</text>
-        <text class="empty-desc">去发现更多有趣的人吧~</text>
-      </view>
+      <u-empty mode="data" text="关注的人还没有动态" />
     </template>
   </view>
-
-  <ReportPopup :visible="showReport" :content-type="reportContentType" :content-id="reportContentId" @close="showReport = false" />
 </template>
 
-<style lang="scss" scoped>
-.page-glow-top {
-  position: fixed; top: -300rpx; right: -200rpx;
-  width: 700rpx; height: 700rpx;
-  background: radial-gradient(circle, rgba(192,132,252,0.12) 0%, rgba(249,168,212,0.08) 50%, transparent 70%);
-  pointer-events: none; z-index: 0;
-}
-.page-glow-bottom {
-  position: fixed; bottom: -200rpx; left: -200rpx;
-  width: 500rpx; height: 500rpx;
-  background: radial-gradient(circle, rgba(103,232,249,0.06) 0%, transparent 70%);
-  pointer-events: none; z-index: 0;
-}
-.container { position: relative; z-index: 1; min-height: 100vh; padding-bottom: 120rpx; }
+<ReportPopup :visible="showReport" :content-type="reportContentType" :content-id="reportContentId" @close="showReport = false" />
 
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
+<style lang="scss" scoped>
+.container { min-height: 100vh; background: var(--color-canvas, #F7F4F0); }
 
 .tab-bar {
-  display: flex; margin: 20rpx 24rpx;
-  border-radius: 20rpx; padding: 8rpx;
-  position: sticky; top: 16rpx; z-index: 50;
+  display: flex; background: var(--color-surface, #fff);
+  padding: 0 40rpx; position: sticky; top: 0; z-index: 50;
+  border-bottom: 1rpx solid var(--hairline, #E0DBD4);
 }
-.tab-item {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; padding: 18rpx 0;
-  cursor: pointer; border-radius: 14rpx;
-  transition: all 0.3s ease;
-}
-.tab-item:hover { background: rgba(192,132,252,0.06); }
-.tab-text { font-size: 28rpx; color: var(--ink-muted); font-weight: 500; transition: color 0.3s ease; }
-.tab-active .tab-text { color: var(--brand-primary); font-weight: 600; }
-.tab-indicator {
-  width: 48rpx; height: 4rpx; border-radius: 2rpx;
-  background: var(--brand-gradient); margin-top: 10rpx;
-  animation: fadeIn 0.3s ease;
-}
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 24rpx 0; cursor: pointer; }
+.tab-text { font-size: 28rpx; color: var(--ink-subtle, #8E9BAB); font-weight: 500; transition: color 0.3s ease; }
+.tab-active .tab-text { color: var(--brand-primary, #C67A6A); font-weight: 600; }
+.tab-indicator { width: 40rpx; height: 4rpx; border-radius: 2rpx; background: #C67A6A; margin-top: 12rpx; animation: fadeIn 0.3s ease; }
 
-.loading-state { padding: 24rpx; display: flex; flex-direction: column; gap: 20rpx; }
-.skeleton-card { padding: 32rpx; border-radius: 22rpx; }
-.skeleton-header { display: flex; align-items: center; gap: 20rpx; margin-bottom: 24rpx; }
-.skeleton-avatar { width: 72rpx; height: 72rpx; border-radius: 50%; background: linear-gradient(135deg, #E9D5FF 0%, #F3E8FF 100%); }
-.skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 12rpx; }
-.skeleton-line { height: 20rpx; border-radius: 10rpx; background: linear-gradient(135deg, #E9D5FF 0%, #F3E8FF 100%); }
-.skeleton-body { display: flex; flex-direction: column; gap: 12rpx; }
-.w-60 { width: 60%; } .w-40 { width: 40%; } .w-90 { width: 90%; } .w-70 { width: 70%; }
+.loading-state { display: flex; justify-content: center; padding: 200rpx 0; }
 
-.post-list { padding: 0 24rpx 24rpx; }
+.post-list { padding: 20rpx; }
 .post-card {
-  padding: 32rpx; margin-bottom: 20rpx; border-radius: 22rpx;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  &:active { transform: scale(0.98); }
+  background: var(--color-surface, #fff);
+  border-radius: 18rpx;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(30,42,58,0.04);
+  transition: all 0.2s ease;
+  &:active { transform: scale(0.99); }
 }
-.post-header { display: flex; align-items: center; gap: 20rpx; margin-bottom: 20rpx; }
-.author-avatar-wrap {
-  width: 72rpx; height: 72rpx; border-radius: 50%;
-  padding: 3rpx; background: var(--brand-gradient);
-}
-.author-avatar { width: 100%; height: 100%; border-radius: 50%; }
+
+.post-header { display: flex; align-items: center; gap: 16rpx; margin-bottom: 16rpx; }
 .post-author { flex: 1; }
-.author-name { font-size: 28rpx; font-weight: 600; color: var(--ink); display: block; }
-.post-time { font-size: 22rpx; color: var(--ink-tertiary); display: block; margin-top: 4rpx; }
-.more-btn {
-  width: 48rpx; height: 48rpx; display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; transition: background 0.2s;
-  &:hover { background: var(--hairline); }
-}
-.more-dot {
-  width: 6rpx; height: 6rpx; border-radius: 50%; background: var(--ink-tertiary);
-  box-shadow: 0 -10rpx 0 var(--ink-tertiary), 0 10rpx 0 var(--ink-tertiary);
-}
+.author-name { font-size: 26rpx; font-weight: 600; color: var(--ink, #1E2A3A); display: block; }
+.post-time { font-size: 22rpx; color: var(--ink-tertiary, #B8C2CE); display: block; margin-top: 4rpx; }
 
-.post-body { margin-bottom: 20rpx; }
-.post-content { font-size: 30rpx; line-height: 1.7; color: var(--ink); display: block; }
+.post-body { margin-bottom: 16rpx; }
+.post-content { font-size: 28rpx; line-height: 1.7; color: var(--ink-muted, #5C6B7E); display: block; }
 .post-images { display: flex; gap: 12rpx; margin-top: 16rpx; }
-.post-image { width: 210rpx; height: 210rpx; border-radius: 14rpx; background: var(--color-surface-1); }
+.post-image { width: 210rpx; height: 210rpx; border-radius: 12rpx; background: var(--color-surface-2, #E8E4DE); }
 
-.post-actions {
-  display: flex; align-items: center; gap: 48rpx;
-  padding-top: 20rpx; border-top: 1rpx solid var(--hairline);
-}
-.action-btn { display: flex; align-items: center; gap: 8rpx; transition: all 0.2s ease; }
-.action-btn:active { transform: scale(0.9); }
-.action-btn.is-liked { animation: likePulse 0.4s ease; }
-.like-icon-wrap { width: 40rpx; height: 40rpx; display: flex; align-items: center; justify-content: center; }
-.like-icon { font-size: 32rpx; color: var(--ink-tertiary); transition: all 0.3s ease; }
-.like-icon.is-liked-icon { color: #FB7185; }
-.action-emoji { font-size: 28rpx; }
-.action-count { font-size: 24rpx; color: var(--ink-subtle); }
-.action-count.liked { color: #FB7185; }
-
-@keyframes likePulse {
-  0% { transform: scale(1); }
-  25% { transform: scale(1.3); }
-  50% { transform: scale(0.95); }
-  70% { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
+.post-actions { display: flex; align-items: center; gap: 48rpx; padding-top: 16rpx; border-top: 1rpx solid var(--hairline, #E0DBD4); }
+.action-btn { display: flex; align-items: center; gap: 8rpx; transition: transform 0.2s ease; &:active { transform: scale(0.9); } }
+.action-count { font-size: 24rpx; color: var(--ink-tertiary, #B8C2CE); }
+.action-count.liked { color: #C67A6A; }
 
 .fab {
   position: fixed; right: 40rpx; bottom: 120rpx;
-  width: 100rpx; height: 100rpx; border-radius: 50%;
+  width: 88rpx; height: 88rpx;
+  border-radius: 50%;
+  background: #C67A6A;
   display: flex; align-items: center; justify-content: center;
-  background: var(--brand-gradient); z-index: 100;
-  transition: all 0.3s ease;
-  &:active { transform: scale(0.9); }
+  box-shadow: 0 4rpx 20rpx rgba(198,122,106,0.3);
+  z-index: 100;
+  transition: transform 0.2s ease;
+  &:active { transform: scale(0.92); }
 }
-.fab-icon { font-size: 40rpx; }
+.fab-icon { font-size: 40rpx; color: #fff; font-weight: 300; }
 
-.empty-state {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 200rpx 40rpx; gap: 16rpx;
-}
-.empty-icon { font-size: 80rpx; }
-.empty-title { font-size: 32rpx; font-weight: 600; color: var(--ink); }
-.empty-desc { font-size: 26rpx; color: var(--ink-subtle); }
-.empty-btn {
-  margin-top: 24rpx; padding: 20rpx 48rpx;
-  background: var(--brand-gradient); border-radius: 40rpx;
-  color: #fff; font-size: 28rpx; font-weight: 500;
-  transition: all 0.3s ease;
-  &:active { transform: scale(0.95); }
-}
+.empty-create { padding: 40rpx 60rpx; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @media (min-width: 1024px) {
-  .post-list {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 24rpx;
-    padding: 32rpx;
-  }
+  .post-list { display: grid; grid-template-columns: 1fr 1fr; gap: 24rpx; padding: 32rpx; }
   .post-card { margin-bottom: 0; }
-  .post-image { width: 280rpx; height: 280rpx; }
   .fab { display: none; }
   .container { max-width: 1400rpx; margin: 0 auto; }
 }

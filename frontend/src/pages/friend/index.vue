@@ -91,7 +91,7 @@ function confirmRemove(id: number, name: string) {
 .title { font-size: 36rpx; font-weight: 700; }
 .header-actions { display: flex; gap: 24rpx; }
 .action-btn {
-  font-size: 26rpx; color: #667eea; position: relative;
+  font-size: 26rpx; color: #C67A6A; position: relative;
   display: flex; align-items: center;
 }
 .badge {

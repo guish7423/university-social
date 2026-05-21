@@ -218,7 +218,7 @@ async function submitWhisper() {
     transform: translateX(-50%);
     width: 400rpx;
     height: 400rpx;
-    background: radial-gradient(circle, rgba(102,126,234,0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(198,122,106,0.15) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
   }
@@ -228,7 +228,7 @@ async function submitWhisper() {
   font-size: 48rpx;
   font-weight: 700;
   color: var(--ink, #1a1a2e);
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -283,7 +283,7 @@ async function submitWhisper() {
 }
 
 .tab-active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   color: #fff;
   font-weight: 600;
 }
@@ -313,7 +313,7 @@ async function submitWhisper() {
   display: flex;
   align-items: center;
   gap: 6rpx;
-  background: linear-gradient(135deg, #667eea15, #764ba215);
+  background: linear-gradient(135deg, #C67A6A15, #1E2A3A15);
   padding: 6rpx 16rpx;
   border-radius: 20rpx;
 }
@@ -322,7 +322,7 @@ async function submitWhisper() {
 
 .codename-text {
   font-size: 24rpx;
-  color: #667eea;
+  color: #C67A6A;
   font-weight: 600;
 }
 
@@ -386,12 +386,12 @@ async function submitWhisper() {
   bottom: 100rpx;
   width: 100rpx;
   height: 100rpx;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(102,126,234,0.4);
+  box-shadow: 0 8rpx 24rpx rgba(198,122,106,0.4);
   transition: transform 0.15s;
   &:active { transform: scale(0.9); }
 }
@@ -426,9 +426,9 @@ async function submitWhisper() {
 }
 
 .type-active {
-  border-color: #667eea;
-  color: #667eea;
-  background: #667eea08;
+  border-color: #C67A6A;
+  color: #C67A6A;
+  background: #C67A6A08;
 }
 
 .loading-state, .empty-state {

@@ -1,7 +1,7 @@
 <template>
   <view class="pc-sidebar" :class="{ collapsed }">
     <view class="sidebar-brand">
-      <text class="brand-logo">🎓</text>
+      <text class="brand-logo">◈</text>
       <text class="brand-name" v-show="!collapsed">校园社</text>
     </view>
     <view class="sidebar-nav">
@@ -47,18 +47,18 @@ try {
 } catch {}
 
 const navItems = [
-  { icon: "🏠", label: "动态广场", path: "/pages/square/index", tab: true },
-  { icon: "🔵", label: "校园圈子", path: "/pages/circle/list", tab: true },
-  { icon: "🌳", label: "树洞", path: "/pages/whisper/index", tab: true },
-  { icon: "🔍", label: "搜索", path: "/pages/search/index" },
-  { icon: "🛒", label: "二手市场", path: "/pages/product/list" },
-  { icon: "🎯", label: "校园活动", path: "/pages/activity/list" },
-  { icon: "⭐", label: "积分排行", path: "/pages/points/index" },
-  { icon: "📚", label: "课程评价", path: "/pages/course/search" },
-  { icon: "🔎", label: "失物招领", path: "/pages/found/list" },
-  { icon: "👥", label: "好友", path: "/pages/friend/index" },
-  { icon: "🔔", label: "通知", path: "/pages/notification/index" },
-  { icon: "👤", label: "个人中心", path: "/pages/user/index", tab: true },
+  { icon: "◈", label: "动态广场", path: "/pages/square/index", tab: true },
+  { icon: "◎", label: "校园圈子", path: "/pages/circle/list", tab: true },
+  { icon: "♢", label: "树洞", path: "/pages/whisper/index", tab: true },
+  { icon: "⌕", label: "搜索", path: "/pages/search/index" },
+  { icon: "▤", label: "二手市场", path: "/pages/product/list" },
+  { icon: "▣", label: "校园活动", path: "/pages/activity/list" },
+  { icon: "★", label: "积分排行", path: "/pages/points/index" },
+  { icon: "◉", label: "课程评价", path: "/pages/course/search" },
+  { icon: "♢", label: "失物招领", path: "/pages/found/list" },
+  { icon: "◯", label: "好友", path: "/pages/friend/index" },
+  { icon: "⌕", label: "通知", path: "/pages/notification/index" },
+  { icon: "◈", label: "个人中心", path: "/pages/user/index", tab: true },
 ]
 
 function navigate(item: typeof navItems[0]) {
@@ -86,7 +86,7 @@ function goProfile() {
     left: 0;
     width: 220px;
     height: 100vh;
-    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(180deg, #1E2A3A 0%, #2A3A4E 100%);
     z-index: 999;
     transition: width 0.3s ease;
     overflow: hidden;
@@ -99,7 +99,7 @@ function goProfile() {
     padding: 24px 20px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-  .brand-logo { font-size: 24px; flex-shrink: 0; }
+  .brand-logo { font-size: 24px; color: #C67A6A; font-weight: 300; flex-shrink: 0; }
   .brand-name { font-size: 18px; font-weight: 700; color: #fff; white-space: nowrap; }
   .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
   .nav-item {
@@ -112,7 +112,7 @@ function goProfile() {
     border-left: 3px solid transparent;
   }
   .nav-item:hover { background: rgba(255,255,255,0.06); }
-  .nav-active { background: rgba(102,126,234,0.15); border-left-color: #667eea; }
+  .nav-active { background: rgba(198,122,106,0.15); border-left-color: #C67A6A; }
   .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
   .nav-label { font-size: 14px; color: rgba(255,255,255,0.75); white-space: nowrap; font-weight: 500; }
   .nav-active .nav-label { color: #fff; font-weight: 600; }

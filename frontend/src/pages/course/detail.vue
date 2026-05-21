@@ -32,7 +32,7 @@
         <view v-if="!course.user_rating" class="rate-form">
           <view class="rate-row" v-for="r in rateFields" :key="r.key">
             <text class="rate-label">{{ r.label }}</text>
-            <u-rate v-model="form[r.key]" :count="5" active-color="#667eea"></u-rate>
+            <u-rate v-model="form[r.key]" :count="5" active-color="#C67A6A"></u-rate>
           </view>
           <u-textarea v-model="form.comment" placeholder="写下你的评价（选填）" height="120" :count="true" maxlength="500"></u-textarea>
           <u-button type="primary" :loading="submitting" @click="submitRating" class="submit-btn">提交评价</u-button>
@@ -40,7 +40,7 @@
         <view v-else class="my-rating">
           <view class="rate-row" v-for="r in rateFields" :key="r.key">
             <text class="rate-label">{{ r.label }}</text>
-            <u-rate :modelValue="course.user_rating[r.key]" :count="5" disabled active-color="#667eea"></u-rate>
+            <u-rate :modelValue="course.user_rating[r.key]" :count="5" disabled active-color="#C67A6A"></u-rate>
           </view>
           <text class="my-comment" v-if="course.user_rating.comment">{{ course.user_rating.comment }}</text>
         </view>
@@ -49,7 +49,7 @@
       <view class="comments-section">
         <view class="section-header">
           <text class="section-title">全部评价 ({{ course.rating_count || 0 }})</text>
-          <u-icon name="order" size="16" color="#667eea"></u-icon>
+          <u-icon name="order" size="16" color="#C67A6A"></u-icon>
         </view>
         <view v-if="!ratings || ratings.length === 0" class="empty-ratings">
           <text class="empty-text">暂无评价，来做第一个吧</text>
@@ -148,7 +148,7 @@ export default {
   justify-content: center;
 }
 .course-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #C67A6A 0%, #1E2A3A 100%);
   border-radius: var(--rounded-lg, 16rpx);
   padding: var(--space-lg, 32rpx);
   color: #fff;
@@ -170,7 +170,7 @@ export default {
   padding: var(--space-lg, 32rpx) var(--space-md, 24rpx); text-align: center;
   box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.06));
   .stat-value {
-    font-size: 40rpx; font-weight: 700; color: #667eea; display: block; margin-bottom: 8rpx;
+    font-size: 40rpx; font-weight: 700; color: #C67A6A; display: block; margin-bottom: 8rpx;
   }
   .stat-label { font-size: 24rpx; color: var(--ink-muted, #999); }
 }
@@ -198,7 +198,7 @@ export default {
 .rating-nickname { font-size: 26rpx; color: var(--ink-muted, #666); }
 .rating-stars {
   display: flex; gap: 24rpx; margin-bottom: 8rpx;
-  .star-label { font-size: 24rpx; color: #667eea; }
+  .star-label { font-size: 24rpx; color: #C67A6A; }
 }
 .rating-comment { display: block; font-size: 26rpx; color: var(--ink, #333); margin-bottom: 8rpx; line-height: 1.5; }
 .rating-bottom {

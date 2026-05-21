@@ -170,7 +170,7 @@ function formatTime(t: string) {
   display: flex;
   align-items: center;
   gap: 6rpx;
-  background: linear-gradient(135deg, #667eea15, #764ba215);
+  background: linear-gradient(135deg, #C67A6A15, #1E2A3A15);
   padding: 6rpx 16rpx;
   border-radius: 20rpx;
 }
@@ -179,7 +179,7 @@ function formatTime(t: string) {
 
 .codename-text {
   font-size: 24rpx;
-  color: #667eea;
+  color: #C67A6A;
   font-weight: 600;
 }
 

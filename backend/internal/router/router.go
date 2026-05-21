@@ -67,6 +67,7 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 		{
 			auth.GET("/user/profile", authHandler.GetProfile)
 			auth.PUT("/user/profile", authHandler.UpdateProfile)
+			auth.GET("/users/:id", authHandler.GetUser)
 			auth.POST("/posts", postHandler.CreatePost)
 			auth.GET("/posts", postHandler.ListPosts)
 			auth.GET("/posts/:id", postHandler.GetPost)

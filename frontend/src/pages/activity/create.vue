@@ -240,7 +240,7 @@ page { background: #f5f7fa; }
   height: 88rpx;
   line-height: 88rpx;
   text-align: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   color: #fff;
   border-radius: 44rpx;
   font-size: 32rpx;

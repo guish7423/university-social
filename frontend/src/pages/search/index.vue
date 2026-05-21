@@ -202,7 +202,7 @@ function formatTime(t: string) {
   font-size: 26rpx; color: $ink-muted;
   border-radius: $rounded-md; background: $color-surface;
 }
-.tab-active { color: #fff; background: linear-gradient(135deg, #667eea, #764ba2); font-weight: 600; }
+.tab-active { color: #fff; background: linear-gradient(135deg, #C67A6A, #1E2A3A); font-weight: 600; }
 
 .placeholder { text-align: center; padding: 100rpx 0; }
 .placeholder-title { font-size: 32rpx; font-weight: 700; color: $ink; display: block; }
@@ -232,11 +232,11 @@ function formatTime(t: string) {
 .card-info { flex: 1; }
 .card-desc { font-size: 24rpx; color: $ink-muted; margin-top: 4rpx; display: block; }
 .card-meta { font-size: 22rpx; color: $ink-tertiary; margin-top: 8rpx; display: flex; gap: 12rpx; align-items: center; }
-.member-badge { font-size: 20rpx; color: #667eea; border: 1rpx solid #667eea; border-radius: $rounded-full; padding: 4rpx 16rpx; }
+.member-badge { font-size: 20rpx; color: #C67A6A; border: 1rpx solid #C67A6A; border-radius: $rounded-full; padding: 4rpx 16rpx; }
 
 .user-card { display: flex; align-items: center; gap: 20rpx; }
 .follow-btn {
-  font-size: 24rpx; color: #667eea; border: 1rpx solid #667eea;
+  font-size: 24rpx; color: #C67A6A; border: 1rpx solid #C67A6A;
   border-radius: $rounded-full; padding: 8rpx 24rpx; white-space: nowrap;
 }
 .follow-btn.followed { color: $ink-muted; border-color: $color-hairline; }
@@ -251,7 +251,7 @@ function formatTime(t: string) {
 }
 .trending-rank {
   width: 48rpx; height: 48rpx; border-radius: $rounded-md;
-  background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A); color: #fff;
   text-align: center; line-height: 48rpx; font-size: 24rpx; font-weight: 700;
 }
 .trending-body { flex: 1; }

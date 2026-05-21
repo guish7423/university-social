@@ -54,7 +54,7 @@ function goUser(id: number) {
       <text class="empty-text">暂无关注</text>
     </view>
     <view v-for="u in users" :key="u.id" class="user-item" @click="goUser(u.id)">
-      <u-avatar :src="u.avatar" :text="u.nickname?.[0] || '?'" size="80" shape="circle" fontSize="32" bgColor="#667eea" />
+      <u-avatar :src="u.avatar" :text="u.nickname?.[0] || '?'" size="80" shape="circle" fontSize="32" bgColor="#C67A6A" />
       <view class="user-info">
         <text class="user-name">{{ u.nickname }}</text>
         <view class="user-meta">
@@ -75,17 +75,17 @@ function goUser(id: number) {
 </template>
 
 <style scoped>
-.container { min-height: 100vh; background: var(--u-bg-color, #f3f4f6); }
-.header { padding: 30rpx; background: #fff; }
-.title { font-size: 34rpx; font-weight: 700; color: #303133; }
+.container { min-height: 100vh; background: var(--color-canvas, #F7F4F0); }
+.header { padding: 30rpx; background: var(--color-surface, #fff); }
+.title { font-size: 34rpx; font-weight: 700; color: var(--ink, #1E2A3A); }
 .empty-state { display: flex; justify-content: center; padding: 120rpx 0; }
-.empty-text { font-size: 28rpx; color: #999; }
+.empty-text { font-size: 28rpx; color: var(--ink-tertiary, #B8C2CE); }
 .user-item {
   display: flex; align-items: center; gap: 20rpx;
-  padding: 24rpx 30rpx; background: #fff; border-bottom: 1rpx solid #f0f0f0;
+  padding: 24rpx 30rpx; background: var(--color-surface, #fff); border-bottom: 1rpx solid var(--hairline-light, #EAE6E0);
 }
 .user-info { flex: 1; }
-.user-name { font-size: 30rpx; font-weight: 600; color: #303133; display: block; }
+.user-name { font-size: 30rpx; font-weight: 600; color: var(--ink, #1E2A3A); display: block; }
 .user-meta { display: flex; align-items: center; gap: 8rpx; margin-top: 6rpx; }
-.user-school { font-size: 24rpx; color: #999; }
+.user-school { font-size: 24rpx; color: var(--ink-tertiary, #B8C2CE); }
 </style>

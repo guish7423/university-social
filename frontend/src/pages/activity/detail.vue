@@ -295,7 +295,7 @@ page { background: #f5f7fa; }
 }
 .send-btn {
   padding: 12rpx 24rpx;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   color: #fff;
   border-radius: 30rpx;
   font-size: 24rpx;
@@ -311,7 +311,7 @@ page { background: #f5f7fa; }
   font-weight: 600;
 }
 .join {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   color: #fff;
 }
 .leave {

@@ -189,7 +189,7 @@ page { background: #f5f7fa; }
 
 .submit-btn {
   width: 100%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   color: #fff;
   border: none;
   border-radius: 50rpx;

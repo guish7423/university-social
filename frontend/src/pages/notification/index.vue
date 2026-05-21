@@ -71,7 +71,7 @@ function getTypeText(type: string) {
   opacity: 0; transform: translateY(10rpx);
   animation: fadeInUp 0.4s ease-out forwards;
 }
-.note-item.unread { background: linear-gradient(135deg, #eef0ff, #fff); }
+.note-item.unread { background: rgba(198,122,106,0.06); }
 .avatar { width: 64rpx; height: 64rpx; border-radius: 50%; background: $color-hairline; }
 .note-body { flex: 1; }
 .note-name { font-size: 26rpx; font-weight: 600; color: $ink; display: block; }

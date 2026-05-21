@@ -24,7 +24,7 @@
           size="96"
           shape="square"
           fontSize="40"
-          bgColor="linear-gradient(135deg, #667eea, #764ba2)"
+          bgColor="linear-gradient(135deg, #C67A6A, #1E2A3A)"
         >
         </u-avatar>
         <view class="circle-info">
@@ -139,8 +139,8 @@ function goDetail(id: number) {
 }
 .member-badge {
   font-size: 22rpx;
-  color: #667eea;
-  border: 1rpx solid #667eea;
+  color: #C67A6A;
+  border: 1rpx solid #C67A6A;
   border-radius: $rounded-full;
   padding: 6rpx 20rpx;
   white-space: nowrap;

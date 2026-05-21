@@ -85,7 +85,7 @@ function originalPrice() {
         <swiper
           v-if="product.images?.length"
           class="image-swiper"
-          indicator-dots indicator-color="#ffffff88" indicator-active-color="#667eea"
+          indicator-dots indicator-color="#ffffff88" indicator-active-color="#C67A6A"
           autoplay circular
         >
           <swiper-item v-for="(img, i) in product.images" :key="i">
@@ -267,7 +267,7 @@ page { background: #f5f7fa; }
 .comment-input { flex: 1; height: 64rpx; font-size: 26rpx; }
 .send-btn {
   padding: 8rpx 20rpx;
-  color: #667eea;
+  color: #C67A6A;
   font-size: 26rpx;
   font-weight: 500;
   &.disabled { color: #ccc; }

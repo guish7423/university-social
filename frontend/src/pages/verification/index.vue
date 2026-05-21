@@ -158,7 +158,7 @@ async function handleVerify() {
 
 .info-text {
   font-size: 24rpx;
-  color: #667eea;
+  color: #C67A6A;
   display: block;
   margin-bottom: 32rpx;
 }
@@ -167,7 +167,7 @@ async function handleVerify() {
   width: 120rpx;
   height: 120rpx;
   border-radius: 60rpx;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,7 +196,7 @@ async function handleVerify() {
 
 .back-link {
   font-size: 24rpx;
-  color: #667eea;
+  color: #C67A6A;
   display: block;
   margin-top: 24rpx;
   text-decoration: underline;

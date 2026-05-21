@@ -46,3 +46,10 @@ export function devLogin(nickname: string) {
     data: { nickname },
   })
 }
+
+export function getUserInfo(id: number) {
+  return request<UserInfo>({
+    url: "/users/" + id,
+    method: "GET",
+  })
+}

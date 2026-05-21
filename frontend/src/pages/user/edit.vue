@@ -65,7 +65,7 @@ async function handleSave() {
           size="140"
           shape="circle"
           fontSize="56"
-          bgColor="#667eea"
+          bgColor="#C67A6A"
         />
         <view class="avatar-overlay">
           <text class="camera-icon">📷</text>
@@ -149,7 +149,7 @@ async function handleSave() {
 
 .camera-text {
   font-size: 22rpx;
-  color: #667eea;
+  color: #C67A6A;
 }
 
 .field {

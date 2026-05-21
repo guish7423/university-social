@@ -202,14 +202,14 @@ async function handleSubmit() {
 
 .picker-text {
   font-size: 22rpx;
-  color: #999;
+  color: var(--ink-tertiary, #B8C2CE);
   margin-top: 8rpx;
 }
 
 .section-label {
   font-size: 28rpx;
   font-weight: 600;
-  color: #606266;
+  color: var(--ink-muted, #5C6B7E);
   display: block;
 }
 
@@ -228,15 +228,15 @@ async function handleSubmit() {
 .topic-tag {
   display: inline-block;
   padding: 14rpx 32rpx;
-  background: #f0f0f0;
+  background: var(--color-surface-1, #F0EDE8);
   border-radius: 40rpx;
   font-size: 26rpx;
-  color: #606266;
+  color: var(--ink-muted, #5C6B7E);
   transition: all 0.2s;
 }
 
 .topic-tag.active {
-  background: var(--brand-primary, #FF6B6B);
+  background: var(--brand-primary, #C67A6A);
   color: #fff;
 }
 

@@ -1,29 +1,27 @@
 @import 'uview-pro/theme.scss';
 
-@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
 
-$brand-primary: #C084FC;
-$brand-secondary: #E879F9;
-$brand-gradient: linear-gradient(135deg, #C084FC 0%, #E879F9 50%, #F9A8D4 100%);
-$brand-gradient-alt: linear-gradient(135deg, #A78BFA 0%, #C084FC 50%, #F472B6 100%);
-$brand-gradient-warm: linear-gradient(135deg, #F9A8D4 0%, #F472B6 50%, #FB7185 100%);
+$brand-primary: #C67A6A;
+$brand-secondary: #8BA889;
+$brand-dark: #1E2A3A;
 
-$color-canvas: #FAF5FF;
-$color-surface: rgba(255,255,255,0.85);
-$color-surface-1: #F3E8FF;
-$color-surface-2: #EDE4F7;
-$color-hairline: rgba(192,132,252,0.15);
-$color-hairline-light: rgba(192,132,252,0.08);
+$color-canvas: #F7F4F0;
+$color-surface: #FFFFFF;
+$color-surface-1: #F0EDE8;
+$color-surface-2: #E8E4DE;
+$color-hairline: #E0DBD4;
+$color-hairline-light: #EAE6E0;
 
-$ink: #1E1B2E;
-$ink-muted: #6B5B7B;
-$ink-subtle: #9D8BAF;
-$ink-tertiary: #C4B5D0;
+$ink: #1E2A3A;
+$ink-muted: #5C6B7E;
+$ink-subtle: #8E9BAB;
+$ink-tertiary: #B8C2CE;
 
-$color-success: #34D399;
-$color-warning: #FBBF24;
-$color-error: #FB7185;
-$color-info: #67E8F9;
+$color-success: #8BA889;
+$color-warning: #D4A56A;
+$color-error: #C67A6A;
+$color-info: #7AA9C4;
 
 $space-1: 8rpx;
 $space-2: 16rpx;
@@ -37,15 +35,15 @@ $space-12: 96rpx;
 $space-section: 120rpx;
 
 $rounded-sm: 8rpx;
-$rounded-md: 16rpx;
-$rounded-lg: 24rpx;
-$rounded-xl: 32rpx;
+$rounded-md: 14rpx;
+$rounded-lg: 20rpx;
+$rounded-xl: 28rpx;
 $rounded-pill: 9999rpx;
 
-$shadow-sm: 0 1px 3px rgba(107,91,123,0.08);
-$shadow-md: 0 4px 16px rgba(107,91,123,0.1);
-$shadow-lg: 0 8px 32px rgba(107,91,123,0.12);
-$shadow-glow: 0 4px 24px rgba(192,132,252,0.35);
+$shadow-sm: 0 1px 3px rgba(30,42,58,0.06);
+$shadow-md: 0 4px 16px rgba(30,42,58,0.06);
+$shadow-lg: 0 8px 32px rgba(30,42,58,0.08);
+$shadow-xl: 0 16px 48px rgba(30,42,58,0.1);
 
 $transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 $transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -58,7 +56,8 @@ $font-md: 30rpx;
 $font-lg: 34rpx;
 $font-xl: 40rpx;
 $font-2xl: 48rpx;
-$font-3xl: 64rpx;
+$font-3xl: 60rpx;
+$font-4xl: 72rpx;
 
 $z-dropdown: 10;
 $z-sticky: 100;
@@ -67,46 +66,40 @@ $z-overlay: 300;
 $z-modal: 400;
 $z-toast: 500;
 
-$u-type-primary: #C084FC;
-$u-type-primary-light: #D8B4FE;
-$u-type-primary-dark: #A855F7;
-$u-type-primary-disabled: #E9D5FF;
+$u-type-primary: #C67A6A;
+$u-type-primary-light: #D49484;
+$u-type-primary-dark: #A86252;
+$u-type-primary-disabled: #DDBEB6;
 $u-border-radius: 12rpx;
-$u-border-radius-large: 20rpx;
-$u-color-bg: #FAF5FF;
+$u-border-radius-large: 18rpx;
+$u-color-bg: #F7F4F0;
 
 :root, page {
-  --brand-primary: #C084FC;
-  --brand-secondary: #E879F9;
-  --brand-gradient: linear-gradient(135deg, #C084FC 0%, #E879F9 50%, #F9A8D4 100%);
-  --brand-gradient-alt: linear-gradient(135deg, #A78BFA 0%, #C084FC 50%, #F472B6 100%);
-  --color-success: #34D399;
-  --color-warning: #FBBF24;
-  --color-error: #FB7185;
-  --color-info: #67E8F9;
-  --ink: #1E1B2E;
-  --ink-muted: #6B5B7B;
-  --ink-subtle: #9D8BAF;
-  --ink-tertiary: #C4B5D0;
-  --color-canvas: #FAF5FF;
-  --color-surface: rgba(255,255,255,0.85);
-  --color-surface-1: #F3E8FF;
-  --color-surface-2: #EDE4F7;
-  --hairline: rgba(192,132,252,0.15);
-  --hairline-light: rgba(192,132,252,0.08);
-  --u-bg-color: #FAF5FF;
-  --shadow-card: 0 2px 12px rgba(107,91,123,0.08);
-  --radius-card: 20rpx;
+  --brand-primary: #C67A6A;
+  --brand-secondary: #8BA889;
+  --brand-dark: #1E2A3A;
+  --color-success: #8BA889;
+  --color-warning: #D4A56A;
+  --color-error: #C67A6A;
+  --color-info: #7AA9C4;
+  --ink: #1E2A3A;
+  --ink-muted: #5C6B7E;
+  --ink-subtle: #8E9BAB;
+  --ink-tertiary: #B8C2CE;
+  --color-canvas: #F7F4F0;
+  --color-surface: #FFFFFF;
+  --color-surface-1: #F0EDE8;
+  --color-surface-2: #E8E4DE;
+  --hairline: #E0DBD4;
+  --hairline-light: #EAE6E0;
+  --u-bg-color: #F7F4F0;
+  --shadow-card: 0 2px 12px rgba(30,42,58,0.06);
+  --radius-card: 18rpx;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --glass-bg: rgba(255,255,255,0.65);
-  --glass-border: rgba(255,255,255,0.4);
-  --glass-shadow: 0 8px 32px rgba(107,91,123,0.08);
-  --font-cute: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
-  --font-body: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24rpx); }
+  from { opacity: 0; transform: translateY(20rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -115,48 +108,19 @@ $u-color-bg: #FAF5FF;
   to { opacity: 1; }
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(40rpx); }
+  from { opacity: 0; transform: translateY(30rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.97); }
   to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12rpx); }
-}
-
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(192,132,252,0.3); }
-  50% { box-shadow: 0 0 40px rgba(192,132,252,0.5); }
-}
-
-@keyframes shimmerGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-scale-in { animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-float { animation: float 3s ease-in-out infinite; }
-.animate-glow { animation: glow 2s ease-in-out infinite; }
-.animate-shimmer-bg { background-size: 200% 200%; animation: shimmerGradient 3s ease infinite; }
 
 .stagger-1 { animation-delay: 0.04s; }
 .stagger-2 { animation-delay: 0.08s; }
@@ -166,3 +130,10 @@ $u-color-bg: #FAF5FF;
 .stagger-6 { animation-delay: 0.24s; }
 .stagger-7 { animation-delay: 0.28s; }
 .stagger-8 { animation-delay: 0.32s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

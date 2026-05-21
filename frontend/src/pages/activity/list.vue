@@ -116,7 +116,7 @@ page { background: #f5f7fa; }
   color: #666;
   transition: all 0.2s;
   &.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #C67A6A, #1E2A3A);
     color: #fff;
     font-weight: 600;
   }
@@ -178,7 +178,7 @@ page { background: #f5f7fa; }
 }
 .owner-badge {
   font-size: 22rpx;
-  color: #667eea;
+  color: #C67A6A;
   font-weight: 500;
 }
 
@@ -191,11 +191,11 @@ page { background: #f5f7fa; }
   width: 100rpx;
   height: 100rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #C67A6A, #1E2A3A);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 20rpx rgba(102,126,234,0.4);
+  box-shadow: 0 4rpx 20rpx rgba(198,122,106,0.4);
   z-index: 100;
   &:active { transform: scale(0.9); }
 }

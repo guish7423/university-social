@@ -107,9 +107,9 @@ page { background: #f5f7fa; }
   border-bottom: 2rpx solid transparent;
   transition: all 0.2s;
   &.active {
-    color: #667eea;
+    color: #C67A6A;
     font-weight: 600;
-    border-bottom-color: #667eea;
+    border-bottom-color: #C67A6A;
   }
 }
 
