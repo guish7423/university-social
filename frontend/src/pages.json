@@ -249,7 +249,55 @@
         "navigationBarTitleText": "聊天",
         "navigationBarBackgroundColor": "#C67A6A",
         "navigationBarTextStyle": "white"
+      },
+    {
+      "path": "pages/admin/index",
+      "style": {
+        "navigationBarTitleText": "管理后台",
+        "navigationBarBackgroundColor": "#1E2A3A",
+        "navigationBarTextStyle": "white"
       }
+    },
+    {
+      "path": "pages/admin/users",
+      "style": {
+        "navigationBarTitleText": "用户管理",
+        "navigationBarBackgroundColor": "#1E2A3A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/admin/posts",
+      "style": {
+        "navigationBarTitleText": "帖子管理",
+        "navigationBarBackgroundColor": "#1E2A3A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/admin/circles",
+      "style": {
+        "navigationBarTitleText": "圈子管理",
+        "navigationBarBackgroundColor": "#1E2A3A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/admin/reports",
+      "style": {
+        "navigationBarTitleText": "举报管理",
+        "navigationBarBackgroundColor": "#1E2A3A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/admin/sensitive",
+      "style": {
+        "navigationBarTitleText": "敏感词管理",
+        "navigationBarBackgroundColor": "#1E2A3A",
+        "navigationBarTextStyle": "white"
+      }
+    }
 
   ],
   "globalStyle": {
