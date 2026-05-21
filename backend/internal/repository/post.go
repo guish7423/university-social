@@ -230,3 +230,105 @@ func (r *PostRepository) CreateNotification(userID, fromUserID int64, ntype, con
 		userID, fromUserID, ntype, content, refID)
 	return err
 }
+
+func (r *PostRepository) SearchPosts(query string, offset, limit int, currentUserID int64) ([]*model.Post, error) {
+	args := []interface{}{currentUserID, limit, offset, "%" + query + "%"}
+	rows, err := r.db.Query(
+		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
+			p.like_count, p.comment_count, p.created_at, p.updated_at,
+			u.nickname, u.avatar,
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+		FROM posts p
+		JOIN users u ON u.id = p.user_id
+		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
+		WHERE p.content ILIKE $4
+		ORDER BY p.like_count DESC, p.created_at DESC LIMIT $2 OFFSET $3`, args...)
+	if err != nil {
+		return nil, fmt.Errorf("search posts: %w", err)
+	}
+	defer rows.Close()
+	var posts []*model.Post
+	for rows.Next() {
+		p, err := scanPost(rows, true)
+		if err != nil { return nil, err }
+		posts = append(posts, p)
+	}
+	return posts, nil
+}
+
+func (r *PostRepository) TrendingPosts(offset, limit int, currentUserID int64) ([]*model.Post, error) {
+	args := []interface{}{currentUserID, limit, offset}
+	rows, err := r.db.Query(
+		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
+			p.like_count, p.comment_count, p.created_at, p.updated_at,
+			u.nickname, u.avatar,
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+		FROM posts p
+		JOIN users u ON u.id = p.user_id
+		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
+		WHERE p.created_at >= CURRENT_DATE - INTERVAL '7 days'
+		ORDER BY (p.like_count * 3 + p.comment_count * 2) DESC, p.created_at DESC
+		LIMIT $2 OFFSET $3`, args...)
+	if err != nil {
+		return nil, fmt.Errorf("trending posts: %w", err)
+	}
+	defer rows.Close()
+	var posts []*model.Post
+	for rows.Next() {
+		p, err := scanPost(rows, true)
+		if err != nil { return nil, err }
+		posts = append(posts, p)
+	}
+	return posts, nil
+}
+
+func (r *PostRepository) FollowingPosts(userID int64, offset, limit int) ([]*model.Post, error) {
+	args := []interface{}{userID, limit, offset}
+	rows, err := r.db.Query(
+		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
+			p.like_count, p.comment_count, p.created_at, p.updated_at,
+			u.nickname, u.avatar,
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+		FROM posts p
+		JOIN follows f ON f.following_id = p.user_id
+		JOIN users u ON u.id = p.user_id
+		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
+		WHERE f.follower_id = $1
+		ORDER BY p.created_at DESC LIMIT $2 OFFSET $3`, args...)
+	if err != nil {
+		return nil, fmt.Errorf("following posts: %w", err)
+	}
+	defer rows.Close()
+	var posts []*model.Post
+	for rows.Next() {
+		p, err := scanPost(rows, true)
+		if err != nil { return nil, err }
+		posts = append(posts, p)
+	}
+	return posts, nil
+}
+
+func (r *PostRepository) ListUserPosts(userID, currentUserID int64, offset, limit int) ([]*model.Post, error) {
+	args := []interface{}{userID, currentUserID, limit, offset}
+	rows, err := r.db.Query(
+		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
+			p.like_count, p.comment_count, p.created_at, p.updated_at,
+			u.nickname, u.avatar,
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+		FROM posts p
+		JOIN users u ON u.id = p.user_id
+		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $2
+		WHERE p.user_id = $1
+		ORDER BY p.created_at DESC LIMIT $3 OFFSET $4`, args...)
+	if err != nil {
+		return nil, fmt.Errorf("list user posts: %w", err)
+	}
+	defer rows.Close()
+	var posts []*model.Post
+	for rows.Next() {
+		p, err := scanPost(rows, true)
+		if err != nil { return nil, err }
+		posts = append(posts, p)
+	}
+	return posts, nil
+}

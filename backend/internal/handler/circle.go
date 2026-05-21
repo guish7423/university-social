@@ -239,3 +239,22 @@ func (h *CircleHandler) ListComments(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, comments)
 }
+
+func (h *CircleHandler) SearchCircles(c *gin.Context) {
+	query := c.Query("q")
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "搜索关键词不能为空"})
+		return
+	}
+	circles, err := h.repo.Search(query, offset, limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "搜索失败"})
+		return
+	}
+	if circles == nil {
+		circles = []*model.Circle{}
+	}
+	c.JSON(http.StatusOK, circles)
+}

@@ -1,5 +1,13 @@
 import { request } from "./request"
 
+export function searchPosts(q: string, offset = 0, limit = 20) {
+  return request<PostData[]>({ url: "/posts/search", method: "GET", data: { q, offset, limit } })
+}
+
+export function trendingPosts(days = 7, limit = 20) {
+  return request<PostData[]>({ url: "/posts/trending", method: "GET", data: { days, limit } })
+}
+
 export interface PostData {
   id: number
   user_id: number
@@ -91,4 +99,25 @@ export function uploadImage(tempFilePath: string): Promise<string> {
 
 export function uploadImages(tempFilePaths: string[]): Promise<string[]> {
   return Promise.all(tempFilePaths.map(uploadImage))
+}
+
+export interface ShareCardData {
+	title: string
+	description: string
+	image: string
+	path: string
+	author?: { nickname: string; avatar: string }
+	like_count: number
+}
+
+export async function shareCard(postId: number): Promise<ShareCardData> {
+	return request(`/posts/${postId}/share`)
+}
+
+export function followingPosts(offset = 0, limit = 20) {
+	return request<PostData[]>({ url: "/posts/following", method: "GET", data: { offset, limit } })
+}
+
+export function userPosts(userId: number, offset = 0, limit = 20) {
+	return request<PostData[]>({ url: `/users/${userId}/posts`, method: "GET", data: { offset, limit } })
 }

@@ -8,7 +8,9 @@ type User struct {
 	UnionID     string    `json:"union_id,omitempty" db:"union_id"`
 	Nickname    string    `json:"nickname" db:"nickname"`
 	Avatar      string    `json:"avatar" db:"avatar"`
+
 	Phone       string    `json:"phone,omitempty" db:"phone"`
+	Email       string    `json:"email,omitempty" db:"email"`
 	School      string    `json:"school,omitempty" db:"school"`
 	IsVerified  bool      `json:"is_verified" db:"is_verified"`
 	Role        string    `json:"role" db:"role"`

@@ -5,7 +5,7 @@
       "^u-(.*)": "uview-pro/components/u-$1/u-$1.vue"
     }
   },
-    "pages": [
+  "pages": [
     {
       "path": "pages/square/index",
       "style": {
@@ -49,6 +49,14 @@
       "path": "pages/user/index",
       "style": {
         "navigationBarTitleText": "我的",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/user/edit",
+      "style": {
+        "navigationBarTitleText": "编辑资料",
         "navigationBarBackgroundColor": "#667eea",
         "navigationBarTextStyle": "white"
       }
@@ -108,16 +116,186 @@
         "navigationBarBackgroundColor": "#667eea",
         "navigationBarTextStyle": "white"
       }
-    }
-  },
-  {
-    "path": "pages/user/edit",
-    "style": {
-      "navigationBarTitleText": "编辑资料",
-      "navigationBarBackgroundColor": "#667eea",
-      "navigationBarTextStyle": "white"
-    }
-  ],
+    },
+    {
+      "path": "pages/whisper/index",
+      "style": {
+        "navigationBarTitleText": "树洞",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/whisper/detail",
+      "style": {
+        "navigationBarTitleText": "树洞详情",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/verification/index",
+      "style": {
+        "navigationBarTitleText": "校园认证",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/points/index",
+      "style": {
+        "navigationBarTitleText": "我的积分",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/user/followers",
+      "style": {
+        "navigationBarTitleText": "粉丝",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/user/following",
+      "style": {
+        "navigationBarTitleText": "关注",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/user/posts",
+      "style": {
+        "navigationBarTitleText": "我的帖子",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+		},
+      "path": "pages/search/index",
+      "style": {
+        "navigationBarTitleText": "搜索",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+		},
+		{
+			"path": "pages/product/list",
+			"style": {
+				"navigationBarTitleText": "二手市场",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/product/detail",
+			"style": {
+				"navigationBarTitleText": "商品详情",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/product/create",
+			"style": {
+				"navigationBarTitleText": "发布闲置",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/product/mine",
+			"style": {
+				"navigationBarTitleText": "我的发布",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		}
+,
+		{
+			"path": "pages/activity/list",
+			"style": {
+				"navigationBarTitleText": "活动广场",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/activity/detail",
+			"style": {
+				"navigationBarTitleText": "活动详情",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/activity/create",
+			"style": {
+				"navigationBarTitleText": "创建活动",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/activity/mine",
+			"style": {
+				"navigationBarTitleText": "我的活动",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/course/search",
+			"style": {
+				"navigationBarTitleText": "课程评价",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/course/detail",
+			"style": {
+				"navigationBarTitleText": "课程详情",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		}
+		},
+		{
+			"path": "pages/found/list",
+			"style": {
+				"navigationBarTitleText": "失物招领",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/found/create",
+			"style": {
+				"navigationBarTitleText": "发布",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/found/detail",
+			"style": {
+				"navigationBarTitleText": "详情",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/found/mine",
+			"style": {
+				"navigationBarTitleText": "我的发布",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		}
+	
+	]
+,
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "校园社",
@@ -137,6 +315,10 @@
       {
         "pagePath": "pages/circle/list",
         "text": "圈子"
+      },
+      {
+        "pagePath": "pages/whisper/index",
+        "text": "树洞"
       },
       {
         "pagePath": "pages/user/index",

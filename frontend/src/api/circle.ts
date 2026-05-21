@@ -1,4 +1,8 @@
 import { request } from "./request"
+
+export function searchCircles(q: string) {
+  return request<CircleData[]>({ url: "/circles/search", method: "GET", data: { q } })
+}
 import type { UserInfo } from "./user"
 
 export interface CircleData {

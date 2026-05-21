@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { getPost, listComments, createComment, type PostData, type CommentData } from "@/api/post"
+import { followUser, unfollowUser, checkFollow } from "@/api/follow"
 
 const post = ref<PostData | null>(null)
 const comments = ref<CommentData[]>([])
 const commentText = ref("")
 const submitting = ref(false)
 const postId = ref(0)
+const isFollowingAuthor = ref(false)
+const followLoading = ref(false)
 
 onMounted(() => {
   const pages = getCurrentPages()
@@ -19,7 +22,19 @@ onMounted(() => {
 })
 
 async function loadPost(id: number) {
-  try { post.value = await getPost(id) } catch {}
+  try {
+    post.value = await getPost(id)
+    if (post.value?.author?.id) {
+      checkFollowState(post.value.author.id)
+    }
+  } catch {}
+}
+
+async function checkFollowState(userId: number) {
+  try {
+    const res = await checkFollow(userId)
+    isFollowingAuthor.value = res.is_following
+  } catch {}
 }
 
 async function loadComments(id: number) {
@@ -36,6 +51,21 @@ async function handleComment() {
     loadComments(postId.value)
   } catch {}
   submitting.value = false
+}
+
+async function toggleFollowAuthor() {
+  if (!post.value?.author?.id || followLoading.value) return
+  followLoading.value = true
+  try {
+    if (isFollowingAuthor.value) {
+      await unfollowUser(post.value.author.id)
+      isFollowingAuthor.value = false
+    } else {
+      await followUser(post.value.author.id)
+      isFollowingAuthor.value = true
+    }
+  } catch {}
+  followLoading.value = false
 }
 
 function formatTime(t: string) {
@@ -62,6 +92,16 @@ function formatTime(t: string) {
             <text class="author-name">{{ post.author?.nickname || "匿名" }}</text>
             <text class="post-time">{{ formatTime(post.created_at) }}</text>
           </view>
+          <u-button
+            v-if="post.author?.id"
+            size="mini"
+            shape="circle"
+            :type="isFollowingAuthor ? 'default' : 'primary'"
+            :text="isFollowingAuthor ? '已关注' : '+ 关注'"
+            :loading="followLoading"
+            :customStyle="{ marginLeft: 'auto', minWidth: '100rpx' }"
+            @click="toggleFollowAuthor"
+          />
         </view>
         <text class="post-content">{{ post.content }}</text>
         <view v-if="post.images?.length" class="post-images">
@@ -123,114 +163,103 @@ function formatTime(t: string) {
   background: var(--u-bg-color, #f3f4f6);
   padding-bottom: 120rpx;
 }
-
 .loading-state {
   display: flex;
   justify-content: center;
   padding: 200rpx 0;
 }
-
 .post-card {
   background: #fff;
   padding: 30rpx;
   margin-bottom: 16rpx;
 }
-
 .post-header {
   display: flex;
   align-items: center;
   gap: 16rpx;
   margin-bottom: 20rpx;
 }
-
+.post-header .u-button {
+  margin-left: auto;
+}
 .post-author {
   flex: 1;
 }
-
 .author-name {
   font-size: 28rpx;
   font-weight: 600;
+  color: #303133;
   display: block;
 }
-
 .post-time {
   font-size: 22rpx;
-  color: #c0c4cc;
-  display: block;
+  color: #999;
   margin-top: 4rpx;
+  display: block;
 }
-
 .post-content {
   font-size: 30rpx;
-  line-height: 1.8;
-  display: block;
-  margin-bottom: 20rpx;
+  line-height: 1.6;
+  color: #303133;
+  white-space: pre-wrap;
 }
-
 .post-images {
-  margin-bottom: 20rpx;
+  margin-top: 20rpx;
 }
-
 .image-full {
   width: 100%;
   border-radius: 12rpx;
-  margin-bottom: 8rpx;
+  margin-bottom: 12rpx;
 }
-
 .post-stats {
+  margin-top: 20rpx;
   font-size: 24rpx;
-  color: #c0c4cc;
-  padding-top: 16rpx;
-  border-top: 1rpx solid var(--u-divider-color, #e4e7ed);
+  color: #999;
 }
-
 .comment-section {
   background: #fff;
   padding: 30rpx;
 }
-
 .section-title {
   font-size: 28rpx;
-  font-weight: 700;
+  font-weight: 600;
   color: #303133;
-  margin-bottom: 24rpx;
+  margin-bottom: 20rpx;
   display: block;
 }
-
 .comment-item {
   display: flex;
-  gap: 16rpx;
-  margin-bottom: 24rpx;
+  gap: 12rpx;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
 }
-
 .comment-body {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
 }
-
 .comment-author {
   font-size: 24rpx;
-  color: #667eea;
-  margin-bottom: 4rpx;
-  display: block;
+  font-weight: 600;
+  color: #606266;
 }
-
 .comment-content {
   font-size: 28rpx;
-  line-height: 1.5;
   color: #303133;
+  line-height: 1.5;
 }
-
 .comment-input-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   display: flex;
-  align-items: center;
   gap: 16rpx;
-  padding: 16rpx 30rpx;
-  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  align-items: center;
   background: #fff;
-  border-top: 1rpx solid var(--u-divider-color, #e4e7ed);
+  padding: 16rpx 30rpx;
+  border-top: 1rpx solid #eee;
+  z-index: 100;
 }
 </style>

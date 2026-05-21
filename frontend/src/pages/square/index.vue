@@ -1,16 +1,28 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue"
-import { listPosts, toggleLike, type PostData } from "@/api/post"
+import { listPosts, followingPosts, toggleLike, type PostData } from "@/api/post"
 import { useUserStore } from "@/store/user"
+import ReportPopup from "@/components/ReportPopup.vue"
 
 const userStore = useUserStore()
 const posts = ref<PostData[]>([])
 const loading = ref(false)
+const currentTab = ref(0)
+const tabs = ["全部", "关注"]
 
-onMounted(fetchPosts)
+// report state
+const showReport = ref(false)
+const reportContentId = ref(0)
+const reportContentType = ref("post")
 
 const unsub = uni.$on('post-created', () => {
+  if (currentTab.value === 0) fetchPosts()
+  else fetchFollowing()
+})
+
+onMounted(() => {
   fetchPosts()
+  if (userStore.isLogin) fetchFollowing()
 })
 
 onUnmounted(() => {
@@ -25,6 +37,27 @@ async function fetchPosts() {
   loading.value = false
 }
 
+async function fetchFollowing() {
+  loading.value = true
+  try {
+    posts.value = await followingPosts()
+  } catch {
+    posts.value = []
+  }
+  loading.value = false
+}
+
+function onTabChange(index: number) {
+  currentTab.value = index
+  if (!userStore.isLogin && index === 1) {
+    uni.showToast({ title: "请先登录", icon: "none" })
+    uni.navigateTo({ url: "/pages/login/index" })
+    return
+  }
+  if (index === 0) fetchPosts()
+  else fetchFollowing()
+}
+
 async function handleLike(post: PostData) {
   if (!userStore.isLogin) {
     uni.navigateTo({ url: "/pages/login/index" })
@@ -33,6 +66,23 @@ async function handleLike(post: PostData) {
   const res = await toggleLike(post.id)
   post.is_liked = res.liked
   post.like_count += res.liked ? 1 : -1
+}
+
+function handleMore(post: PostData) {
+  const btns = ["举报"]
+  if (post.user_id === userStore.user?.id) {
+    btns.push("删除")
+  }
+  uni.showActionSheet({
+    itemList: btns,
+    success(res) {
+      if (btns[res.tapIndex] === "举报") {
+        reportContentId.value = post.id
+        reportContentType.value = "post"
+        showReport.value = true
+      }
+    }
+  })
 }
 
 function goCreate() {
@@ -57,6 +107,18 @@ function formatTime(t: string) {
 
 <template>
   <view class="container">
+    <view class="tab-bar">
+      <view
+        v-for="(tab, i) in tabs"
+        :key="i"
+        :class="['tab-item', currentTab === i && 'tab-active']"
+        @click="onTabChange(i)"
+      >
+        <text class="tab-text">{{ tab }}</text>
+        <view v-if="currentTab === i" class="tab-indicator" />
+      </view>
+    </view>
+
     <view v-if="loading" class="loading-state">
       <u-loading mode="flower" size="60" />
       <text class="loading-text">加载中...</text>
@@ -65,9 +127,9 @@ function formatTime(t: string) {
     <template v-else-if="posts && posts.length">
       <view class="post-list">
         <view
-          v-for="post in posts"
+          v-for="(post, idx) in posts"
           :key="post.id"
-          class="post-card"
+          :class="['post-card', 'animate-fade-in-up', 'stagger-' + Math.min(idx + 1, 8)]"
           @click="goDetail(post.id)"
         >
           <view class="post-header">
@@ -81,7 +143,7 @@ function formatTime(t: string) {
               <text class="author-name">{{ post.author?.nickname || "匿名" }}</text>
               <text class="post-time">{{ formatTime(post.created_at) }}</text>
             </view>
-            <u-icon name="more" color="#c0c4cc" size="32" />
+            <u-icon name="more" color="#c0c4cc" size="32" @click.stop="handleMore(post)" />
           </view>
 
           <view class="post-body">
@@ -98,9 +160,9 @@ function formatTime(t: string) {
           </view>
 
           <view class="post-actions">
-            <view class="action-btn" @click.stop="handleLike(post)">
+            <view :class="['action-btn', post.is_liked && 'is-liked']" @click.stop="handleLike(post)">
               <u-icon
-                :name="post.is_liked ? 'heart' : 'heart'"
+                :name="'heart'"
                 :color="post.is_liked ? '#e74c3c' : '#c0c4cc'"
                 :size="36"
               />
@@ -114,24 +176,70 @@ function formatTime(t: string) {
         </view>
       </view>
 
-      <view class="fab" @click="goCreate">
+      <view class="fab animate-scale-in" @click="goCreate">
         <u-icon name="plus" color="#fff" size="44" />
       </view>
     </template>
 
-    <template v-else>
+    <template v-else-if="currentTab === 0">
       <u-empty mode="data" text="还没有动态，快来发第一条吧" />
       <view class="empty-create">
         <u-button type="primary" shape="circle" @click="goCreate">发布第一条动态</u-button>
       </view>
     </template>
+
+    <template v-else>
+      <u-empty mode="data" text="关注的人还没有动态" />
+    </template>
   </view>
 </template>
 
-<style scoped>
+<ReportPopup :visible="showReport" :content-type="reportContentType" :content-id="reportContentId" @close="showReport = false" />
+
+<style lang="scss" scoped>
 .container {
   min-height: 100vh;
   background: var(--u-bg-color, #f3f4f6);
+}
+
+.tab-bar {
+  display: flex;
+  background: var(--color-surface, #fff);
+  padding: 0 40rpx;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1rpx solid var(--hairline, #e4e7ed);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 0;
+  cursor: pointer;
+}
+
+.tab-text {
+  font-size: 28rpx;
+  color: var(--ink-muted, #909399);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.tab-active .tab-text {
+  color: var(--brand-primary, #667eea);
+  font-weight: 600;
+}
+
+.tab-indicator {
+  width: 40rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  margin-top: 12rpx;
+  animation: fadeIn 0.3s ease;
 }
 
 .loading-state {
@@ -153,10 +261,16 @@ function formatTime(t: string) {
 
 .post-card {
   background: #fff;
-  border-radius: 20rpx;
-  padding: 30rpx;
+  border-radius: 22rpx;
+  padding: 32rpx;
   margin-bottom: 20rpx;
   box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1rpx solid rgba(0,0,0,0.02);
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 1rpx 8rpx rgba(0,0,0,0.02);
+  }
 }
 
 .post-header {
@@ -204,7 +318,7 @@ function formatTime(t: string) {
 .post-image {
   width: 210rpx;
   height: 210rpx;
-  border-radius: 12rpx;
+  border-radius: 14rpx;
   background: #f5f5f5;
 }
 
@@ -220,6 +334,17 @@ function formatTime(t: string) {
   display: flex;
   align-items: center;
   gap: 8rpx;
+  transition: transform 0.2s ease;
+  &.is-liked { animation: likePulse 0.4s ease; }
+  &:active { transform: scale(0.9); }
+}
+
+@keyframes likePulse {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(0.95); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
 .action-count {
@@ -244,6 +369,11 @@ function formatTime(t: string) {
   justify-content: center;
   box-shadow: 0 8rpx 32rpx rgba(102, 126, 234, 0.5);
   z-index: 100;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  &:active {
+    transform: scale(0.9);
+    box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  }
 }
 
 .empty-create {

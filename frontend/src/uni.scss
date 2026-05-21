@@ -1,12 +1,179 @@
+// ===================================================
+// Design Token System ~ Based on awesome-design-md
+// Reference: DESIGN.md for full documentation
+// ===================================================
+
 @import 'uview-pro/theme.scss';
 
+// ===== Brand Colors ===== /// Design Tokens System
+$brand-primary: #667eea;
+$brand-secondary: #764ba2;
+$brand-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$brand-gradient-alt: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+
+// ===== Surface Ladder (DESIGN.md) ===== 
+$color-canvas: #f0f2f5;
+$color-surface: #ffffff;
+$color-surface-1: #fafafa;
+$color-surface-2: #f5f5f5;
+$color-hairline: #e4e7ed;
+$color-hairline-light: #ebeef5;
+// Legacy numeric aliases
+$neutral-5: $color-hairline;
+$neutral-6: $color-canvas;
+$neutral-7: $color-surface-2;
+$neutral-8: $color-surface-1;
+
+// ===== Ink Text Ladder (DESIGN.md) ===== 
+$ink: #303133;
+$ink-muted: #606266;
+$ink-subtle: #909399;
+$ink-tertiary: #c0c4cc;
+// Legacy numeric aliases
+$neutral-1: $ink;
+$neutral-2: $ink-muted;
+$neutral-3: $ink-subtle;
+$neutral-4: $ink-tertiary;
+
+// ===== Spacing (DESIGN.md named tokens) ===== 
+$space-xxs: 4rpx;
+$space-xs: 8rpx;
+$space-sm: 16rpx;
+$space-md: 24rpx;
+$space-lg: 32rpx;
+$space-xl: 48rpx;
+$space-xxl: 64rpx;
+$space-section: 96rpx;
+// Legacy numeric aliases
+$space-1: $space-xs;
+$space-2: $space-sm;
+$space-3: $space-md;
+$space-4: $space-lg;
+$space-5: 40rpx;
+$space-6: $space-xl;
+$space-7: 56rpx;
+$space-8: $space-xxl;
+$space-10: 80rpx;
+$space-12: $space-section;
+
+// ===== Rounded (DESIGN.md naming) ===== 
+$rounded-xs: 8rpx;
+$rounded-sm: 12rpx;
+$rounded-md: 16rpx;
+$rounded-lg: 24rpx;
+$rounded-xl: 32rpx;
+$rounded-pill: 9999rpx;
+$rounded-full: 50%;
+// Legacy aliases
+$radius-sm: $rounded-xs;
+$radius-md: $rounded-md;
+$radius-lg: $rounded-lg;
+$radius-xl: $rounded-xl;
+$radius-round: $rounded-full;
+
+// ===== Shadows ===== 
+$shadow-sm: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 8rpx 40rpx rgba(0, 0, 0, 0.08);
+$shadow-glow: 0 4rpx 24rpx rgba(102, 126, 234, 0.3);
+
+// ===== Transitions ===== 
+$transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ===== Font Scale (rpx) ===== 
+$font-xs: 22rpx;
+$font-sm: 26rpx;
+$font-base: 28rpx;
+$font-md: 30rpx;
+$font-lg: 34rpx;
+$font-xl: 40rpx;
+$font-2xl: 48rpx;
+$font-3xl: 64rpx;
+
+// ===== Z-Index Scale ===== 
+$z-dropdown: 10;
+$z-sticky: 100;
+$z-fixed: 200;
+$z-overlay: 300;
+$z-modal: 400;
+$z-toast: 500;
+
+// ===== Override uView Theme ===== 
 $u-type-primary: #667eea;
 $u-type-primary-light: #8b9cf6;
 $u-type-primary-dark: #4c63d2;
 $u-type-primary-disabled: #b3c0fa;
 $u-border-radius: 12rpx;
 $u-border-radius-large: 20rpx;
+$u-color-bg: #f0f2f5;
 
-page {
+// ===== CSS Custom Properties (DESIGN.md aligned) ===== 
+:root, page {
+  --brand-primary: #667eea;
+  --brand-secondary: #764ba2;
+  --brand-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --color-success: #43e97b;
+  --color-warning: #f5a623;
+  --color-error: #e74c3c;
+  --color-info: #4facfe;
+  --ink: #303133;
+  --ink-muted: #606266;
+  --ink-subtle: #909399;
+  --ink-tertiary: #c0c4cc;
+  --color-canvas: #f0f2f5;
+  --color-surface: #ffffff;
+  --color-surface-1: #fafafa;
+  --color-surface-2: #f5f5f5;
+  --hairline: #e4e7ed;
+  --hairline-light: #ebeef5;
   --u-bg-color: #f0f2f5;
+  --shadow-card: 0 2rpx 16rpx rgba(0,0,0,0.04);
+  --radius-card: 20rpx;
 }
+
+// ===== Shared Animation Keyframes ===== 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(60rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+// ===== Utility Classes ===== 
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out both; }
+.animate-scale-in { animation: scaleIn 0.5s ease-out both; }
+
+// Staggered animation delays
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.4s; }

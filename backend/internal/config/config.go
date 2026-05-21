@@ -11,6 +11,11 @@ type Config struct {
 	WechatSecret string
 	AdminUserIDs string
 	UploadDir    string
+	SMTPHost     string
+	SMTPPort     string
+	SMTPUser     string
+	SMTPPass     string
+	SMTPFrom     string
 }
 
 func Load() *Config {
@@ -23,6 +28,11 @@ func Load() *Config {
 		WechatSecret: getEnv("WECHAT_SECRET", ""),
 		AdminUserIDs: getEnv("ADMIN_USER_IDS", ""),
 		UploadDir:    getEnv("UPLOAD_DIR", "./uploads"),
+		SMTPHost:     getEnv("SMTP_HOST", ""),
+		SMTPPort:     getEnv("SMTP_PORT", "587"),
+		SMTPUser:     getEnv("SMTP_USER", ""),
+		SMTPPass:     getEnv("SMTP_PASS", ""),
+		SMTPFrom:     getEnv("SMTP_FROM", ""),
 	}
 }
 

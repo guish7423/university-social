@@ -5,18 +5,18 @@
       <text class="loading-text">加载中...</text>
     </view>
 
-    <template v-else-if="circles.length === 0">
-      <u-empty mode="data" text="还没有圈子，来创建一个吧" />
-      <view class="empty-action">
-        <u-button type="primary" shape="circle" @click="goCreate">创建圈子</u-button>
+    <template v-else>
+      <view v-if="circles.length === 0" class="empty-state">
+        <u-empty mode="data" text="还没有圈子，来创建一个吧" />
+        <view class="empty-action">
+          <u-button type="primary" shape="circle" @click="goCreate">创建圈子</u-button>
+        </view>
       </view>
-    </template>
 
-    <view v-else class="circle-list">
       <view
-        v-for="c in circles"
+        v-for="(c, i) in circles"
         :key="c.id"
-        class="circle-card"
+        :class="['circle-card', 'stagger-' + ((i % 8) + 1)]"
         @click="goDetail(c.id)"
       >
         <u-avatar
@@ -37,9 +37,8 @@
         </view>
         <view v-if="c.is_member" class="member-badge">已加入</view>
       </view>
-    </view>
-
-    <u-safe-bottom />
+      <u-safe-bottom />
+    </template>
   </view>
 </template>
 
@@ -70,10 +69,10 @@ function goDetail(id: number) {
 }
 </script>
 
-<style scoped>
 .container {
   min-height: 100vh;
-  background: var(--u-bg-color, #f3f4f6);
+  background: $color-canvas;
+  padding: 20rpx;
 }
 
 .loading-state {
@@ -83,25 +82,30 @@ function goDetail(id: number) {
   padding: 200rpx 0;
   gap: 20rpx;
 }
-
 .loading-text {
   font-size: 26rpx;
-  color: #909399;
+  color: $ink-muted;
 }
 
 .circle-list {
-  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
 }
 
 .circle-card {
   display: flex;
   align-items: center;
   gap: 24rpx;
-  background: #fff;
-  border-radius: 20rpx;
+  background: $color-surface;
+  border-radius: $rounded-lg;
   padding: 28rpx;
-  margin-bottom: 16rpx;
-  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+  border: 1rpx solid $color-hairline;
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+}
+.circle-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
 }
 
 .circle-info {
@@ -112,36 +116,32 @@ function goDetail(id: number) {
 .circle-name {
   font-size: 30rpx;
   font-weight: 700;
-  color: #303133;
+  color: $ink;
   display: block;
 }
-
 .circle-desc {
   font-size: 24rpx;
-  color: #909399;
+  color: $ink-muted;
   display: block;
   margin-top: 6rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .circle-meta {
   display: flex;
   gap: 24rpx;
   margin-top: 10rpx;
 }
-
 .meta-text {
   font-size: 22rpx;
-  color: #c0c4cc;
+  color: $ink-tertiary;
 }
-
 .member-badge {
   font-size: 22rpx;
   color: #667eea;
   border: 1rpx solid #667eea;
-  border-radius: 30rpx;
+  border-radius: $rounded-full;
   padding: 6rpx 20rpx;
   white-space: nowrap;
 }
@@ -149,4 +149,11 @@ function goDetail(id: number) {
 .empty-action {
   padding: 40rpx 60rpx;
 }
-</style>
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 60ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 180ms; }
+.stagger-5 { animation-delay: 240ms; }
+.stagger-6 { animation-delay: 300ms; }
+.stagger-7 { animation-delay: 360ms; }
+.stagger-8 { animation-delay: 420ms; }

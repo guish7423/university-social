@@ -43,7 +43,8 @@ function getTypeText(type: string) {
     </view>
 
     <view v-if="notes && notes.length === 0" class="empty">暂无通知</view>
-    <view v-for="n in (notes || [])" :key="n.id" :class="['note-item', !n.is_read && 'unread']">
+    <view v-for="(n, i) in (notes || [])" :key="n.id"
+          :class="['note-item', !n.is_read && 'unread', 'stagger-' + ((i % 8) + 1)]">
       <image v-if="n.from_user?.avatar" class="avatar" :src="n.from_user.avatar" mode="aspectFill" />
       <view class="note-body">
         <text class="note-name">{{ n.from_user?.nickname || "系统" }}</text>
@@ -55,16 +56,34 @@ function getTypeText(type: string) {
 </template>
 
 <style scoped>
-.container { min-height: 100vh; background: #f5f5f5; }
-.header { display: flex; justify-content: space-between; align-items: center; padding: 30rpx; background: #fff; }
-.title { font-size: 36rpx; font-weight: 700; }
-.unread-badge { font-size: 24rpx; color: #e74c3c; }
-.empty { text-align: center; padding: 200rpx 0; color: #999; }
-.note-item { display: flex; gap: 20rpx; padding: 24rpx 30rpx; background: #fff; border-bottom: 1rpx solid #eee; }
-.note-item.unread { background: #f0f4ff; }
-.avatar { width: 64rpx; height: 64rpx; border-radius: 50%; }
+.container { min-height: 100vh; background: $color-canvas; }
+.header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 30rpx; background: $color-surface;
+  border-bottom: 1rpx solid $color-hairline;
+}
+.title { font-size: 36rpx; font-weight: 700; color: $ink; }
+.unread-badge { font-size: 24rpx; color: $ink-muted; }
+.empty { text-align: center; padding: 200rpx 0; color: $ink-muted; font-size: 26rpx; }
+.note-item {
+  display: flex; gap: 20rpx; padding: 24rpx 30rpx;
+  background: $color-surface; border-bottom: 1rpx solid $color-hairline;
+  opacity: 0; transform: translateY(10rpx);
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+.note-item.unread { background: linear-gradient(135deg, #eef0ff, #fff); }
+.avatar { width: 64rpx; height: 64rpx; border-radius: 50%; background: $color-hairline; }
 .note-body { flex: 1; }
-.note-name { font-size: 26rpx; font-weight: 600; display: block; }
-.note-content { font-size: 26rpx; color: #333; display: block; margin: 4rpx 0; }
-.note-time { font-size: 20rpx; color: #999; }
+.note-name { font-size: 26rpx; font-weight: 600; color: $ink; display: block; }
+.note-content { font-size: 26rpx; color: $ink-muted; display: block; margin: 4rpx 0; }
+.note-time { font-size: 20rpx; color: $ink-tertiary; }
+
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 60ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 180ms; }
+.stagger-5 { animation-delay: 240ms; }
+.stagger-6 { animation-delay: 300ms; }
+.stagger-7 { animation-delay: 360ms; }
+.stagger-8 { animation-delay: 420ms; }
 </style>

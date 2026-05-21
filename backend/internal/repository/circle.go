@@ -270,3 +270,29 @@ func (r *CircleRepository) ListComments(postID int) ([]*model.CirclePostComment,
 	}
 	return comments, nil
 }
+
+func (r *CircleRepository) Search(query string, offset, limit int) ([]*model.Circle, error) {
+	rows, err := r.db.Query(
+		`SELECT c.id, c.name, c.description, c.icon, c.creator_id, c.member_count, c.post_count, c.created_at,
+			u.nickname, u.avatar
+		FROM circles c JOIN users u ON u.id = c.creator_id
+		WHERE c.name ILIKE $1 OR c.description ILIKE $1
+		ORDER BY c.member_count DESC LIMIT $2 OFFSET $3`,
+		"%"+query+"%", limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("search circles: %w", err)
+	}
+	defer rows.Close()
+
+	var circles []*model.Circle
+	for rows.Next() {
+		var c model.Circle
+		var u model.User
+		if err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.Icon, &c.CreatorID, &c.MemberCount, &c.PostCount, &c.CreatedAt, &u.Nickname, &u.Avatar); err != nil {
+			return nil, err
+		}
+		c.Creator = &u
+		circles = append(circles, &c)
+	}
+	return circles, nil
+}

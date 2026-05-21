@@ -17,12 +17,13 @@ import (
 )
 
 type AuthHandler struct {
-	repo   *repository.UserRepository
-	config *config.Config
+	repo       *repository.UserRepository
+	config     *config.Config
+	pointsRepo *repository.PointsRepository
 }
 
-func NewAuthHandler(repo *repository.UserRepository, cfg *config.Config) *AuthHandler {
-	return &AuthHandler{repo: repo, config: cfg}
+func NewAuthHandler(repo *repository.UserRepository, cfg *config.Config, pointsRepo *repository.PointsRepository) *AuthHandler {
+	return &AuthHandler{repo: repo, config: cfg, pointsRepo: pointsRepo}
 }
 
 func (h *AuthHandler) WxLogin(c *gin.Context) {
@@ -63,6 +64,7 @@ func (h *AuthHandler) WxLogin(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "生成令牌失败"})
 		return
 	}
+	h.pointsRepo.ClaimDailyLogin(user.ID)
 
 	c.JSON(http.StatusOK, model.LoginResponse{
 		Token: token,
@@ -104,7 +106,9 @@ func (h *AuthHandler) DevLogin(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "生成令牌失败"})
 		return
 	}
+	h.pointsRepo.ClaimDailyLogin(user.ID)
 	c.JSON(http.StatusOK, model.LoginResponse{
+
 		Token: token,
 		User:  user,
 	})
