@@ -54,6 +54,10 @@ async function toggleFollow() {
     }
   } catch {}
 }
+
+function goChat() {
+  uni.navigateTo({ url: `/pages/chat/detail?userId=${userId.value}&nickname=${encodeURIComponent(user.value?.nickname || '')}` })
+}
 </script>
 
 <template>
@@ -81,6 +85,7 @@ async function toggleFollow() {
       <view v-if="!isSelf" class="follow-btn" :class="{ following: isFollowing }" @click="toggleFollow">
         {{ isFollowing ? '已关注' : '+ 关注' }}
       </view>
+      <view class="msg-btn" @click="goChat">发消息</view>
     </view>
   </view>
 </template>
@@ -112,5 +117,17 @@ async function toggleFollow() {
   transition: all 0.2s;
   &:active { transform: scale(0.97); }
   &.following { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.75); }
+}
+
+.msg-btn {
+  padding: 12rpx 40rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  margin-top: 8rpx;
+  transition: all 0.2s;
+  &:active { transform: scale(0.97); }
 }
 </style>

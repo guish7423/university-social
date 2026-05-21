@@ -17,6 +17,7 @@ const menuGroups = [
   { title: "社交", items: [
     { icon: "♢", label: "好友", path: "/pages/friend/index" },
     { icon: "◉", label: "通知", path: "/pages/notification/index" },
+    { icon: "✉", label: "消息", path: "/pages/chat/index" },
     { icon: "♢", label: "关注", path: "/pages/user/following" },
     { icon: "◯", label: "粉丝", path: "/pages/user/followers" },
   ]},

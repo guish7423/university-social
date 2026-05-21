@@ -3,7 +3,7 @@ project: university-social
 path: ~/.opencode-workspace/university-social
 milestone: "本地迭代完成 ✅"
 overall: 88
-last_updated: 2026-05-20
+last_updated: 2026-05-21
 ---
 
 ## 项目概述
@@ -15,7 +15,7 @@ last_updated: 2026-05-20
 - [x] 用户注册/登录（dev-login + JWT）
 - [x] 首页（hero + 功能卡片导航）
 - [x] 广场（帖子流、点赞、评论数）
-- [x] 发帖（含图片上传 9张）
+- [x] 搜索性能优化（ILIKE → pg_trgm GIN 索引 + similarity 排序）
 - [x] 帖子详情（评论区渲染、发表评论）
 - [x] 圈子（列表、创建、详情、帖子、成员）
 - [x] 好友（搜索、发送请求、收件箱/接收/拒绝、长按删除）
@@ -28,7 +28,7 @@ last_updated: 2026-05-20
 
 ## 待办功能
 
-- [ ] 搜索性能优化（PostgreSQL 全文检索）
+- [x] 搜索性能优化（PostgreSQL pg_trgm 全文检索）
 - [ ] WebSocket/IM 实时消息
 - [ ] DB schema 审查与索引优化
 - [ ] 后台管理面板完善

@@ -234,6 +234,22 @@
         "navigationBarTitleText": "添加好友"
       }
     }
+    },
+    {
+      "path": "pages/chat/index",
+      "style": {
+        "navigationBarTitleText": "消息",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/chat/detail",
+      "style": {
+        "navigationBarTitleText": "聊天",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
 
   ],
   "globalStyle": {
