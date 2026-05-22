@@ -335,7 +335,11 @@
     "navigationBarTitleText": "校园社",
     "backgroundColor": "#F7F4F0",
     "backgroundColorContent": "#F7F4F0",
-    "enablePullDownRefresh": false
+    "enablePullDownRefresh": false,
+    "animation": {
+      "animationType": "fade-in",
+      "animationDuration": 200
+    }
   },
   "tabBar": {
     "color": "#8E9BAB",

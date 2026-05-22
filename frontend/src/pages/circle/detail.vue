@@ -2,7 +2,7 @@
   <view class="page">
     <view v-if="loading" class="loading-state">
       <u-loading mode="flower" size="60" />
-      <text class="loading-text">加载中...</text>
+
     </view>
 
     <template v-else-if="circle">

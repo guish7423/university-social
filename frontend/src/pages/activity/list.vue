@@ -60,7 +60,7 @@ function formatTime(t: string) {
       </scroll-view>
     </view>
 
-    <view v-if="loading" class="loading"><text>加载中...</text></view>
+    <u-loading mode="flower" size="60" v-if="loading" />
 
     <view v-else class="activity-list">
       <view

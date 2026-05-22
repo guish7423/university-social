@@ -3,21 +3,21 @@ import { ref, computed } from "vue"
 import { onLoad } from "@dcloudio/uni-app"
 import { useUserStore } from "@/store/user"
 import { getUserInfo } from "@/api/user"
-import { getFollowing, getFollowers, getFollowCounts, checkFollow, followUser, unfollowUser } from "@/api/follow"
+import { getFollowCounts, checkFollow, followUser, unfollowUser } from "@/api/follow"
 
 const userStore = useUserStore()
 const userId = ref(0)
 const user = ref<any>(null)
 const isFollowing = ref(false)
 const counts = ref({ following: 0, followers: 0, posts: 0 })
+const loading = ref(true)
 
 const isSelf = computed(() => userId.value === userStore.id)
 
 onLoad((opts: any) => {
   if (opts.id) {
     userId.value = parseInt(opts.id)
-    loadUser()
-    loadCounts()
+    Promise.all([loadUser(), loadCounts()]).finally(() => { loading.value = false })
     if (!isSelf.value) checkFollowing()
   }
 })
@@ -62,31 +62,34 @@ function goChat() {
 
 <template>
   <view class="page">
-    <view class="profile-header">
-      <u-avatar :src="user?.avatar" :text="user?.nickname?.[0] || '?'" size="140" shape="circle" />
-      <text class="profile-name">{{ user?.nickname || '加载中...' }}</text>
-      <text class="profile-school">{{ user?.school || '' }}</text>
+    <u-loading mode="flower" size="60" v-if="loading" />
+    <template v-else>
+      <view class="profile-header">
+        <u-avatar :src="user?.avatar" :text="user?.nickname?.[0] || '?'" size="140" shape="circle" />
+        <text class="profile-name">{{ user?.nickname }}</text>
+        <text class="profile-school">{{ user?.school || '' }}</text>
 
-      <view class="counts">
-        <view class="count-item">
-          <text class="count-num">{{ counts.posts }}</text>
-          <text class="count-label">帖子</text>
+        <view class="counts">
+          <view class="count-item">
+            <text class="count-num">{{ counts.posts }}</text>
+            <text class="count-label">帖子</text>
+          </view>
+          <view class="count-item">
+            <text class="count-num">{{ counts.following }}</text>
+            <text class="count-label">关注</text>
+          </view>
+          <view class="count-item">
+            <text class="count-num">{{ counts.followers }}</text>
+            <text class="count-label">粉丝</text>
+          </view>
         </view>
-        <view class="count-item">
-          <text class="count-num">{{ counts.following }}</text>
-          <text class="count-label">关注</text>
-        </view>
-        <view class="count-item">
-          <text class="count-num">{{ counts.followers }}</text>
-          <text class="count-label">粉丝</text>
-        </view>
-      </view>
 
-      <view v-if="!isSelf" class="follow-btn" :class="{ following: isFollowing }" @click="toggleFollow">
-        {{ isFollowing ? '已关注' : '+ 关注' }}
+        <view v-if="!isSelf" class="follow-btn" :class="{ following: isFollowing }" @click="toggleFollow">
+          {{ isFollowing ? '已关注' : '+ 关注' }}
+        </view>
+        <view class="msg-btn" @click="goChat">发消息</view>
       </view>
-      <view class="msg-btn" @click="goChat">发消息</view>
-    </view>
+    </template>
   </view>
 </template>
 

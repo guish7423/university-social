@@ -8,7 +8,7 @@
           <text class="msg-time">{{ formatTime(m.created_at) }}</text>
         </view>
       </view>
-      <view v-if="loading" class="loading">加载中...</view>
+      <u-loading mode="flower" size="48" v-if="loading" />
     </scroll-view>
     <view class="input-bar">
       <input class="input" v-model="text" :disabled="sending" confirm-type="send" @confirm="send" placeholder="输入消息..." />

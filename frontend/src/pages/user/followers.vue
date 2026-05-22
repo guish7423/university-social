@@ -6,6 +6,7 @@ import { useUserStore } from "@/store/user"
 const userStore = useUserStore()
 const users = ref<FollowUser[]>([])
 const followState = ref<Record<number, boolean>>({})
+const loading = ref(true)
 
 onMounted(() => {
   const pages = getCurrentPages()
@@ -15,6 +16,7 @@ onMounted(() => {
 })
 
 async function loadFollowers(userId: number) {
+  loading.value = true
   try {
     const data = await getFollowers(userId)
     users.value = data
@@ -26,6 +28,7 @@ async function loadFollowers(userId: number) {
     }
   } catch {}
 }
+  loading.value = false
 
 async function toggleFollow(userId: number) {
   try {
@@ -47,6 +50,7 @@ function goUser(id: number) {
 <template>
   <view class="container">
     <view class="header">
+      <u-loading mode="flower" size="60" v-if="loading" />
       <text class="title">粉丝</text>
     </view>
     <view v-if="users.length === 0" class="empty-state">

@@ -15,7 +15,6 @@ onMounted(() => {
 async function loadFriends() {
   try { friends.value = (await listFriends()) || [] } catch {}
 }
-  try { friends.value = (await listFriends()) || [] } catch {}
 
 async function loadPendingCount() {
   try {
@@ -70,7 +69,7 @@ function confirmRemove(id: number, name: string) {
       </view>
     </view>
 
-    <view v-if="(friends || []).length === 0" class="empty">还没有好友</view>
+    <u-empty v-if="(friends || []).length === 0" mode="list" text="还没有好友" desc="去添加你的同学好友吧" />
     <view v-for="f in friends" :key="f.id" class="friend-item" @longpress="confirmRemove(f.id, f.nickname)">
       <u-avatar :src="f.avatar" size="72" :name="f.nickname?.[0] || '?'" />
       <view class="friend-info">

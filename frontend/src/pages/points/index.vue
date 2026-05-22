@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue"
 import { getPointsBalance, claimDailyLogin, getPointsLeaderboard } from "@/api/points"
 
+const loading = ref(true)
 const balance = ref<any>({})
 const leaderboard = ref<any[]>([])
 
@@ -14,16 +15,20 @@ const rules = [
 ]
 
 async function load() {
+  loading.value = true
   try {
     balance.value = await getPointsBalance()
     leaderboard.value = (await getPointsLeaderboard()).leaderboard ?? []
   } catch {}
+  loading.value = false
 }
 onMounted(load)
 </script>
 
 <template>
   <view class="page">
+    <u-loading mode="flower" size="60" v-if="loading" />
+    <template v-else>
     <view class="balance-card">
       <text class="balance-label">我的积分</text>
       <text class="balance-value">{{ balance.points ?? 0 }}</text>
@@ -63,6 +68,7 @@ onMounted(load)
         <view v-if="leaderboard.length === 0" class="empty">暂无排行数据</view>
       </view>
     </view>
+    </template>
   </view>
 </template>
 

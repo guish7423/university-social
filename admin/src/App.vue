@@ -8,6 +8,10 @@
             <el-icon><DataBoard /></el-icon>
             <span>数据看板</span>
           </el-menu-item>
+          <el-menu-item index="/datascreen">
+            <el-icon><Monitor /></el-icon>
+            <span>数据大屏</span>
+          </el-menu-item>
           <el-menu-item index="/users">
             <el-icon><User /></el-icon>
             <span>用户管理</span>

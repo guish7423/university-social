@@ -27,7 +27,7 @@ function formatTime(t: string) {
   <view class="container">
     <view v-if="loading" class="loading-state">
       <u-loading mode="flower" size="60" />
-      <text class="loading-text">加载中...</text>
+
     </view>
     <template v-else-if="announcements.length">
       <view v-for="a in announcements" :key="a.id" class="announcement-card" @click="viewDetail(a)">

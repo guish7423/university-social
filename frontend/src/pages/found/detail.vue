@@ -5,18 +5,23 @@ import { useUserStore } from "@/store/user"
 import { onLoad } from "@dcloudio/uni-app"
 
 const userStore = useUserStore()
+const loading = ref(true)
 const item = ref<any>(null)
+
 const isOwner = computed(() => item.value && userStore.userInfo && item.value.user_id === userStore.userInfo.id)
 
 onLoad((opts: any) => {
   if (opts.id) loadItem(parseInt(opts.id))
+  else loading.value = false
 })
 
 async function loadItem(id: number) {
+  loading.value = true
   try {
     const { data } = await getLostItem(id)
     item.value = data
   } catch { uni.showToast({ title: "加载失败", icon: "none" }) }
+  loading.value = false
 }
 
 async function markSolved() {
@@ -45,6 +50,8 @@ async function doDelete() {
 
 <template>
   <view class="page">
+    <u-loading mode="flower" size="60" v-if="loading" />
+    <template v-else>
     <view class="header" v-if="item">
       <view class="header-top">
         <view class="tag" :class="item.category === 'lost' ? 'tag-lost' : 'tag-found'">
@@ -87,6 +94,7 @@ async function doDelete() {
       </u-button>
       <u-button type="error" shape="circle" plain @click="doDelete">删除</u-button>
     </view>
+    </template>
   </view>
 </template>
 

@@ -65,12 +65,12 @@ function formatTime(t: string) {
       <view class="hero-content">
         <view class="hero-text">
           <text class="hero-title">校园社</text>
-          <text class="hero-subtitle">连接校园里的每一个人</text>
+          <text class="hero-subtitle">洛阳高校 · 连接校园里的每一个人</text>
         </view>
         <view class="hero-stats">
           <view class="hero-stat-item">
-            <text class="hero-stat-num">8</text>
-            <text class="hero-stat-label">功能模块</text>
+            <text class="hero-stat-num">10+</text>
+            <text class="hero-stat-label">洛阳高校</text>
           </view>
           <view class="hero-stat-divider" />
           <view class="hero-stat-item">
@@ -229,10 +229,17 @@ page { background: #F7F4F0; }
   gap: 16rpx;
 }
 .feature-card {
+  position: relative;
   background: #fff; border-radius: 16rpx; padding: 28rpx 12rpx;
   display: flex; flex-direction: column; align-items: center; gap: 12rpx;
-  box-shadow: 0 2rpx 12rpx rgba(30,42,58,0.04);
-  transition: all 0.2s ease; cursor: pointer;
+  box-shadow: 0 2rpx 12rpx rgba(198,122,106,0.08);
+  transition: all 0.3s ease; cursor: pointer; overflow: hidden;
+  &::before {
+    content: ''; position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(198,122,106,0.06), transparent 60%);
+    pointer-events: none;
+  }
   &:active { transform: scale(0.96); }
 }
 .feature-card-hover { transform: scale(0.96); }

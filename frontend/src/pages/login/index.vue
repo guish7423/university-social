@@ -33,7 +33,7 @@ async function handleLogin() {
           <text class="logo-text">C</text>
         </view>
         <text class="brand-title">校园社</text>
-        <text class="brand-subtitle">连接校园里的每一个人</text>
+        <text class="brand-subtitle">洛阳高校 · 连接校园里的每一个人</text>
       </view>
     </view>
 

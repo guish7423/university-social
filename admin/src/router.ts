@@ -7,6 +7,8 @@ import Banners from "@/views/Banners.vue"
 import Announcements from "@/views/Announcements.vue"
 import SensitiveWords from "@/views/SensitiveWords.vue"
 import Reports from "@/views/Reports.vue"
+import DataScreen from "@/views/DataScreen.vue"
+
 
 const routes = [
   { path: "/", redirect: "/dashboard" },
@@ -18,6 +20,8 @@ const routes = [
   { path: "/announcements", component: Announcements, meta: { title: "公告管理" } },
   { path: "/sensitive-words", component: SensitiveWords, meta: { title: "敏感词管理" } },
   { path: "/reports", component: Reports, meta: { title: "举报管理" } },
+  { path: "/datascreen", component: DataScreen, meta: { title: "数据大屏" } },
+  { path: "/login", component: () => import("@/views/Login.vue"), meta: { title: "登录", hideInMenu: true } },
 ]
 
 export default createRouter({

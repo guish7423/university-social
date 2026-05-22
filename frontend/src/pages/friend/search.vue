@@ -37,7 +37,7 @@ async function addFriend(id: number) {
       <view class="search-btn" @click="handleSearch">搜索</view>
     </view>
 
-    <view v-if="loading" class="state">搜索中...</view>
+    <u-loading mode="flower" size="60" v-if="loading" />
     <view v-else-if="results.length === 0 && query" class="state">未找到用户</view>
     <view v-else-if="results.length === 0" class="state">输入昵称搜索</view>
 
