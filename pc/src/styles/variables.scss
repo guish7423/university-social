@@ -1,0 +1,109 @@
+// ═══════════════════════════════════════
+// Design Tokens — 校园社 PC Design System
+// ═══════════════════════════════════════
+
+// ── Brand ──
+$brand-hue: 16;
+$brand-primary: oklch(0.62 0.12 $brand-hue);       // #C67A6A warm terracotta
+$brand-primary-light: oklch(0.70 0.10 $brand-hue);  // #D4998A
+$brand-primary-dark: oklch(0.50 0.12 $brand-hue);   // #A85E4E
+
+// ── Campus accent ──
+$campus-gold: oklch(0.72 0.10 70);    // #D4A85E
+$campus-green: oklch(0.65 0.12 150);  // #5EB87E
+$campus-blue: oklch(0.62 0.10 240);   // #5E8FD4
+$campus-purple: oklch(0.58 0.12 290); // #8B6EC4
+$campus-cyan: oklch(0.65 0.08 200);   // #5EACB8
+
+// ── Neutral (warm-tinted) ──
+$bg-app: oklch(0.14 0.01 30);          // #1A1E2E
+$bg-card: oklch(0.17 0.015 30);        // #232840
+$bg-raised: oklch(0.20 0.015 30);      // #2A2F48
+$bg-sidebar: oklch(0.11 0.01 30);      // #141824
+$bg-hover: oklch(0.23 0.015 30);       // #2E334A
+
+$text-primary: oklch(0.92 0.005 30);   // #E8E6E3
+$text-secondary: oklch(0.65 0.01 30);  // #9B97A0
+$text-muted: oklch(0.45 0.01 30);      // #6B6872
+$text-inverse: oklch(0.14 0.01 30);    // for light-on-dark
+
+$border-default: oklch(0.22 0.015 30); // #2E3348
+$border-light: oklch(0.26 0.015 30);   // #383D58
+
+// ── Semantic ──
+$color-success: $campus-green;
+$color-warning: $campus-gold;
+$color-danger: oklch(0.58 0.18 30);
+$color-info: $campus-blue;
+$color-link: oklch(0.65 0.12 $brand-hue);
+
+// ── Type Scale (1.25 modular) ──
+$text-xs: 0.75rem;    // 12px
+$text-sm: 0.875rem;   // 14px
+$text-base: 1rem;     // 16px
+$text-lg: 1.125rem;   // 18px
+$text-xl: 1.25rem;    // 20px
+$text-2xl: 1.5rem;    // 24px
+$text-3xl: 1.875rem;  // 30px
+$text-4xl: 2.25rem;   // 36px
+
+// ── Spacing (4px base) ──
+$space-1: 0.25rem;  // 4px
+$space-2: 0.5rem;   // 8px
+$space-3: 0.75rem;  // 12px
+$space-4: 1rem;     // 16px
+$space-5: 1.25rem;  // 20px
+$space-6: 1.5rem;   // 24px
+$space-8: 2rem;     // 32px
+$space-10: 2.5rem;  // 40px
+$space-12: 3rem;    // 48px
+$space-16: 4rem;    // 64px
+
+// ── Radius ──
+$radius-sm: 0.375rem;   // 6px
+$radius-md: 0.625rem;   // 10px
+$radius-lg: 1rem;       // 16px
+$radius-xl: 1.5rem;     // 24px
+$radius-full: 9999px;
+
+// ── Shadows (layered elevation) ──
+$shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+$shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+$shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+$shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+$shadow-xl: 0 12px 36px rgba(0,0,0,0.5);
+
+// ── Animation ──
+$duration-instant: 100ms;
+$duration-fast: 150ms;
+$duration-normal: 200ms;
+$duration-slow: 300ms;
+$duration-page: 350ms;
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+$ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+// ── Layout ──
+$sidebar-width: 240px;
+$topbar-height: 56px;
+$content-max: 900px;
+$content-wide: 1200px;
+
+// Backward-compatible aliases
+$bg-dark: $bg-app;
+$border-color: $border-default;
+$primary: $brand-primary;
+$primary-light: $brand-primary-light;
+$accent-blue: $campus-blue;
+$accent-gold: $campus-gold;
+$accent-green: $campus-green;
+$duration-page: $duration-slow;
+
+// Hex fallbacks (for rgba() compatibility - oklch can't be used with rgba in Sass)
+$brand-primary-hex: #C67A6A;
+$brand-primary-light-hex: #D4998A;
+$brand-primary-dark-hex: #A85E4E;
+$bg-app-hex: #1A1E2E;
+$bg-sidebar-hex: #141824;
+$campus-blue-hex: #5E8FD4;

@@ -1,0 +1,275 @@
+@use "./variables.scss" as *;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: "DM Sans", "Noto Sans SC", "PingFang SC", sans-serif;
+  background: oklch(0.14 0.01 30);
+  color: oklch(0.92 0.005 30);
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(0.26 0.015 30); border-radius: 3px; }
+
+.el-menu { border-right: none !important; }
+
+.page-enter-active { transition: all 0.25s ease-out; }
+.page-leave-active { transition: all 0.15s ease-in; }
+.page-enter-from { opacity: 0; transform: translateY(12px); }
+.page-leave-to { opacity: 0; transform: translateY(-8px); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.el-button {
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  &:active { transform: translateY(2px); }
+}
+
+.el-button--primary {
+  &:hover { box-shadow: 0 4px 20px rgba(198,122,106,0.35); }
+  &:active { box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+}
+
+.post-card, .activity-card, .product-card, .found-card {
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease !important;
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+  &:active { transform: translateY(0); }
+}
+.post-card:hover {
+  box-shadow: 0 8px 30px rgba(198,122,106,0.15) !important;
+}
+
+/* ═══ Noise Texture Overlay ═══ */
+.sidebar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px;
+  z-index: 1;
+}
+
+/* ═══ Glass Topbar ═══ */
+.top-bar {
+  backdrop-filter: blur(12px) saturate(1.8);
+  -webkit-backdrop-filter: blur(12px) saturate(1.8);
+  background: rgba(26, 30, 46, 0.85) !important;
+}
+
+/* ═══ Glow Effects ═══ */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(198,122,106,0.3); }
+  50% { box-shadow: 0 0 20px rgba(198,122,106,0.5); }
+}
+
+.el-button--primary {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* ═══ Staggered Entrance ═══ */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: stagger-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes stagger-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0ms; }
+.stagger-item:nth-child(2) { animation-delay: 60ms; }
+.stagger-item:nth-child(3) { animation-delay: 120ms; }
+.stagger-item:nth-child(4) { animation-delay: 180ms; }
+.stagger-item:nth-child(5) { animation-delay: 240ms; }
+.stagger-item:nth-child(6) { animation-delay: 300ms; }
+.stagger-item:nth-child(7) { animation-delay: 360ms; }
+.stagger-item:nth-child(8) { animation-delay: 420ms; }
+.stagger-item:nth-child(9) { animation-delay: 480ms; }
+.stagger-item:nth-child(10) { animation-delay: 540ms; }
+
+/* ═══ Element Plus Dark Theme Overrides ═══ */
+:root {
+  --el-color-primary: oklch(0.62 0.12 16);
+  --el-color-primary-light-3: oklch(0.70 0.10 16);
+  --el-color-primary-light-5: oklch(0.78 0.08 16);
+  --el-color-primary-light-7: oklch(0.85 0.06 16);
+  --el-color-primary-light-8: oklch(0.90 0.04 16);
+  --el-color-primary-light-9: oklch(0.94 0.02 16);
+  --el-color-primary-dark-2: oklch(0.50 0.12 16);
+  --el-bg-color: oklch(0.14 0.01 30);
+  --el-bg-color-overlay: oklch(0.17 0.015 30);
+  --el-bg-color-page: oklch(0.14 0.01 30);
+  --el-text-color-primary: oklch(0.92 0.005 30);
+  --el-text-color-regular: oklch(0.65 0.01 30);
+  --el-text-color-secondary: oklch(0.45 0.01 30);
+  --el-border-color: oklch(0.22 0.015 30);
+  --el-border-color-light: oklch(0.26 0.015 30);
+  --el-fill-color: oklch(0.20 0.015 30);
+  --el-fill-color-light: oklch(0.23 0.015 30);
+  --el-fill-color-blank: oklch(0.14 0.01 30);
+}
+/* ═══ Element Plus Dark Theme Overrides ═══ */
+.el-card {
+  --el-card-bg-color: oklch(0.17 0.015 30);
+  --el-card-border-color: oklch(0.22 0.015 30);
+  background: oklch(0.17 0.015 30) !important;
+  border: 1px solid oklch(0.22 0.015 30);
+  color: oklch(0.92 0.005 30);
+}
+
+.el-table {
+  --el-table-bg-color: oklch(0.17 0.015 30);
+  --el-table-tr-bg-color: oklch(0.17 0.015 30);
+  --el-table-header-bg-color: oklch(0.14 0.01 30);
+  --el-table-row-hover-bg-color: oklch(0.23 0.015 30);
+  --el-table-border-color: oklch(0.22 0.015 30);
+  --el-table-text-color: oklch(0.92 0.005 30);
+  --el-table-header-text-color: oklch(0.65 0.01 30);
+  background: oklch(0.17 0.015 30) !important;
+  color: oklch(0.92 0.005 30);
+}
+
+.el-dialog {
+  --el-dialog-bg-color: oklch(0.17 0.015 30);
+  --el-dialog-title-text-color: oklch(0.92 0.005 30);
+  background: oklch(0.17 0.015 30) !important;
+  .el-dialog__body { color: oklch(0.92 0.005 30); }
+}
+
+.el-drawer {
+  --el-drawer-bg-color: oklch(0.17 0.015 30);
+  background: oklch(0.17 0.015 30) !important;
+}
+
+.el-input__wrapper {
+  background: oklch(0.14 0.01 30) !important;
+  box-shadow: 0 0 0 1px oklch(0.22 0.015 30) inset !important;
+  &:focus-within { box-shadow: 0 0 0 1px oklch(0.62 0.12 16) inset !important; }
+}
+
+.el-input__inner {
+  color: oklch(0.92 0.005 30) !important;
+  &::placeholder { color: oklch(0.45 0.01 30) !important; }
+}
+
+.el-select, .el-date-editor {
+  --el-select-bg-color: oklch(0.14 0.01 30);
+  --el-select-input-focus-border-color: oklch(0.62 0.12 16);
+}
+
+.el-tag {
+  --el-tag-bg-color: oklch(0.20 0.015 30);
+  --el-tag-border-color: oklch(0.26 0.015 30);
+  --el-tag-text-color: oklch(0.92 0.005 30);
+}
+
+.el-message {
+  --el-message-bg-color: oklch(0.17 0.015 30);
+  --el-message-border-color: oklch(0.22 0.015 30);
+  --el-message-text-color: oklch(0.92 0.005 30);
+  background: oklch(0.17 0.015 30) !important;
+}
+
+.el-empty__description p {
+  color: oklch(0.65 0.01 30) !important;
+}
+
+.el-message-box {
+  --el-messagebox-bg-color: oklch(0.17 0.015 30);
+  --el-messagebox-title-text-color: oklch(0.92 0.005 30);
+  --el-messagebox-content-color: oklch(0.65 0.01 30);
+  background: oklch(0.17 0.015 30) !important;
+  .el-message-box__message { color: oklch(0.65 0.01 30); }
+}
+
+.el-pagination {
+  --el-pagination-bg-color: transparent;
+  --el-pagination-button-color: oklch(0.65 0.01 30);
+  --el-pagination-hover-color: oklch(0.62 0.12 16);
+  button.is-active { color: oklch(0.62 0.12 16); }
+}
+
+.el-tabs__item {
+  color: oklch(0.65 0.01 30) !important;
+  &.is-active { color: oklch(0.62 0.12 16) !important; }
+}
+
+.el-divider {
+  --el-divider-border-color: oklch(0.22 0.015 30);
+}
+
+.el-badge__content {
+  background: oklch(0.58 0.18 30) !important;
+}
+
+.el-avatar {
+  --el-avatar-bg-color: oklch(0.20 0.015 30);
+  --el-avatar-text-color: oklch(0.92 0.005 30);
+}
+
+.el-skeleton__item {
+  --el-skeleton-color: oklch(0.20 0.015 30);
+  --el-skeleton-to-color: oklch(0.23 0.015 30);
+}
+
+.el-notification {
+  --el-notification-bg-color: oklch(0.17 0.015 30);
+  --el-notification-title-text-color: oklch(0.92 0.005 30);
+  --el-notification-text-color: oklch(0.65 0.01 30);
+  background: oklch(0.17 0.015 30) !important;
+  border: 1px solid oklch(0.22 0.015 30);
+}
+
+.el-dropdown-menu {
+  --el-dropdown-menu-bg-color: oklch(0.17 0.015 30);
+  --el-dropdown-menu-item-hover-bg-color: oklch(0.23 0.015 30);
+  --el-dropdown-menu-item-hover-color: oklch(0.92 0.005 30);
+  --el-dropdown-menu-item-color: oklch(0.65 0.01 30);
+  background: oklch(0.17 0.015 30) !important;
+  border: 1px solid oklch(0.22 0.015 30);
+}
+
+.el-select-dropdown {
+  --el-select-dropdown-bg-color: oklch(0.17 0.015 30);
+  --el-select-dropdown-item-hover-bg-color: oklch(0.23 0.015 30);
+  background: oklch(0.17 0.015 30) !important;
+  border: 1px solid oklch(0.22 0.015 30);
+}
+
+.el-breadcrumb__inner {
+  color: oklch(0.65 0.01 30) !important;
+}
+.el-breadcrumb__item:last-child .el-breadcrumb__inner {
+  color: oklch(0.92 0.005 30) !important;
+}
+
+.el-link {
+  --el-link-text-color: oklch(0.65 0.12 16);
+}
+
+.el-switch {
+  --el-switch-off-color: oklch(0.26 0.015 30);
+}
+
+.el-radio__label {
+  color: oklch(0.92 0.005 30) !important;
+}
+
+.el-checkbox__label {
+  color: oklch(0.92 0.005 30) !important;
+}

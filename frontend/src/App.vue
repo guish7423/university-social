@@ -90,16 +90,15 @@ onLaunch(() => {
 <style>
 page { background: var(--color-canvas, #F7F4F0); font-family: 'Noto Sans SC', 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif; overscroll-behavior: none; -webkit-font-smoothing: antialiased; }
 @media (min-width: 1024px) {
-  .uni-tabbar, .uni-tabbar-bottom, uni-tabbar { display: none !important; }
-  .uni-page-head { display: none !important; }
-  .uni-page-body { margin-left: 220px; padding-top: 0; }
-  ::-webkit-scrollbar { display: block; width: 6px; }
-  ::-webkit-scrollbar-thumb { background: #B8C2CE; border-radius: 3px; }
-  ::-webkit-scrollbar-track { background: transparent; }
+.uni-tabbar, .uni-tabbar-bottom, uni-tabbar { display: none !important; }
+.uni-page-head { display: none !important; }
+.uni-page-body, uni-page-wrapper { margin-left: 220px; max-width: calc(100% - 220px); }
+uni-page-wrapper { display: flex; justify-content: center; }
+uni-page-wrapper > * { width: 100%; max-width: 1200px; }
+.uni-page-body { max-width: 1200px; margin-right: auto; padding: 24px 32px; }
+::-webkit-scrollbar { display: block; width: 6px; }
 }
-@media (min-width: 1440px) {
-  .uni-page-body { margin-left: 220px; max-width: 1200px; }
-}
+
 .pc-sidebar { display: none; flex-direction: column; position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: #1E2A3A; z-index: 999; overflow-y: auto; }
 @media (min-width: 1024px) { .pc-sidebar { display: flex; } }
 .sidebar-brand { padding: 32px 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
