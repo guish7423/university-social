@@ -12,9 +12,9 @@
     },
     "usingComponents": true
   }
-}
   ,"h5": {
     "router": {
       "base": "/university-social/"
     }
   }
+}
