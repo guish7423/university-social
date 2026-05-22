@@ -43,8 +43,8 @@ jobs:
         run: |
           pnpm install
           pnpm run build:h5
-          mkdir -p ../dist/h5
-          cp -r dist/build/h5/* ../dist/h5/ 2>/dev/null || cp -r dist/* ../dist/h5/ 2>/dev/null || true
+          mkdir -p ../dist
+          cp -r dist/build/h5/* ../dist/ 2>/dev/null || cp -r dist/* ../dist/ 2>/dev/null || true
 
       - name: Build Admin
         working-directory: admin
