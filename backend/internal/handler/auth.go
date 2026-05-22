@@ -155,6 +155,10 @@ func (h *AuthHandler) GetUser(c *gin.Context) {
 	}
 	user, err := h.repo.FindByID(userID)
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "服务器错误"})
+		return
+	}
+	if user == nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "用户不存在"})
 		return
 	}

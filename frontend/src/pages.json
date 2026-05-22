@@ -129,7 +129,6 @@
         "navigationBarTextStyle": "white"
       }
     },
-
     {
       "path": "pages/notification/index",
       "style": {
@@ -219,7 +218,6 @@
         "navigationBarTextStyle": "white"
       }
     },
-
     {
       "path": "pages/user/detail",
       "style": {
@@ -233,7 +231,6 @@
       "style": {
         "navigationBarTitleText": "添加好友"
       }
-    }
     },
     {
       "path": "pages/chat/index",
@@ -249,7 +246,8 @@
         "navigationBarTitleText": "聊天",
         "navigationBarBackgroundColor": "#C67A6A",
         "navigationBarTextStyle": "white"
-      },
+      }
+    },
     {
       "path": "pages/admin/index",
       "style": {
@@ -297,8 +295,39 @@
         "navigationBarBackgroundColor": "#1E2A3A",
         "navigationBarTextStyle": "white"
       }
+    },
+    {
+      "path": "pages/announcement/index",
+      "style": {
+        "navigationBarTitleText": "校园公告",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/campus/calendar",
+      "style": {
+        "navigationBarTitleText": "校历",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/campus/directory",
+      "style": {
+        "navigationBarTitleText": "校园黄页",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/campus/rooms",
+      "style": {
+        "navigationBarTitleText": "空教室查询",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
     }
-
   ],
   "globalStyle": {
     "navigationBarBackgroundColor": "#C67A6A",

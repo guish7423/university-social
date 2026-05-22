@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import { onLoad } from "@dcloudio/uni-app"
 import { useUserStore } from "@/store/user"
-import { getProfile } from "@/api/user"
+import { getUserInfo } from "@/api/user"
 import { getFollowing, getFollowers, getFollowCounts, checkFollow, followUser, unfollowUser } from "@/api/follow"
 
 const userStore = useUserStore()

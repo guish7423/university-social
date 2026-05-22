@@ -1,9 +1,9 @@
 import { request } from "./request"
+import type { UserInfo } from "./user"
 
 export function searchCircles(q: string) {
   return request<CircleData[]>({ url: "/circles/search", method: "GET", data: { q } })
 }
-import type { UserInfo } from "./user"
 
 export interface CircleData {
   id: number
@@ -14,6 +14,7 @@ export interface CircleData {
   creator_id: number
   member_count: number
   post_count: number
+  join_type: string
   created_at: string
   is_member: boolean
   creator?: { nickname: string; avatar: string }
@@ -39,6 +40,17 @@ export interface CirclePostData {
   created_at: string
   author: UserInfo
   is_liked: boolean
+}
+
+export interface JoinRequestData {
+  id: number
+  circle_id: number
+  user_id: number
+  status: string
+  created_at: string
+  handled_at: string | null
+  handler_id: number | null
+  user: { nickname: string; avatar: string }
 }
 
 export function listCircles(offset = 0, limit = 20) {
@@ -89,4 +101,26 @@ export function listCirclePostComments(postId: number) {
   return request<{ id: number; user_id: number; content: string; created_at: string; author: UserInfo }[]>({
     url: `/circles/posts/${postId}/comments`, method: "GET",
   })
+}
+
+export function getCircleJoinRequests(circleId: number) {
+  return request<JoinRequestData[]>({ url: `/circles/${circleId}/join-requests`, method: "GET" })
+}
+
+export function handleJoinRequest(requestId: number, action: "approve" | "reject") {
+  return request<{ message: string }>({ url: `/circles/join-requests/${requestId}/handle`, method: "POST", data: { action } })
+}
+
+export interface CircleActivityData {
+  id: number
+  circle_id: number
+  user_id: number
+  action: string
+  content: string
+  created_at: string
+  user: { nickname: string; avatar: string }
+}
+
+export function listCircleActivities(circleId: number) {
+  return request<CircleActivityData[]>({ url: `/circles/${circleId}/activities`, method: "GET" })
 }

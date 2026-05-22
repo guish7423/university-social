@@ -1,130 +1,8 @@
-<template>
-  <view class="container">
-    <view class="search-bar">
-      <u-icon name="search" size="32" color="#909399"></u-icon>
-      <input
-        v-model="query"
-        class="search-input"
-        placeholder="搜索帖子、圈子、用户..."
-        :adjust-position="false"
-        maxlength="50"
-        confirm-type="search"
-        @confirm="doSearch"
-      />
-      <text v-if="query" class="clear-btn" @click="query = ''; results = null">清除</text>
-    </view>
-
-    <view class="tabs">
-      <view
-        v-for="t in tabs" :key="t.key"
-        class="tab"
-        :class="activeTab === t.key && 'tab-active'"
-        @click="switchTab(t.key)"
-      >{{ t.label }}</view>
-    </view>
-
-    <!-- 搜索提示 -->
-    <view v-if="!query && !trendingPosts.length" class="placeholder">
-      <text class="placeholder-title">热门趋势</text>
-      <text class="placeholder-desc">搜索校园新鲜事</text>
-    </view>
-
-    <!-- 搜索结果：帖子 -->
-    <view v-if="activeTab === 'posts'" class="result-list">
-      <view v-if="loading" class="loading"><u-loading mode="flower" size="40" /></view>
-      <view v-else-if="!posts.length" class="empty">没有找到相关帖子</view>
-      <view
-        v-for="(p, i) in posts" :key="p.id"
-        class="card stagger-{{ i + 1 }}"
-        @click="goPost(p.id)"
-      >
-        <view class="card-header">
-          <u-avatar :src="p.author?.avatar" size="60" shape="circle" />
-          <view class="card-author">
-            <text class="card-name">{{ p.author?.nickname || '匿名' }}</text>
-            <text class="card-school">{{ p.school }}</text>
-          </view>
-          <text class="card-time">{{ formatTime(p.created_at) }}</text>
-        </view>
-        <text class="card-content">{{ p.content }}</text>
-        <view v-if="p.images?.length" class="card-images">
-          <image v-for="(img, j) in p.images.slice(0, 3)" :key="j" :src="img" mode="aspectFill" class="card-img" />
-        </view>
-        <view class="card-actions">
-          <text>👍 {{ p.like_count }}</text>
-          <text>💬 {{ p.comment_count }}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 搜索结果：圈子 -->
-    <view v-if="activeTab === 'circles'" class="result-list">
-      <view v-if="loading" class="loading"><u-loading mode="flower" size="40" /></view>
-      <view v-else-if="!circles.length" class="empty">没有找到相关圈子</view>
-      <view
-        v-for="c in circles" :key="c.id"
-        class="card"
-        @click="goCircle(c.id)"
-      >
-        <u-avatar :text="c.icon || c.name[0]" size="72" shape="square" />
-        <view class="card-info">
-          <text class="card-name">{{ c.name }}</text>
-          <text class="card-desc">{{ c.description || '暂无简介' }}</text>
-          <view class="card-meta">
-            <text>{{ c.member_count }} 成员 · {{ c.post_count }} 帖子</text>
-            <text v-if="c.is_member" class="member-badge">已加入</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 搜索结果：用户 -->
-    <view v-if="activeTab === 'users'" class="result-list">
-      <view v-if="loading" class="loading"><u-loading mode="flower" size="40" /></view>
-      <view v-else-if="!users.length" class="empty">没有找到相关用户</view>
-      <view v-for="u in users" :key="u.id" class="card user-card">
-        <u-avatar :src="u.avatar" size="72" shape="circle" />
-        <view class="card-info">
-          <text class="card-name">{{ u.nickname }}</text>
-          <text class="card-desc">{{ u.school || '未知学校' }}</text>
-        </view>
-        <text class="follow-btn" :class="u.is_friend && 'followed'" @click="toggleFollow(u)">
-          {{ u.is_friend ? '好友' : '加好友' }}
-        </text>
-      </view>
-    </view>
-
-    <!-- 热门帖子 -->
-    <view v-if="!query && trendingPosts.length" class="trending-section">
-      <view class="section-header">
-        <text class="section-title">🔥 今日热议</text>
-      </view>
-      <view
-        v-for="(p, i) in trendingPosts" :key="p.id"
-        class="trending-item stagger-{{ i + 1 }}"
-        @click="goPost(p.id)"
-      >
-        <text class="trending-rank">{{ i + 1 }}</text>
-        <view class="trending-body">
-          <text class="trending-content">{{ p.content }}</text>
-          <view class="trending-meta">
-            <text>👍 {{ p.like_count }}</text>
-            <text>💬 {{ p.comment_count }}</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <u-safe-bottom />
-  </view>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { searchPosts, trendingPosts, listPosts } from "@/api/post"
+import { ref, onMounted, nextTick } from "vue"
+import { searchPosts, trendingPosts, type PostData } from "@/api/post"
 import { searchCircles } from "@/api/circle"
 import { searchUsers, sendFriendRequest } from "@/api/social"
-import type { PostData } from "@/api/post"
 import type { CircleData } from "@/api/circle"
 import type { UserInfo } from "@/api/user"
 
@@ -134,7 +12,8 @@ const loading = ref(false)
 const posts = ref<PostData[]>([])
 const circles = ref<CircleData[]>([])
 const users = ref<(UserInfo & { is_friend?: boolean })[]>([])
-const trendingPosts = ref<PostData[]>([])
+const trending = ref<PostData[]>([])
+const searchInput = ref<InstanceType<typeof HTMLInputElement> | null>(null)
 
 const tabs = [
   { key: "posts", label: "帖子" },
@@ -143,14 +22,18 @@ const tabs = [
 ]
 
 onMounted(async () => {
-  try { trendingPosts.value = await trendingPosts() } catch {}
+  try { trending.value = await trendingPosts() } catch {}
+  nextTick(() => {
+    const input = document.querySelector('.search-input') as HTMLInputElement
+    if (input) input.focus()
+  })
 })
 
 async function doSearch() {
-  if (!query.value.trim()) return
+  const q = query.value.trim()
+  if (!q) return
   loading.value = true
   try {
-    const q = query.value.trim()
     if (activeTab.value === "posts") posts.value = await searchPosts(q)
     else if (activeTab.value === "circles") circles.value = await searchCircles(q)
     else if (activeTab.value === "users") users.value = await searchUsers(q)
@@ -165,6 +48,7 @@ function switchTab(key: string) {
 
 function goPost(id: number) { uni.navigateTo({ url: `/pages/post/detail?id=${id}` }) }
 function goCircle(id: number) { uni.navigateTo({ url: `/pages/circle/detail?id=${id}` }) }
+function goUser(id: number) { uni.navigateTo({ url: `/pages/user/detail?id=${id}` }) }
 
 async function toggleFollow(u: UserInfo & { is_friend?: boolean }) {
   if (u.is_friend) return
@@ -176,7 +60,8 @@ async function toggleFollow(u: UserInfo & { is_friend?: boolean }) {
 }
 
 function formatTime(t: string) {
-  const d = new Date(t); const now = new Date(); const diff = (now.getTime() - d.getTime()) / 1000
+  if (!t) return ""
+  const d = new Date(t), now = new Date(), diff = (now.getTime() - d.getTime()) / 1000
   if (diff < 60) return "刚刚"
   if (diff < 3600) return `${Math.floor(diff / 60)}分钟前`
   if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`
@@ -184,77 +69,214 @@ function formatTime(t: string) {
 }
 </script>
 
-<style scoped>
-.container { min-height: 100vh; background: $color-canvas; padding: 20rpx; }
+<template>
+  <view class="page">
+    <view class="top-bar">
+      <view class="search-box" @click.stop>
+        <u-icon name="search" size="32" color="#8E9BAB" />
+        <input
+          v-model="query"
+          class="search-input"
+          placeholder="搜索帖子、圈子、用户..."
+          :adjust-position="false"
+          maxlength="50"
+          confirm-type="search"
+          @confirm="doSearch"
+        />
+        <text v-if="query" class="clear-btn" @click="query = ''">清除</text>
+        <text class="search-btn" @click="doSearch">搜索</text>
+      </view>
+    </view>
 
-.search-bar {
+    <view class="tabs">
+      <view v-for="t in tabs" :key="t.key"
+        :class="['tab', activeTab === t.key && 'tab-active']"
+        @click="switchTab(t.key)">
+        {{ t.label }}
+      </view>
+    </view>
+
+    <scroll-view scroll-y class="scroll-area" @scrolltolower="doSearch">
+      <view v-if="loading" class="loading"><u-loading mode="flower" size="40" /></view>
+
+      <template v-else-if="query.trim()">
+        <view v-if="activeTab === 'posts'" class="result-list">
+          <view v-for="p in posts" :key="p.id"
+            class="result-card" hover-class="result-card-hover"
+            @click="goPost(p.id)">
+            <view class="card-header">
+              <u-avatar :src="p.author?.avatar" :text="p.author?.nickname?.[0] || '?'" size="56" shape="circle" />
+              <view class="card-author">
+                <text class="card-name">{{ p.author?.nickname || '匿名' }}</text>
+                <text class="card-school">{{ p.school || '' }}</text>
+              </view>
+              <text class="card-time">{{ formatTime(p.created_at) }}</text>
+            </view>
+            <text class="card-content">{{ p.content }}</text>
+            <view v-if="p.images?.length" class="card-images">
+              <image v-for="(img, j) in p.images.slice(0, 3)" :key="j" :src="img" mode="aspectFill" class="card-img" />
+            </view>
+            <view class="card-actions">
+              <u-icon name="heart" size="28" color="#B8C2CE" />
+              <text class="action-txt">{{ p.like_count || 0 }}</text>
+              <u-icon name="chat" size="28" color="#B8C2CE" />
+              <text class="action-txt">{{ p.comment_count || 0 }}</text>
+            </view>
+          </view>
+          <view v-if="posts.length === 0" class="empty">没有找到相关帖子</view>
+        </view>
+
+        <view v-if="activeTab === 'circles'" class="result-list">
+          <view v-for="c in circles" :key="c.id"
+            class="result-card row" hover-class="result-card-hover"
+            @click="goCircle(c.id)">
+            <u-avatar :text="c.name?.[0] || 'C'" size="72" shape="square" />
+            <view class="card-info">
+              <text class="card-name">{{ c.name }}</text>
+              <text class="card-desc">{{ c.description || '暂无简介' }}</text>
+              <view class="card-meta">
+                <text>{{ c.member_count }} 成员 · {{ c.post_count }} 帖子</text>
+                <text v-if="c.is_member" class="badge">已加入</text>
+              </view>
+            </view>
+          </view>
+          <view v-if="circles.length === 0" class="empty">没有找到相关圈子</view>
+        </view>
+
+        <view v-if="activeTab === 'users'" class="result-list">
+          <view v-for="u in users" :key="u.id" class="result-card row" hover-class="result-card-hover">
+            <u-avatar :src="u.avatar" :text="u.nickname?.[0] || '?'" size="72" shape="circle" @click="goUser(u.id)" />
+            <view class="card-info" @click="goUser(u.id)">
+              <text class="card-name">{{ u.nickname }}</text>
+              <text class="card-desc">{{ u.school || '未知学校' }}</text>
+            </view>
+            <text :class="['follow-btn', u.is_friend && 'followed']" @click="toggleFollow(u)">
+              {{ u.is_friend ? '好友' : '加好友' }}
+            </text>
+          </view>
+          <view v-if="users.length === 0" class="empty">没有找到相关用户</view>
+        </view>
+      </template>
+
+      <template v-else>
+        <view v-if="trending.length" class="trending-section">
+          <view class="section-header">
+            <text class="section-title">今日热议</text>
+          </view>
+          <view v-for="(p, i) in trending" :key="p.id"
+            class="trending-item" hover-class="trending-item-hover"
+            @click="goPost(p.id)">
+            <view :class="['trending-rank', i < 3 && 'top']">{{ i + 1 }}</view>
+            <view class="trending-body">
+              <text class="trending-content">{{ p.content }}</text>
+              <view class="trending-meta">
+                <u-icon name="heart" size="24" color="#B8C2CE" />
+                <text>{{ p.like_count || 0 }}</text>
+                <u-icon name="chat" size="24" color="#B8C2CE" />
+                <text>{{ p.comment_count || 0 }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view v-else class="placeholder">
+          <u-icon name="search" size="120" color="#EAE6E0" />
+          <text class="placeholder-title">输入关键词搜索</text>
+          <text class="placeholder-desc">搜索帖子、圈子或校园用户</text>
+        </view>
+      </template>
+
+      <u-safe-bottom />
+    </scroll-view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.page { min-height: 100vh; background: #F7F4F0; display: flex; flex-direction: column; }
+
+.top-bar { background: linear-gradient(135deg, #1E2A3A 0%, #2A3A4E 100%); padding: 20rpx 24rpx 24rpx; }
+.search-box {
   display: flex; align-items: center; gap: 16rpx;
-  background: $color-surface; border-radius: $rounded-full;
-  padding: 16rpx 28rpx; margin-bottom: 20rpx;
-  border: 1rpx solid $color-hairline;
+  background: rgba(255,255,255,0.12); border-radius: 40rpx;
+  padding: 0 20rpx; height: 72rpx;
 }
-.search-input { flex: 1; font-size: 28rpx; color: $ink; }
-.clear-btn { font-size: 24rpx; color: $ink-muted; }
+.search-input { flex: 1; font-size: 28rpx; color: #fff; }
+.search-input::placeholder { color: rgba(255,255,255,0.4); }
+.clear-btn { font-size: 24rpx; color: rgba(255,255,255,0.6); cursor: pointer; }
+.search-btn {
+  font-size: 26rpx; color: #C67A6A; font-weight: 600; cursor: pointer;
+  padding: 8rpx 16rpx; border-left: 1rpx solid rgba(255,255,255,0.15);
+}
 
-.tabs { display: flex; gap: 8rpx; margin-bottom: 20rpx; }
+.tabs { display: flex; gap: 8rpx; padding: 16rpx 24rpx; background: #fff; border-bottom: 1rpx solid #EAE6E0; }
 .tab {
-  flex: 1; text-align: center; padding: 16rpx 0;
-  font-size: 26rpx; color: $ink-muted;
-  border-radius: $rounded-md; background: $color-surface;
+  flex: 1; text-align: center; padding: 14rpx 0;
+  font-size: 26rpx; color: #8E9BAB; border-radius: 10rpx;
+  background: #F7F4F0; cursor: pointer;
 }
-.tab-active { color: #fff; background: linear-gradient(135deg, #C67A6A, #1E2A3A); font-weight: 600; }
+.tab-active { color: #fff; background: linear-gradient(135deg, #C67A6A, #B06454); font-weight: 600; }
 
-.placeholder { text-align: center; padding: 100rpx 0; }
-.placeholder-title { font-size: 32rpx; font-weight: 700; color: $ink; display: block; }
-.placeholder-desc { font-size: 26rpx; color: $ink-muted; margin-top: 10rpx; }
+.scroll-area { flex: 1; }
 
-.loading { text-align: center; padding: 100rpx 0; }
-.empty { text-align: center; padding: 100rpx 0; color: $ink-muted; font-size: 26rpx; }
+.loading { text-align: center; padding: 200rpx 0; }
+.empty { text-align: center; padding: 80rpx 0; color: #B8C2CE; font-size: 26rpx; }
 
-.result-list { display: flex; flex-direction: column; gap: 16rpx; }
+.result-list { padding: 20rpx 16rpx; display: flex; flex-direction: column; gap: 16rpx; }
 
-.card {
-  background: $color-surface; border-radius: $rounded-lg; padding: 24rpx;
-  border: 1rpx solid $color-hairline; transition: transform 150ms ease-out;
+.result-card {
+  background: #fff; border-radius: 14rpx; padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(30,42,58,0.04); transition: all 0.2s ease;
 }
-.card:active { transform: scale(0.98); }
+.result-card.row { display: flex; align-items: center; gap: 20rpx; }
+.result-card-hover { transform: scale(0.99); }
 
-.card-header { display: flex; align-items: center; gap: 16rpx; margin-bottom: 12rpx; }
+.card-header { display: flex; align-items: center; gap: 14rpx; margin-bottom: 12rpx; }
 .card-author { flex: 1; }
-.card-name { font-size: 26rpx; font-weight: 600; color: $ink; display: block; }
-.card-school { font-size: 22rpx; color: $ink-muted; }
-.card-time { font-size: 22rpx; color: $ink-tertiary; white-space: nowrap; }
-.card-content { font-size: 28rpx; line-height: 1.6; color: $ink; margin-bottom: 12rpx; }
-.card-images { display: flex; gap: 8rpx; margin-bottom: 12rpx; }
-.card-img { width: 200rpx; height: 200rpx; border-radius: $rounded-md; background: $color-hairline; }
-.card-actions { display: flex; gap: 24rpx; font-size: 24rpx; color: $ink-muted; padding-top: 12rpx; border-top: 1rpx solid $color-hairline; }
+.card-name { font-size: 26rpx; font-weight: 600; color: #1E2A3A; display: block; }
+.card-school { font-size: 22rpx; color: #8E9BAB; margin-top: 4rpx; display: block; }
+.card-time { font-size: 22rpx; color: #B8C2CE; white-space: nowrap; }
+.card-content { font-size: 26rpx; line-height: 1.6; color: #5C6B7E; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card-images { display: flex; gap: 8rpx; margin-top: 12rpx; }
+.card-img { flex: 1; height: 180rpx; border-radius: 10rpx; background: #E8E4DE; }
+.card-actions { display: flex; align-items: center; gap: 8rpx; margin-top: 12rpx; padding-top: 12rpx; border-top: 1rpx solid #EAE6E0; }
+.action-txt { font-size: 22rpx; color: #B8C2CE; margin-right: 24rpx; }
 
-.card-info { flex: 1; }
-.card-desc { font-size: 24rpx; color: $ink-muted; margin-top: 4rpx; display: block; }
-.card-meta { font-size: 22rpx; color: $ink-tertiary; margin-top: 8rpx; display: flex; gap: 12rpx; align-items: center; }
-.member-badge { font-size: 20rpx; color: #C67A6A; border: 1rpx solid #C67A6A; border-radius: $rounded-full; padding: 4rpx 16rpx; }
+.card-info { flex: 1; min-width: 0; }
+.card-desc { font-size: 24rpx; color: #8E9BAB; margin-top: 4rpx; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-meta { font-size: 22rpx; color: #B8C2CE; margin-top: 8rpx; display: flex; align-items: center; gap: 12rpx; }
+.badge { font-size: 20rpx; color: #C67A6A; border: 1rpx solid #C67A6A; border-radius: 20rpx; padding: 2rpx 16rpx; }
 
-.user-card { display: flex; align-items: center; gap: 20rpx; }
 .follow-btn {
   font-size: 24rpx; color: #C67A6A; border: 1rpx solid #C67A6A;
-  border-radius: $rounded-full; padding: 8rpx 24rpx; white-space: nowrap;
+  border-radius: 20rpx; padding: 8rpx 24rpx; white-space: nowrap; cursor: pointer;
 }
-.follow-btn.followed { color: $ink-muted; border-color: $color-hairline; }
+.follow-btn.followed { color: #B8C2CE; border-color: #EAE6E0; }
 
-.trending-section { margin-top: 20rpx; }
-.section-header { margin-bottom: 16rpx; }
-.section-title { font-size: 30rpx; font-weight: 700; color: $ink; }
+.trending-section { padding: 24rpx 16rpx; }
+.section-header { margin-bottom: 20rpx; }
+.section-title { font-size: 30rpx; font-weight: 700; color: #1E2A3A; }
 
 .trending-item {
-  display: flex; gap: 16rpx; padding: 20rpx 0;
-  border-bottom: 1rpx solid $color-hairline;
+  display: flex; gap: 16rpx; padding: 20rpx 0; border-bottom: 1rpx solid #EAE6E0; cursor: pointer;
+  &:last-child { border-bottom: none; }
+  transition: transform 0.2s ease;
 }
+.trending-item-hover { transform: scale(0.99); }
 .trending-rank {
-  width: 48rpx; height: 48rpx; border-radius: $rounded-md;
-  background: linear-gradient(135deg, #C67A6A, #1E2A3A); color: #fff;
-  text-align: center; line-height: 48rpx; font-size: 24rpx; font-weight: 700;
+  width: 48rpx; height: 48rpx; border-radius: 10rpx;
+  background: #EAE6E0; color: #8E9BAB;
+  text-align: center; line-height: 48rpx; font-size: 24rpx; font-weight: 700; flex-shrink: 0;
 }
-.trending-body { flex: 1; }
-.trending-content { font-size: 26rpx; color: $ink; display: block; margin-bottom: 6rpx; }
-.trending-meta { display: flex; gap: 20rpx; font-size: 22rpx; color: $ink-tertiary; }
+.trending-rank.top {
+  background: linear-gradient(135deg, #C67A6A, #B06454); color: #fff;
+}
+.trending-body { flex: 1; min-width: 0; }
+.trending-content { font-size: 26rpx; color: #5C6B7E; display: block; margin-bottom: 8rpx; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.trending-meta { display: flex; align-items: center; gap: 8rpx; font-size: 22rpx; color: #B8C2CE; }
+
+.placeholder {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 200rpx 60rpx; gap: 16rpx;
+}
+.placeholder-title { font-size: 30rpx; font-weight: 600; color: #1E2A3A; }
+.placeholder-desc { font-size: 26rpx; color: #8E9BAB; }
 </style>

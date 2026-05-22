@@ -11,6 +11,7 @@ type Circle struct {
 	CreatorID   int64     `json:"creator_id"`
 	MemberCount int       `json:"member_count"`
 	PostCount   int       `json:"post_count"`
+	JoinType    string    `json:"join_type"`
 	CreatedAt   time.Time `json:"created_at"`
 	IsMember    bool      `json:"is_member,omitempty"`
 	Creator     *User     `json:"creator,omitempty"`
@@ -43,6 +44,7 @@ type CreateCircleRequest struct {
 	Description string `json:"description"`
 	Icon        string `json:"icon"`
 	Cover       string `json:"cover"`
+	JoinType    string `json:"join_type"`
 }
 
 type CreateCirclePostRequest struct {
@@ -57,4 +59,20 @@ type CirclePostComment struct {
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
 	Author    *User     `json:"author,omitempty"`
+}
+
+type JoinRequest struct {
+	ID        int64      `json:"id"`
+	CircleID  int64      `json:"circle_id"`
+	UserID    int64      `json:"user_id"`
+	Status    string     `json:"status"`
+	CreatedAt time.Time  `json:"created_at"`
+	HandledAt *time.Time `json:"handled_at,omitempty"`
+	HandlerID *int64     `json:"handler_id,omitempty"`
+	User      *User      `json:"user,omitempty"`
+}
+
+type HandleJoinRequest struct {
+	Action  string `json:"action" binding:"required"`
+	Message string `json:"message,omitempty"`
 }

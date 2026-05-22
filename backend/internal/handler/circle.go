@@ -99,10 +99,26 @@ func (h *CircleHandler) Join(c *gin.Context) {
 		return
 	}
 
+	joinType, err := h.repo.GetJoinType(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "加入失败"})
+		return
+	}
+
+	if joinType == "approve" {
+		if err := h.repo.CreateJoinRequest(id, userID); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "申请失败"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "已发送加入申请，请等待圈主审核"})
+		return
+	}
+
 	if err := h.repo.Join(id, userID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "加入失败"})
 		return
 	}
+	h.repo.CreateActivity(id, userID, "join", "")
 	c.JSON(http.StatusOK, gin.H{"message": "加入成功"})
 }
 
@@ -158,6 +174,7 @@ func (h *CircleHandler) CreatePost(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "发帖失败"})
 		return
 	}
+	h.repo.CreateActivity(circleID, userID, "create_post", req.Content)
 	c.JSON(http.StatusCreated, gin.H{"id": id})
 }
 
@@ -257,4 +274,88 @@ func (h *CircleHandler) SearchCircles(c *gin.Context) {
 		circles = []*model.Circle{}
 	}
 	c.JSON(http.StatusOK, circles)
+}
+
+func (h *CircleHandler) ListJoinRequests(c *gin.Context) {
+	userID := c.GetInt64("user_id")
+	circleID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+
+	isAdmin, err := h.repo.IsCreatorOrAdmin(circleID, userID)
+	if err != nil || !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "无权操作"})
+		return
+	}
+
+	requests, err := h.repo.ListJoinRequests(circleID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取申请列表失败"})
+		return
+	}
+	if requests == nil {
+		requests = []*model.JoinRequest{}
+	}
+	c.JSON(http.StatusOK, requests)
+}
+
+func (h *CircleHandler) HandleJoinRequest(c *gin.Context) {
+	userID := c.GetInt64("user_id")
+	requestID, err := strconv.ParseInt(c.Param("requestId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+
+	var req model.HandleJoinRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+
+	if req.Action != "approve" && req.Action != "reject" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "操作类型错误"})
+		return
+	}
+
+	if err := h.repo.HandleJoinRequest(requestID, userID, req.Action); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "操作失败"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "操作成功"})
+}
+
+func (h *CircleHandler) MemberAvatarWall(c *gin.Context) {
+	circleID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+
+	entries, err := h.repo.MemberAvatarWall(circleID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取成员墙失败"})
+		return
+	}
+	if entries == nil {
+		entries = []*repository.AvatarWallEntry{}
+	}
+	c.JSON(http.StatusOK, entries)
+}
+
+func (h *CircleHandler) ListActivities(c *gin.Context) {
+	circleID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	activities, err := h.repo.ListActivities(circleID, 50)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取动态失败"})
+		return
+	}
+	c.JSON(http.StatusOK, activities)
 }

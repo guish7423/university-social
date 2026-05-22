@@ -163,7 +163,7 @@ function formatTime(t: string) { return t ? t.slice(0, 16).replace("T", " ") : "
 </template>
 
 <style lang="scss">
-page { background: #f5f7fa; }
+page { background: #F7F4F0; }
 .loading { text-align: center; padding: 200rpx; color: #999; }
 .container { padding-bottom: 200rpx; }
 
@@ -263,7 +263,7 @@ page { background: #f5f7fa; }
 .comment-list { display: flex; flex-direction: column; gap: 16rpx; }
 .comment-item {
   padding: 12rpx 0;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid #F7F4F0;
 }
 .comment-content { font-size: 26rpx; color: #333; display: block; }
 .comment-time { font-size: 20rpx; color: #bbb; margin-top: 4rpx; display: block; }
@@ -288,7 +288,7 @@ page { background: #f5f7fa; }
 .comment-input {
   flex: 1;
   height: 60rpx;
-  background: #f5f5f5;
+  background: #F7F4F0;
   border-radius: 30rpx;
   padding: 0 24rpx;
   font-size: 26rpx;
@@ -315,7 +315,7 @@ page { background: #f5f7fa; }
   color: #fff;
 }
 .leave {
-  background: #f5f5f5;
+  background: #F7F4F0;
   color: #666;
 }
 .delete {

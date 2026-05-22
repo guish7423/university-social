@@ -30,6 +30,48 @@ func (h *AdminHandler) Dashboard(c *gin.Context) {
 	})
 }
 
+func (h *AdminHandler) DailyStats(c *gin.Context) {
+	days := 30
+	if d := c.Query("days"); d != "" {
+		if n, err := strconv.Atoi(d); err == nil && n > 0 && n <= 365 {
+			days = n
+		}
+	}
+
+	rows, err := h.db.Query(
+		`SELECT date, dau, new_users, new_posts, new_comments, new_likes, new_circles
+		 FROM daily_stats ORDER BY date DESC LIMIT $1`, days,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取统计失败"})
+		return
+	}
+	defer rows.Close()
+
+	type DailyStat struct {
+		Date        string `json:"date"`
+		Dau         int    `json:"dau"`
+		NewUsers    int    `json:"new_users"`
+		NewPosts    int    `json:"new_posts"`
+		NewComments int    `json:"new_comments"`
+		NewLikes    int    `json:"new_likes"`
+		NewCircles  int    `json:"new_circles"`
+	}
+
+	var stats []*DailyStat
+	for rows.Next() {
+		var s DailyStat
+		if err := rows.Scan(&s.Date, &s.Dau, &s.NewUsers, &s.NewPosts, &s.NewComments, &s.NewLikes, &s.NewCircles); err != nil {
+			continue
+		}
+		stats = append(stats, &s)
+	}
+	if stats == nil {
+		stats = []*DailyStat{}
+	}
+	c.JSON(http.StatusOK, stats)
+}
+
 func (h *AdminHandler) ListUsers(c *gin.Context) {
 	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))

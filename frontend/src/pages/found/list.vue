@@ -1,159 +1,140 @@
-<template>
-	<view class="page">
-		<u-tabs :list="tabs" :scrollable="false" :current="currentTab" @change="onTabChange" active-color="#5b6ef5"></u-tabs>
+<script setup lang="ts">
+import { ref, onMounted } from "vue"
+import { listLostItems, searchLostItems, type LostItem } from "@/api/found"
 
-		<view class="toolbar">
-			<u-search placeholder="搜索物品" v-model="keyword" @search="onSearch" @clear="onClear" :show-action="false" bg-color="#f5f5f5" shape="round"></u-search>
-		</view>
+const items = ref<LostItem[]>([])
+const loading = ref(true)
+const keyword = ref("")
 
-		<view class="list" v-if="items.length">
-			<view class="card" v-for="(item, idx) in items" :key="item.id" :class="'stagger-' + ((idx % 8) + 1)" @click="goDetail(item.id)">
-				<view class="card-top">
-					<view class="tag" :class="item.category === 'lost' ? 'tag-lost' : 'tag-found'">
-						{{ item.category === 'lost' ? '寻物' : '招领' }}
-					</view>
-					<view class="status-tag" v-if="item.status !== 0">
-						{{ item.status === 1 ? '已解决' : '已关闭' }}
-					</view>
-				</view>
-				<text class="card-title">{{ item.title }}</text>
-				<text class="card-desc" v-if="item.description">{{ item.description }}</text>
-				<view class="card-meta">
-					<text class="meta-item" v-if="item.item_type">📦 {{ item.item_type }}</text>
-					<text class="meta-item" v-if="item.location">📍 {{ item.location }}</text>
-				</view>
-				<view class="card-footer">
-					<text class="author">{{ item.nickname || '匿名' }}</text>
-					<text class="time">{{ formatTime(item.created_at) }}</text>
-				</view>
-			</view>
-		</view>
+const categories = ["全部", "校园卡", "电子产品", "书籍", "钥匙", "衣物", "其他"]
+const activeCat = ref(0)
 
-		<u-empty text="暂无内容" mode="list" v-else-if="!loading"></u-empty>
-		<u-loadmore :status="loadStatus" v-if="items.length" />
+onMounted(async () => {
+  try { items.value = await listLostItems() } catch {}
+  loading.value = false
+})
 
-		<u-toast ref="toast"></u-toast>
-	</view>
-</template>
-
-<script>
-export default {
-	data() {
-		return {
-			tabs: [{ name: '全部' }, { name: '寻物' }, { name: '招领' }],
-			currentTab: 0,
-			keyword: '',
-			items: [],
-			loading: false,
-			loadStatus: 'loadmore',
-			offset: 0,
-			limit: 20,
-			hasMore: true,
-		}
-	},
-	onLoad() {
-		this.loadItems()
-	},
-	onReachBottom() {
-		if (this.hasMore) this.loadItems()
-	},
-	methods: {
-		getCategory() {
-			if (this.currentTab === 0) return ''
-			return this.currentTab === 1 ? 'lost' : 'found'
-		},
-		async loadItems() {
-			if (this.loading || !this.hasMore) return
-			this.loading = true
-			this.loadStatus = 'loading'
-			try {
-				const { data } = this.keyword
-					? await searchLostItems(this.keyword, this.getCategory(), this.offset, this.limit)
-					: await listLostItems(this.getCategory(), -1, this.offset, this.limit)
-				if (this.offset === 0) this.items = data
-				else this.items = [...this.items, ...data]
-				this.hasMore = data.length >= this.limit
-				this.offset += data.length
-				this.loadStatus = this.hasMore ? 'loadmore' : 'nomore'
-			} catch (e) {
-				this.loadStatus = 'loadmore'
-			} finally {
-				this.loading = false
-			}
-		},
-		onTabChange(idx) {
-			this.currentTab = idx
-			this.offset = 0
-			this.hasMore = true
-			this.items = []
-			this.loadItems()
-		},
-		onSearch() {
-			this.offset = 0
-			this.hasMore = true
-			this.items = []
-			this.loadItems()
-		},
-		onClear() {
-			this.keyword = ''
-			this.onSearch()
-		},
-		goDetail(id) { uni.navigateTo({ url: '/pages/found/detail?id=' + id }) },
-		formatTime(t) {
-			if (!t) return ''
-			const d = new Date(t)
-			return `${d.getMonth()+1}.${d.getDate()}`
-		}
-	}
+async function onSearch() {
+  loading.value = true
+  try {
+    items.value = keyword.value
+      ? await searchLostItems(keyword.value)
+      : await listLostItems()
+  } catch {}
+  loading.value = false
 }
+
+function goDetail(id: number) { uni.navigateTo({ url: `/pages/found/detail?id=${id}` }) }
+function goCreate() { uni.navigateTo({ url: "/pages/found/create" }) }
+function goFound() { uni.switchTab({ url: "/pages/found/list" }) }
 </script>
 
+<template>
+  <view class="page">
+    <view class="header">
+      <view class="header-bg" />
+      <view class="header-content">
+        <text class="header-title">失物招领</text>
+        <text class="header-sub">捡到物品 · 寻找失主</text>
+      </view>
+    </view>
+
+    <view class="search-bar">
+      <u-icon name="search" size="32" color="#B8C2CE" />
+      <input v-model="keyword" class="search-input" placeholder="搜索失物" @confirm="onSearch" />
+      <text v-if="keyword" class="search-clear" @click="keyword = ''; onSearch()">清除</text>
+    </view>
+
+    <view v-if="loading" class="loading-state">
+      <u-loading mode="flower" size="48" />
+    </view>
+
+    <view v-else-if="items.length" class="list">
+      <view v-for="(item, i) in items" :key="item.id"
+        class="card" hover-class="card-hover"
+        :style="{ animationDelay: (i * 0.06) + 's' }"
+        @click="goDetail(item.id)">
+        <view class="card-left">
+          <image :src="item.images?.[0] || '/static/default.png'" mode="aspectFill" class="card-img" />
+        </view>
+        <view class="card-right">
+          <text class="card-title">{{ item.title }}</text>
+          <text class="card-desc">{{ item.description?.slice(0, 50) }}{{ item.description?.length > 50 ? '...' : '' }}</text>
+          <view class="card-meta">
+            <text class="card-location">{{ item.location || '未知位置' }}</text>
+            <u-icon name="arrow-right" size="24" color="#B8C2CE" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view v-else class="empty-state">
+      <u-icon name="empty-address" size="160" color="#EAE6E0" />
+      <text class="empty-title">还没有失物信息</text>
+      <text class="empty-desc">来发布第一条信息吧</text>
+      <u-button type="primary" shape="circle" class="empty-btn" @click="goCreate">发布信息</u-button>
+    </view>
+  </view>
+</template>
+
 <style lang="scss" scoped>
-.page {
-	min-height: 100vh;
-	padding-bottom: 120rpx;
+page { background: #F7F4F0; }
+.page { min-height: 100vh; }
+
+.header {
+  position: relative; padding: 80rpx 32rpx 60rpx; overflow: hidden;
 }
-.toolbar { padding: 20rpx 24rpx; }
-.list { padding: 0 24rpx; }
+.header-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #1E2A3A, #2A3A4E);
+  z-index: 0;
+  &::after {
+    content: ''; position: absolute; top: -200rpx; right: -80rpx;
+    width: 400rpx; height: 400rpx; border-radius: 50%;
+    background: radial-gradient(circle, rgba(198,122,106,0.15), transparent 70%);
+  }
+}
+.header-content { position: relative; z-index: 1; }
+.header-title { font-size: 36rpx; font-weight: 700; color: #fff; display: block; }
+.header-sub { font-size: 24rpx; color: rgba(255,255,255,0.5); margin-top: 8rpx; }
+
+.search-bar {
+  display: flex; align-items: center; gap: 12rpx;
+  background: #fff; border-radius: 40rpx; padding: 16rpx 28rpx;
+  margin: -24rpx 24rpx 24rpx; position: relative; z-index: 2;
+  box-shadow: 0 4rpx 16rpx rgba(30,42,58,0.06);
+}
+.search-input { flex: 1; font-size: 26rpx; color: #1E2A3A; }
+.search-clear { font-size: 22rpx; color: #C67A6A; cursor: pointer; }
+
+.loading-state { display: flex; justify-content: center; padding: 200rpx 0; }
+
+.list { padding: 0 20rpx 40rpx; display: flex; flex-direction: column; gap: 16rpx; }
+
 .card {
-	background: #fff;
-	border-radius: 22rpx;
-	padding: 28rpx;
-	margin-bottom: 20rpx;
-	box-shadow: 0 2rpx 12rpx rgba(0,0,0,.06);
-	animation: fadeInUp .5s ease-out both;
+  background: #fff; border-radius: 16rpx; padding: 20rpx;
+  display: flex; gap: 16rpx; cursor: pointer; animation: fadeInUp 0.4s both;
+  box-shadow: 0 2rpx 10rpx rgba(30,42,58,0.04);
 }
-.card-top {
-	flex-direction: row; align-items: center; margin-bottom: 12rpx;
+.card-hover { transform: scale(0.98); }
+.card-left { width: 180rpx; height: 180rpx; flex-shrink: 0; }
+.card-img { width: 100%; height: 100%; border-radius: 12rpx; background: #E8E4DE; }
+.card-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8rpx; }
+.card-title { font-size: 28rpx; font-weight: 600; color: #1E2A3A; }
+.card-desc { font-size: 24rpx; color: #8E9BAB; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+.card-location { font-size: 22rpx; color: #B8C2CE; }
+
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; gap: 16rpx;
+  padding: 200rpx 60rpx;
 }
-.tag {
-	font-size: 22rpx; padding: 4rpx 16rpx; border-radius: 8rpx; font-weight: 500;
-	margin-right: 12rpx;
-}
-.tag-lost { background: #fff1f0; color: #ff4d4f; }
-.tag-found { background: #f0fff4; color: #52c41a; }
-.status-tag {
-	font-size: 22rpx; color: #999; background: #f5f5f5;
-	padding: 4rpx 14rpx; border-radius: 8rpx;
-}
-.card-title { font-size: 30rpx; font-weight: 600; color: #1a1a2e; display: block; margin-bottom: 8rpx; }
-.card-desc { font-size: 26rpx; color: #666; display: block; margin-bottom: 12rpx; line-height: 1.5; }
-.card-meta { flex-direction: row; margin-bottom: 16rpx; gap: 20rpx; }
-.meta-item { font-size: 24rpx; color: #888; }
-.card-footer { flex-direction: row; justify-content: space-between; align-items: center; }
-.author { font-size: 24rpx; color: #5b6ef5; }
-.time { font-size: 22rpx; color: #bbb; }
+.empty-title { font-size: 30rpx; font-weight: 600; color: #1E2A3A; }
+.empty-desc { font-size: 26rpx; color: #8E9BAB; }
+.empty-btn { margin-top: 16rpx; }
 
 @keyframes fadeInUp {
-	from { opacity: 0; transform: translateY(20rpx); }
-	to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(20rpx); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.stagger-1 { animation-delay: 0ms; }
-.stagger-2 { animation-delay: 60ms; }
-.stagger-3 { animation-delay: 120ms; }
-.stagger-4 { animation-delay: 180ms; }
-.stagger-5 { animation-delay: 240ms; }
-.stagger-6 { animation-delay: 300ms; }
-.stagger-7 { animation-delay: 360ms; }
-.stagger-8 { animation-delay: 420ms; }
 </style>

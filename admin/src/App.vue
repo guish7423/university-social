@@ -19,6 +19,22 @@
           <el-icon><Collection /></el-icon>
           <span>圈子管理</span>
         </el-menu-item>
+        <el-menu-item index="/banners">
+          <el-icon><Picture /></el-icon>
+          <span>Banner管理</span>
+        </el-menu-item>
+        <el-menu-item index="/announcements">
+          <el-icon><Message /></el-icon>
+          <span>公告管理</span>
+        </el-menu-item>
+        <el-menu-item index="/sensitive-words">
+          <el-icon><Warning /></el-icon>
+          <span>敏感词管理</span>
+        </el-menu-item>
+        <el-menu-item index="/reports">
+          <el-icon><ChatDotSquare /></el-icon>
+          <span>举报管理</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>

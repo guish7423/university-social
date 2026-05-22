@@ -11,6 +11,7 @@ type Post struct {
 	School        string    `json:"school"`
 	LikeCount     int       `json:"like_count"`
 	CommentCount  int       `json:"comment_count"`
+	IsFeatured    bool      `json:"is_featured"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
 	Author        *User     `json:"author,omitempty"`

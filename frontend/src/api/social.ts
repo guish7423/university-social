@@ -1,5 +1,6 @@
 import { request } from "./request"
 import type { UserInfo } from "./user"
+import type { PostData } from "./post"
 
 export interface SearchUserResult extends UserInfo {
   friend_status: string
@@ -49,4 +50,35 @@ export function listNotifications() {
 
 export function markNotificationsRead() {
   return request<{ message: string }>({ url: "/notifications/read", method: "POST" })
+}
+
+
+export interface BannerData {
+  id: number
+  title: string
+  image_url: string
+  link_url: string
+  sort_order: number
+  is_active: boolean
+  created_at: string
+}
+
+export interface AnnouncementData {
+  id: number
+  title: string
+  content: string
+  is_active: boolean
+  created_at: string
+}
+
+export function listBanners() {
+  return request<BannerData[]>({ url: "/banners", method: "GET" })
+}
+
+export function listAnnouncements() {
+  return request<AnnouncementData[]>({ url: "/announcements", method: "GET" })
+}
+
+export function listFeaturedPosts(offset = 0, limit = 20) {
+  return request<PostData[]>({ url: "/posts/featured", method: "GET", data: { offset, limit } })
 }

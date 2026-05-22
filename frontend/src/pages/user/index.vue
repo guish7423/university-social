@@ -24,8 +24,8 @@ const menuGroups = [
   { title: "其他", items: [
     { icon: "⌕", label: "校园认证", path: "/pages/verification/index" },
     { icon: "★", label: "积分排行", path: "/pages/points/index" },
-  ]},
     { icon: "⚙", label: "后台管理", path: "/pages/admin/index" },
+  ]},
 ]
 
 onMounted(async () => {

@@ -59,6 +59,10 @@ const conditionLabels: Record<string, string> = {
 </script>
 
 <template>
+  <view class="top-bar">
+    <text class="top-bar-title">二手市场</text>
+    <u-icon name="search" size="36" color="#fff" />
+  </view>
   <view class="container">
     <view class="category-bar">
       <scroll-view scroll-x class="cat-scroll">
@@ -277,6 +281,16 @@ page { background: #f5f7fa; }
   from { opacity: 0; transform: translateY(20rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.top-bar {
+  background: linear-gradient(135deg, #1E2A3A 0%, #2A3A4E 100%);
+  padding: 20rpx 32rpx; display: flex; align-items: center; justify-content: space-between;
+  height: 88rpx;
+}
+.top-bar-title { font-size: 32rpx; font-weight: 700; color: #fff; }
+.empty-title { font-size: 30rpx; font-weight: 600; color: #1E2A3A; margin-top: 12rpx; }
+.empty-desc { font-size: 26rpx; color: #8E9BAB; margin-top: 8rpx; }
+.empty-btn { margin-top: 16rpx; }
 
 @media (min-width: 1024px) {
 .product-grid {

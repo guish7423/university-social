@@ -44,6 +44,9 @@ function formatTime(t: string) {
 </script>
 
 <template>
+  <view class="top-bar">
+    <text class="top-bar-title">校园活动</text>
+  </view>
   <view class="container">
     <view class="type-bar">
       <scroll-view scroll-x class="type-scroll">
@@ -210,6 +213,13 @@ page { background: #f5f7fa; }
   from { opacity: 0; transform: translateY(20rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.top-bar {
+  background: linear-gradient(135deg, #1E2A3A 0%, #2A3A4E 100%);
+  padding: 20rpx 32rpx; display: flex; align-items: center; justify-content: space-between;
+  height: 88rpx;
+}
+.top-bar-title { font-size: 32rpx; font-weight: 700; color: #fff; }
 
 @media (min-width: 1024px) {
 .activity-list {

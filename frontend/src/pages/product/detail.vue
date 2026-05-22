@@ -177,7 +177,7 @@ function originalPrice() {
 </template>
 
 <style lang="scss">
-page { background: #f5f7fa; }
+page { background: #F7F4F0; }
 .container { height: 100vh; display: flex; flex-direction: column; }
 
 .loading { text-align: center; padding: 100rpx 0; color: #999; }
@@ -192,7 +192,7 @@ page { background: #f5f7fa; }
   background: #fff;
   margin-bottom: 16rpx;
 }
-.price { font-size: 48rpx; font-weight: 700; color: #e74c3c; }
+.price { font-size: 48rpx; font-weight: 700; color: #C67A6A; }
 .original-price {
   font-size: 24rpx;
   color: #999;
@@ -260,7 +260,7 @@ page { background: #f5f7fa; }
   flex: 1;
   display: flex;
   align-items: center;
-  background: #f5f5f5;
+  background: #F7F4F0;
   border-radius: 40rpx;
   padding: 0 24rpx;
 }

@@ -10,9 +10,10 @@ import (
 	"github.com/guish/university-social/internal/handler"
 	"github.com/guish/university-social/internal/middleware"
 	"github.com/guish/university-social/internal/repository"
+	"github.com/guish/university-social/internal/cache"
 )
 
-func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
+func Setup(db *sql.DB, cfg *config.Config, rdb *cache.Cache) *gin.Engine {
 	userRepo := repository.NewUserRepository(db)
 	postRepo := repository.NewPostRepository(db)
 	sensitiveRepo := repository.NewSensitiveWordRepository(db)
@@ -51,9 +52,13 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 
 	lostItemRepo := repository.NewLostItemRepository(db)
 	lostItemHandler := handler.NewLostItemHandler(lostItemRepo)
+	bannerRepo := repository.NewBannerRepository(db)
+	bannerHandler := handler.NewBannerHandler(bannerRepo, rdb)
 	msgRepo := repository.NewMessageRepository(db)
 	chatHandler := handler.NewChatHandler(msgRepo)
 	wsHub := handler.NewWsHub(msgRepo)
+	campusRepo := repository.NewCampusRepository(db)
+	campusHandler := handler.NewCampusHandler(campusRepo)
 
 
 	r := gin.Default()
@@ -102,6 +107,10 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 			auth.POST("/circles/posts/:pid/comments", circleHandler.CreateComment)
 			auth.GET("/circles/posts/:pid/comments", circleHandler.ListComments)
 			auth.POST("/upload", uploadHandler.UploadImage)
+			auth.GET("/circles/:id/join-requests", circleHandler.ListJoinRequests)
+			auth.POST("/circles/join-requests/:requestId/handle", circleHandler.HandleJoinRequest)
+			auth.GET("/circles/:id/avatar-wall", circleHandler.MemberAvatarWall)
+		auth.GET("/circles/:id/activities", circleHandler.ListActivities)
 			auth.GET("/whispers", whisperHandler.List)
 			auth.POST("/whispers", whisperHandler.Create)
 			auth.GET("/whispers/:id", whisperHandler.Get)
@@ -118,6 +127,9 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 			auth.GET("/verification/status", verifHandler.Status)
 			auth.POST("/follow/:id", followHandler.Follow)
 			auth.DELETE("/follow/:id", followHandler.Unfollow)
+			auth.GET("/banners", bannerHandler.ListActive)
+			auth.GET("/announcements", bannerHandler.ListAnnouncementsActive)
+			auth.GET("/posts/featured", bannerHandler.ListFeatured)
 			auth.GET("/follow/:id/check", followHandler.IsFollowing)
 			auth.GET("/users/:id/following", followHandler.Following)
 			auth.GET("/users/:id/followers", followHandler.Followers)
@@ -179,6 +191,10 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 			auth.GET("/chat/messages/:userId", chatHandler.Messages)
 			auth.POST("/chat/read/:userId", chatHandler.MarkRead)
 			auth.GET("/chat/unread", chatHandler.UnreadCount)
+			auth.GET("/campus/calendar", campusHandler.ListCalendar)
+			auth.GET("/campus/directory", campusHandler.ListDirectory)
+			auth.GET("/campus/rooms", campusHandler.ListEmptyRooms)
+			auth.GET("/campus/rooms/buildings", campusHandler.ListBuildings)
 		}
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthRequired(cfg))
@@ -197,7 +213,18 @@ func Setup(db *sql.DB, cfg *config.Config) *gin.Engine {
 			admin.PUT("/reports/:id/dismiss", reportHandler.Dismiss)
 			admin.GET("/sensitive-words", sensitiveHandler.List)
 			admin.POST("/sensitive-words", sensitiveHandler.Add)
+			admin.GET("/banners", bannerHandler.AdminList)
+			admin.POST("/banners", bannerHandler.Create)
+			admin.DELETE("/banners/:id", bannerHandler.Delete)
+			admin.PUT("/banners/:id/toggle", bannerHandler.ToggleActive)
+			admin.GET("/announcements", bannerHandler.AdminListAnnouncements)
+			admin.POST("/announcements", bannerHandler.CreateAnnouncement)
+			admin.DELETE("/announcements/:id", bannerHandler.DeleteAnnouncement)
+			admin.PUT("/announcements/:id/toggle", bannerHandler.ToggleAnnouncementActive)
+			admin.POST("/posts/:id/feature", bannerHandler.SetFeatured)
+			admin.POST("/posts/:id/unfeature", bannerHandler.UnsetFeatured)
 			admin.DELETE("/sensitive-words/:word", sensitiveHandler.Remove)
+			admin.GET("/stats/daily", adminHandler.DailyStats)
 		}
 	}
 
