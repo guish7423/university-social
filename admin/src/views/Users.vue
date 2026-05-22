@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <dv-border-box-13 class="view-wrapper">
     <el-table :data="users" border stripe v-loading="loading" style="width: 100%">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="nickname" label="昵称" min-width="120" />
@@ -25,7 +25,7 @@
         </template>
       </el-table-column>
     </el-table>
-  </div>
+  </dv-border-box-13>
 </template>
 
 <script setup lang="ts">
@@ -71,3 +71,7 @@ async function handleUnban(id: number) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.view-wrapper { padding: 8px; }
+</style>

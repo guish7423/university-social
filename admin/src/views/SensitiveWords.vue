@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <dv-border-box-13 class="view-wrapper">
     <div class="page-header">
       <el-button type="primary" @click="showAdd = true">添加敏感词</el-button>
     </div>
@@ -23,7 +23,7 @@
         <el-button type="primary" @click="handleAdd" :loading="adding">确认</el-button>
       </template>
     </el-dialog>
-  </div>
+  </dv-border-box-13>
 </template>
 
 <script setup lang="ts">
@@ -68,3 +68,8 @@ async function handleRemove(word: string) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.view-wrapper { padding: 8px; }
+.page-header { margin-bottom: 12px; }
+</style>

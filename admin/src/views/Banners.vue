@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <dv-border-box-13 class="view-wrapper">
     <div class="page-header">
       <el-button type="primary" @click="showCreate = true">添加 Banner</el-button>
     </div>
@@ -27,7 +27,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <el-dialog v-model="showCreate" title="添加 Banner" width="500">
       <el-form :model="form" label-width="80px">
         <el-form-item label="标题"><el-input v-model="form.title" /></el-form-item>
@@ -40,7 +39,7 @@
         <el-button type="primary" @click="handleCreate" :loading="creating">确认</el-button>
       </template>
     </el-dialog>
-  </div>
+  </dv-border-box-13>
 </template>
 
 <script setup lang="ts">
@@ -98,3 +97,8 @@ async function handleDelete(id: number) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.view-wrapper { padding: 8px; }
+.page-header { margin-bottom: 12px; }
+</style>

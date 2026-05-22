@@ -55,7 +55,7 @@ function formatPrice(p: number) { return "¥" + p.toFixed(2) }
       <view class="stat-item"><text class="stat-num">{{ total - active }}</text><text class="stat-label">已出</text></view>
     </view>
 
-    <view v-if="loading" class="loading">加载中...</view>
+    <view v-if="loading" class="loading-wrap"><u-loading mode="flower" size="48"></u-loading></view>
 
     <view v-else class="product-list">
       <view v-for="item in products" :key="item.id" class="product-item" @click="goDetail(item.id)">

@@ -95,7 +95,7 @@ const conditionLabels: Record<string, string> = {
       </scroll-view>
     </view>
 
-    <view v-if="loading" class="loading"><text>加载中...</text></view>
+    <u-loading v-if="loading" mode="flower" size="48" />
 
     <view v-else class="product-grid">
       <view

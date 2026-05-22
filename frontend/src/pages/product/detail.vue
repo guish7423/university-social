@@ -78,7 +78,7 @@ function originalPrice() {
 
 <template>
   <view class="container">
-    <view v-if="loading" class="loading"><text>加载中...</text></view>
+    <view v-if="loading" class="loading-wrap"><u-loading mode="flower" size="48"></u-loading></view>
 
     <template v-else-if="product">
       <scroll-view scroll-y class="detail-scroll">

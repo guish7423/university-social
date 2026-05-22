@@ -18,11 +18,10 @@
 - 使用 `openspec_ff` 生成脚手架
 - 使用 `openspec_apply + Ralph Loop` 批量执行任务
 
-#### 🔄 @zcy2nn/agent-forge — 多智能体编排
-- 复杂任务（4步以上）自动派发给专业智能体
-- 内置 Agent 角色：Orchestrator（项目经理）、Workflow（流程专家）、Researcher（研究员）
+#### 🤖 oh-my-opencode — 多智能体编排
+- 复杂任务（4步以上）自动派发给专业智能体（Sisyphus + 13 专家）
+- 12 预配置 Agent + 8 类别 fallback 机制
 - 使用 `@agent-name <task>` 指派任务
-
 #### 🧵 @spoons-and-mirrors/subtask2 — 条件驱动任务链
 - 为每个任务设定明确的"完成条件"
 - 智能体自动重复执行并自检，直到满足条件
@@ -42,12 +41,12 @@
 
 | 任务类型 | 工作流 | 触发条件 |
 |---------|--------|---------|
-| 新功能开发 | owflow: propose → spec → plan → implement | 功能请求 |
-| Bug 修复 | subtask2 条件驱动循环 | 错误报告 |
-| 批量任务 (>3项) | agent-forge 多智能体派发 | 复杂需求 |
-| 跨会话工作 | @op1/workspace plan 恢复 | 新会话 |
-| 大规模并行 | opencode-hive 蜂群 | 大量独立模块 |
-| 任何任务 | 先检视是否适用上述工作流 | 任何请求 |
+|| 新功能开发 | owflow / oh-my-opencode 编排 | 功能请求 |
+|| Bug 修复 | subtask2 条件驱动循环 | 错误报告 |
+|| 批量任务 (>3项) | oh-my-opencode Sisyphus 派发 | 复杂需求 |
+|| 跨会话工作 | @op1/workspace plan 恢复 | 新会话 |
+|| 大规模并行 | opencode-hive 蜂群 / Ralph Loop | 大量独立模块 |
+|| 任何任务 | 先检视是否适用上述工作流 | 任何请求 |
 
 ### 完成标准 (Definition of Done)
 1. 所有计划任务执行完成
@@ -67,3 +66,14 @@
 2. `@op1/workspace` 保存计划状态
 3. `elf add-rule type=learning` 保存学习经验
 4. 重复 >2 次的模式 → `type=golden_rule` 固化
+
+## 插件冲突注意事项
+
+| 插件 | 状态 | 说明 |
+|------|------|------|
+| `owflow` | ✅ 已修复 | Node v25.9.0（原 v22），.owflow/ 已初始化 |
+| `@zcy2nn/agent-forge` | ❌ 已移除 | 与 oh-my-opencode 同源冲突（fork 关系）|
+| `oh-my-opencode` | ✅ 主编排引擎 | 12 Agent + 8 品类 fallback |
+| `@spoons-and-mirrors/subtask2` | ✅ 可用 | 条件驱动任务链 |
+| `@op1/workspace` | ✅ 可用 | 跨会话计划管理 |
+| `opencode-hive` | ✅ 可用 | 蜂群编码（初始化 .hive/）|

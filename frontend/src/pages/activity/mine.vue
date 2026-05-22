@@ -57,7 +57,7 @@ function formatTime(t: string) { return t ? t.slice(0, 16).replace("T", " ") : "
       </view>
     </view>
 
-    <view v-if="loading" class="loading">加载中...</view>
+    <u-loading v-if="loading" mode="flower" size="48" />
 
     <view v-else class="activity-list">
       <view

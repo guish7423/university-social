@@ -81,7 +81,7 @@ function formatTime(t: string) { return t ? t.slice(0, 16).replace("T", " ") : "
 </script>
 
 <template>
-  <view v-if="loading" class="loading">加载中...</view>
+  <u-loading v-if="loading" mode="flower" size="48" />
 
   <view v-else-if="activity" class="container">
     <view class="header-card">

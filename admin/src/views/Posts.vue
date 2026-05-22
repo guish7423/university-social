@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <dv-border-box-13 class="view-wrapper">
     <div class="page-header">
       <el-button :type="showFeatured ? 'default' : 'primary'" @click="showFeatured = false; load()">全部</el-button>
       <el-button :type="showFeatured ? 'primary' : 'default'" @click="showFeatured = true; loadFeatured()">精华帖</el-button>
@@ -20,7 +20,7 @@
         </template>
       </el-table-column>
     </el-table>
-  </div>
+  </dv-border-box-13>
 </template>
 
 <script setup lang="ts">
@@ -79,3 +79,8 @@ async function handleDelete(id: number) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.view-wrapper { padding: 8px; }
+.page-header { margin-bottom: 12px; }
+</style>

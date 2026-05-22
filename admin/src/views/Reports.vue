@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <dv-border-box-13 class="view-wrapper">
     <div class="page-header">
       <el-radio-group v-model="statusFilter" @change="load">
         <el-radio-button value="">全部</el-radio-button>
@@ -32,7 +32,7 @@
         </template>
       </el-table-column>
     </el-table>
-  </div>
+  </dv-border-box-13>
 </template>
 
 <script setup lang="ts">
@@ -89,3 +89,8 @@ async function handleDismiss(id: number) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.view-wrapper { padding: 8px; }
+.page-header { margin-bottom: 12px; }
+</style>

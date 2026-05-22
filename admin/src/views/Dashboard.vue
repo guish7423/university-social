@@ -1,80 +1,78 @@
 <template>
-  <div>
-    <el-row :gutter="20" class="stat-row">
-      <el-col :span="6">
-        <el-card shadow="hover">
-          <div class="stat-card">
+  <div class="dashboard">
+    <div class="db-container">
+      <div class="stat-grid">
+        <dv-border-box-1 class="stat-item">
+          <div class="stat-inner">
             <div class="stat-icon" style="background:#e6f7ff;color:#1890ff"><User /></div>
             <div>
-              <div class="stat-value">{{ summary.user_count }}</div>
+              <dv-digital-flop :config="numberConfig(summary.user_count)" style="width:120px;height:40px" />
               <div class="stat-label">用户总数</div>
             </div>
           </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover">
-          <div class="stat-card">
+        </dv-border-box-1>
+        <dv-border-box-1 class="stat-item">
+          <div class="stat-inner">
             <div class="stat-icon" style="background:#fff7e6;color:#fa8c16"><Document /></div>
             <div>
-              <div class="stat-value">{{ summary.post_count }}</div>
+              <dv-digital-flop :config="numberConfig(summary.post_count)" style="width:120px;height:40px" />
               <div class="stat-label">帖子总数</div>
             </div>
           </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover">
-          <div class="stat-card">
+        </dv-border-box-1>
+        <dv-border-box-1 class="stat-item">
+          <div class="stat-inner">
             <div class="stat-icon" style="background:#f6ffed;color:#52c41a"><Collection /></div>
             <div>
-              <div class="stat-value">{{ summary.circle_count }}</div>
+              <dv-digital-flop :config="numberConfig(summary.circle_count)" style="width:120px;height:40px" />
               <div class="stat-label">圈子总数</div>
             </div>
           </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover">
-          <div class="stat-card">
+        </dv-border-box-1>
+        <dv-border-box-1 class="stat-item">
+          <div class="stat-inner">
             <div class="stat-icon" style="background:#fff0f6;color:#eb2f96"><ChatDotRound /></div>
             <div>
-              <div class="stat-value">{{ weeklyActive || '-' }}</div>
+              <dv-digital-flop :config="numberConfig(weeklyActive)" style="width:120px;height:40px" />
               <div class="stat-label">本周活跃</div>
             </div>
           </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </dv-border-box-1>
+      </div>
 
-    <el-card class="chart-card">
-      <template #header>
+      <dv-border-box-8 class="chart-wrapper">
+        <template #title>
+          <span class="chart-title">📊 30日趋势</span>
+        </template>
         <div class="chart-header">
-          <span>📊 30日趋势 (3D柱状图)</span>
           <el-radio-group v-model="chartMetric" size="small">
             <el-radio-button value="dau">DAU</el-radio-button>
             <el-radio-button value="new_users">新用户</el-radio-button>
             <el-radio-button value="new_posts">新帖子</el-radio-button>
           </el-radio-group>
         </div>
-      </template>
-      <div ref="chartRef" style="height:400px" />
-    </el-card>
+        <div ref="chartRef" style="height:380px" />
+      </dv-border-box-8>
 
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-card class="chart-card">
-          <template #header><span>📈 增量对比 (3D折线)</span></template>
-          <div ref="lineChartRef" style="height:320px" />
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card class="chart-card">
-          <template #header><span>🍩 DAU 占比</span></template>
-          <div ref="pieChartRef" style="height:320px" />
-        </el-card>
-      </el-col>
-    </el-row>
+      <el-row :gutter="20" class="chart-row">
+        <el-col :span="12">
+          <dv-border-box-12 class="chart-wrapper">
+            <template #title>
+              <span class="chart-title">📈 增量对比</span>
+            </template>
+            <div ref="lineChartRef" style="height:300px" />
+          </dv-border-box-12>
+        </el-col>
+        <el-col :span="12">
+          <dv-border-box-12 class="chart-wrapper">
+            <template #title>
+              <span class="chart-title">🍩 DAU 占比</span>
+            </template>
+            <div ref="pieChartRef" style="height:300px" />
+          </dv-border-box-12>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -97,6 +95,14 @@ const metricData = computed(() => dailyData.value.map(d => d[chartMetric.value] 
 let barChart: echarts.ECharts | null = null
 let lineChart: echarts.ECharts | null = null
 let pieChart: echarts.ECharts | null = null
+
+function numberConfig(val: number) {
+  return {
+    number: [val],
+    content: "{nt}",
+    style: { fontSize: 28, fontWeight: 700, fill: "#303133" },
+  }
+}
 
 onMounted(async () => {
   try {
@@ -149,7 +155,7 @@ function updateBarChart() {
     yAxis: { type: "value" },
     series: [{
       type: "bar",
-      data: metricData.value.map((v: number, i: number) => ({
+      data: metricData.value.map((v: number) => ({
         value: v,
         itemStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -177,25 +183,19 @@ function initLineChart() {
     yAxis: { type: "value" },
     series: [
       {
-        name: "新用户",
-        type: "line",
-        smooth: true,
+        name: "新用户", type: "line", smooth: true,
         data: dailyData.value.map(d => d.new_users).reverse(),
         itemStyle: { color: "#409eff" },
         areaStyle: { color: "rgba(64,158,255,0.1)" },
       },
       {
-        name: "新帖子",
-        type: "line",
-        smooth: true,
+        name: "新帖子", type: "line", smooth: true,
         data: dailyData.value.map(d => d.new_posts).reverse(),
         itemStyle: { color: "#67c23a" },
         areaStyle: { color: "rgba(103,194,58,0.1)" },
       },
       {
-        name: "新评论",
-        type: "line",
-        smooth: true,
+        name: "新评论", type: "line", smooth: true,
         data: dailyData.value.map(d => d.new_comments).reverse(),
         itemStyle: { color: "#e6a23c" },
         areaStyle: { color: "rgba(230,162,60,0.1)" },
@@ -228,14 +228,38 @@ function initPieChart() {
 </script>
 
 <style scoped>
-.stat-row { margin-bottom: 20px; }
-.stat-card { display: flex; align-items: center; gap: 16px; }
+.dashboard {
+  min-height: 100vh;
+  background: #f0f2f5;
+}
+.db-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.stat-item {
+  padding: 4px;
+}
+.stat-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+}
 .stat-icon {
   width: 48px; height: 48px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center; font-size: 24px;
 }
 .stat-value { font-size: 28px; font-weight: 700; color: #303133; }
 .stat-label { font-size: 13px; color: #909399; margin-top: 4px; }
-.chart-card { margin-bottom: 20px; }
-.chart-header { display: flex; justify-content: space-between; align-items: center; }
+.chart-title { font-size: 16px; font-weight: 600; }
+.chart-wrapper { margin-bottom: 20px; padding: 4px; }
+.chart-header { display: flex; justify-content: flex-end; padding: 8px 16px 0; }
+.chart-row { margin-top: 0 !important; }
 </style>

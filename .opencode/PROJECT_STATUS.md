@@ -71,33 +71,43 @@ last_updated: 2026-05-22
 
 参考 ~/sucai_0/08.txt，完成了以下自主性提升：
 
-### 安装的自主性插件
-- **owflow@0.1.5** — 规格驱动开发工作流（propose→spec→plan→implement→verify→archive）
-- **@zcy2nn/agent-forge@1.2.6** — 多智能体编排（Orchestrator/Workflow/Researcher）
-- **@spoons-and-mirrors/subtask2@0.3.5** — 条件驱动任务链（自动重复执行+自检）
-- **@op1/workspace@0.5.9** — 跨会话持久计划管理（plan+notepad）
-- **opencode-hive@1.4.8** — 蜂群编码（大规模并行任务）
+### 安全安装的插件 ✅
+- **owflow@0.1.5** — 规格驱动开发工作流（需 Node ^25，已手动初始化 .owflow/）
+- **@spoons-and-mirrors/subtask2@0.3.5** — 条件驱动任务链
+- **@op1/workspace@0.5.9** — 跨会话持久计划管理
+- **opencode-hive@1.4.8** — 蜂群编码（已初始化 .hive/）
 
-### 更新配置
-- AGENTS.md 重写为自主开发工作流
-- opencode.json 新增5个插件声明
-- package.json 新增5个依赖并 npm install
-## 技术决策
-- **前后端分离**: uni-app H5 + Gin REST API
-- **认证**: JWT token（dev 环境 bypass WeChat）
-- **存储**: PostgreSQL 本地，文件系统 uploads/
-- **开发**: WSL2 环境，后端 :8081，Vite :5173
-- **UI 框架**: uView Pro 0.6.2
-- **树洞匿名策略**: pickCodename(userID*31 + whisperID*7) % poolSize 保证帖内一致、帖间变化
+### 冲突修复 🛠️
+- **@zcy2nn/agent-forge@1.2.6 移除** — 经诊断发现其为 oh-my-opencode 的 fork（同一同源），
+  两者同时运行会导致钩子冲突和功能异常。保留已深度配置的 oh-my-opencode。
 
-- **前后端分离**: uni-app H5 + Gin REST API
-- **认证**: JWT token（dev 环境 bypass WeChat）
-- **存储**: PostgreSQL 本地，文件系统 uploads/
-- **开发**: WSL2 环境，后端 :8081，Vite :5173
-- **UI 框架**: uView Pro 0.6.2
-- **自主工作流**: owflow + agent-forge + subtask2 + workspace + hive（参考 08.txt）
+### 最终插件架构
+```
+oh-my-opencode  (主编排) + owflow (规格驱动) + subtask2 (条件链)
+        + workspace (跨会话) + hive (蜂群) + Ralph Loop (迭代)
+```
+| 组件 | 技术栈 |
+|------|--------|
+| **前端** | uni-app + Vue 3 + uView Pro + Vite |
+| **后端** | Go/Gin + PostgreSQL + Redis |
+| **认证** | JWT token (dev bypass WeChat) |
+| **Admin** | Vue 3 + Element Plus + DataV (@kjgl77/datav-vue3) |
+| **开发环境** | WSL2, Backend :8081, Vite :5173 |
+| **部署** | Docker Compose + Nginx + CI (3-job parallel) |
+| **自主工作流** | oh-my-opencode + owflow + subtask2 + workspace + hive |
 
 ## 已知问题
 
 - 图片上传的绝对路径需在前端拼接 base URL
 - Redis 已安装本地，但未用于业务缓存（仅 graphiti 插件热层）
+
+## Ralph Loop 优化记录 (2026-05-22)
+
+### 已完成的优化 ✅
+|- DataV 装饰边框集成：Dashboard (dv-border-box-1, dv-digital-flop), App.vue (sidebar/header 边框), 6 个表格页 (dv-border-box-13)
+|- Bug 修复：square/index.vue 重复 refreshing 行, admin/index.vue 作用域错误 (u→p) 和重复 onMounted 代码
+|- Loading 状态增强：admin/index.vue Promise.all 并行加载, friend/index.vue 重复行移除+loading, chat/index.vue loading 状态, product/list.vue u-loading 组件化
+|- 构建验证：frontend + admin 均通过，backend test 通过
+|- 自主工作流：Node v25 升级, 4 插件安装, agent-forge 冲突移除
+|- Admin SPA 登录页缺失 (低优先级, 开发模式 JWT 正常)
+

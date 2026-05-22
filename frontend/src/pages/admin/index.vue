@@ -7,13 +7,22 @@ const recentUsers = ref<any[]>([])
 const recentPosts = ref<any[]>([])
 const recentReports = ref<any[]>([])
 
+const loading = ref(true)
+
 onMounted(async () => {
   try {
-    stats.value = await getDashboard()
+    const [s, u, p, r] = await Promise.all([
+      getDashboard(),
+      listUsers(0, 5),
+      listPosts(0, 5),
+      listReports('pending', 0, 5)
+    ])
+    stats.value = s
+    recentUsers.value = u || []
+    recentPosts.value = p || []
+    recentReports.value = r || []
   } catch {}
-  try { recentUsers.value = await listUsers(0, 5) } catch {}
-  try { recentPosts.value = await listPosts(0, 5) } catch {}
-  try { recentReports.value = await listReports("pending", 0, 5) } catch {}
+  loading.value = false
 })
 </script>
 
@@ -68,7 +77,7 @@ onMounted(async () => {
       <view class="list">
         <view v-for="p in recentPosts" :key="p.id" class="list-item">
           <view class="list-item-body">
-            <text class="list-item-title">{{ u.nickname }}</text>
+            <text class="list-item-title">{{ p.author?.nickname || '#' + p.user_id }}</text>
             <text class="list-item-desc">{{ p.content?.slice(0,60) }}</text>
           </view>
         </view>
