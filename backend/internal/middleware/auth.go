@@ -14,6 +14,9 @@ func AuthRequired(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		auth := c.GetHeader("Authorization")
 		if auth == "" || !strings.HasPrefix(auth, "Bearer ") {
+			auth = "Bearer " + c.Query("token")
+		}
+		if auth == "Bearer " {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
 			return
 		}

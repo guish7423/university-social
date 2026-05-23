@@ -22,7 +22,7 @@ const tabs = [
 ]
 
 onMounted(async () => {
-  try { trending.value = await trendingPosts() } catch {}
+  try { trending.value = await trendingPosts() } catch (e) { console.error(e) }
   nextTick(() => {
     const input = document.querySelector('.search-input') as HTMLInputElement
     if (input) input.focus()

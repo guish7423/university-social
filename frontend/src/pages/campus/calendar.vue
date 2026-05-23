@@ -21,7 +21,7 @@ onMounted(async () => {
       const d = new Date(events.value[0].event_date)
       currentMonth.value = `${d.getFullYear()}年${d.getMonth() + 1}月`
     }
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 

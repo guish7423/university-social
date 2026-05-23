@@ -300,7 +300,7 @@ async function toggleLike(p: CirclePostData) {
     const res = await toggleCirclePostLike(p.id)
     p.is_liked = res.liked
     p.like_count += res.liked ? 1 : -1
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 function showComments(p: CirclePostData) {
@@ -313,7 +313,7 @@ function showComments(p: CirclePostData) {
 async function loadComments(postId: number) {
   try {
     comments.value = await listCirclePostComments(postId)
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 async function handleCreateComment() {

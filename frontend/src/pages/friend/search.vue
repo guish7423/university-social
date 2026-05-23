@@ -13,7 +13,7 @@ async function handleSearch() {
   loading.value = true
   try {
     results.value = await searchUsers(query.value)
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 

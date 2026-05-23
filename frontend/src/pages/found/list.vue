@@ -10,7 +10,7 @@ const categories = ["全部", "校园卡", "电子产品", "书籍", "钥匙", "
 const activeCat = ref(0)
 
 onMounted(async () => {
-  try { items.value = await listLostItems() } catch {}
+  try { items.value = await listLostItems() } catch (e) { console.error(e) }
   loading.value = false
 })
 
@@ -20,7 +20,7 @@ async function onSearch() {
     items.value = keyword.value
       ? await searchLostItems(keyword.value)
       : await listLostItems()
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 

@@ -64,7 +64,7 @@ async function sendComment() {
     await createProductComment(product.value.id, commentText.value.trim())
     commentText.value = ""
     comments.value = await listProductComments(product.value.id)
-  } catch {}
+  } catch (e) { console.error(e) }
   sending.value = false
 }
 

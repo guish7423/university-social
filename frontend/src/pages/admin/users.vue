@@ -12,7 +12,7 @@ async function load() {
     const data = await listUsers(offset.value)
     if (data.length < 50) hasMore.value = false
     users.value = offset.value === 0 ? data : [...users.value, ...data]
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 

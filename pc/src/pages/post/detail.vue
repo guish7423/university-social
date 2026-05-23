@@ -1,25 +1,27 @@
 <template>
-  <div v-if="loading" class="loading-wrap"><el-skeleton :rows="8" animated /></div>
+  <SkeletonCard v-if="loading" variant="detail" />
   <div v-else-if="!post" class="empty-state"><el-empty description="动态不存在" /></div>
   <div v-else class="detail-page">
     <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn">返回</el-button>
 
     <div class="post-detail">
       <div class="post-header">
-        <el-avatar :size="40" :src="post.author?.avatar" />
+        <el-avatar :size="40" :src="post.author?.avatar" @click="$router.push('/user/' + post.user_id)" style="cursor:pointer" />
         <div class="post-author-info">
-          <span class="name">{{ post.author?.nickname || '匿名' }}</span>
-          <span class="time">{{ formatTime(post.created_at) }}</span>
+          <span class="name" @click="$router.push('/user/' + post.user_id)">{{ post.author?.nickname || '匿名' }}</span>
+          <span class="meta">
+            <span class="time">{{ formatTime(post.created_at) }}</span>
+            <span v-if="post.school" class="school">· {{ post.school }}</span>
+          </span>
         </div>
-        <el-button v-if="post.user_id === userStore.userId" text type="danger" :icon="Delete" @click="handleDelete" size="small">
-          删除
-        </el-button>
+        <el-button v-if="post.user_id === userStore.userId" text type="danger" :icon="Delete" @click="handleDelete" size="small">删除</el-button>
       </div>
 
+      <p v-if="post.title" class="post-title">{{ post.title }}</p>
       <p class="post-content">{{ post.content }}</p>
 
       <div v-if="post.images?.length" class="post-images">
-        <img v-for="(img, i) in post.images" :key="i" :src="img" />
+        <img v-for="(img, i) in post.images" :key="i" :src="img" @click="lightboxIndex = i" :class="{ single: post.images.length === 1 }" />
       </div>
 
       <div class="post-actions">
@@ -33,23 +35,45 @@
     <div class="comments-section">
       <h3>评论 ({{ post.comment_count }})</h3>
       <div class="comment-input">
-        <el-input v-model="commentText" placeholder="写下你的评论..." size="large" @keyup.enter="handleComment" />
+        <el-input
+          v-model="commentText"
+          :placeholder="replyTo ? '回复 @' + replyTo.author?.nickname + '...' : '写下你的评论...'"
+          size="large"
+          @keyup.enter="handleComment"
+        >
+          <template v-if="replyTo" #prefix>
+            <el-tag closable size="small" @close="replyTo = null" style="margin-right:4px">回复 @{{ replyTo.author?.nickname }}</el-tag>
+          </template>
+        </el-input>
         <el-button type="primary" @click="handleComment" :disabled="!commentText.trim()">发送</el-button>
       </div>
 
-      <div v-if="commentsLoading" class="loading-wrap"><el-skeleton :rows="3" animated /></div>
-      <div v-else-if="!comments.length" class="empty-state"><el-empty description="暂无评论" /></div>
+      <SkeletonCard v-if="commentsLoading" variant="post-card" :rows="3" />
+      <div v-else-if="!comments.length" class="empty-state"><el-empty description="暂无评论，来抢沙发吧" :image-size="80" /></div>
       <div v-else class="comment-list">
         <div v-for="c in comments" :key="c.id" class="comment-item">
-          <el-avatar :size="28" :src="c.author?.avatar" />
+          <el-avatar :size="28" :src="c.author?.avatar" @click="$router.push('/user/' + c.user_id)" style="cursor:pointer" />
           <div class="comment-body">
-            <span class="comment-author">{{ c.author?.nickname || '匿名' }}</span>
+            <span class="comment-author" @click="$router.push('/user/' + c.user_id)">{{ c.author?.nickname || '匿名' }}</span>
             <p>{{ c.content }}</p>
-            <span class="comment-time">{{ formatTime(c.created_at) }}</span>
+            <div class="comment-footer">
+              <span class="comment-time">{{ formatTime(c.created_at) }}</span>
+              <span class="comment-reply" @click="startReply(c)">回复</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <Teleport to="body">
+      <div v-if="lightboxIndex !== null" class="lightbox-overlay" @click="lightboxIndex = null">
+        <img :src="post?.images?.[lightboxIndex!]" class="lightbox-img" @click.stop />
+        <div class="lightbox-nav">
+          <span v-if="lightboxIndex! > 0" @click.stop="lightboxIndex!--" class="nav-btn">‹</span>
+          <span v-if="lightboxIndex! < (post?.images?.length || 1) - 1" @click.stop="lightboxIndex!++" class="nav-btn">›</span>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -59,11 +83,12 @@ import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user"
 import { getPost, deletePost, listComments, createComment, toggleLike } from "@/api/post"
 import type { PostData, CommentData } from "@/api/post"
+import SkeletonCard from "@/components/SkeletonCard.vue"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import "dayjs/locale/zh-cn"
 import { ArrowLeft } from "@element-plus/icons-vue"
-import { ElMessageBox } from "element-plus"
+import { ElMessageBox, ElMessage } from "element-plus"
 import { Delete } from "@element-plus/icons-vue"
 
 dayjs.extend(relativeTime)
@@ -78,6 +103,8 @@ const comments = ref<CommentData[]>([])
 const loading = ref(true)
 const commentsLoading = ref(true)
 const commentText = ref("")
+const replyTo = ref<CommentData | null>(null)
+const lightboxIndex = ref<number | null>(null)
 
 function formatTime(t: string) {
   const d = dayjs(t)
@@ -97,98 +124,132 @@ async function handleLike() {
 async function handleDelete() {
   if (!post.value) return
   try {
+    await ElMessageBox.confirm("确定删除这条动态吗？此操作不可撤销。", "确认删除", {
+      confirmButtonText: "删除", cancelButtonText: "取消", type: "warning",
+    })
     await deletePost(post.value.id)
-      await ElMessageBox.confirm("确定删除这条动态吗？", "确认", {
-        confirmButtonText: "删除",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
+    ElMessage.success("已删除")
     router.push("/square")
-  } catch { /* handled by interceptor */ }
+  } catch { /* cancelled or error */ }
+}
+
+function startReply(comment: CommentData) {
+  replyTo.value = comment
+  commentText.value = ""
 }
 
 async function handleComment() {
   if (!commentText.value.trim() || !post.value) return
+  const text = replyTo.value
+    ? "回复 @" + replyTo.value.author?.nickname + "：" + commentText.value.trim()
+    : commentText.value.trim()
   try {
-    await createComment(post.value.id, commentText.value.trim())
+    await createComment(post.value.id, text)
     commentText.value = ""
+    replyTo.value = null
     const newComments = await listComments(post.value.id)
     comments.value = newComments
     if (post.value) post.value.comment_count = newComments.length
+    ElMessage.success("评论成功")
   } catch { /* handled by interceptor */ }
 }
 
 onMounted(async () => {
   const id = Number(route.params.id)
-  try {
-    post.value = await getPost(id)
-  } catch { /* handled by interceptor */ } finally { loading.value = false }
+  try { post.value = await getPost(id) }
+  catch { /* handled by interceptor */ }
+  finally { loading.value = false }
 
-  try {
-    comments.value = await listComments(id)
-  } catch { /* handled by interceptor */ } finally { commentsLoading.value = false }
+  try { comments.value = await listComments(id) }
+  catch { /* handled by interceptor */ }
+  finally { commentsLoading.value = false }
 })
 </script>
 
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-.detail-page { max-width: 680px; }
+.detail-page { max-width: 680px; margin: 0 auto; }
 
-.back-btn { margin-bottom: 16px; }
+.back-btn { margin-bottom: $space-4; }
 
 .post-detail {
-  background: $bg-card; border: 1px solid $border-color;
-  border-radius: $radius-md; padding: 20px; margin-bottom: 20px;
+  background: $bg-card; border: 1px solid $border-default;
+  border-radius: $radius-md; padding: $space-6; margin-bottom: $space-5;
 
   .post-header {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
-    .post-author-info {
-      flex: 1;
-      .name { font-size: 15px; font-weight: 600; }
-      .time { font-size: 12px; color: $text-muted; margin-left: 8px; }
+    display: flex; align-items: center; gap: $space-3; margin-bottom: $space-4;
+    .post-author-info { flex: 1;
+      .name { font-size: $text-base; font-weight: 600; cursor: pointer;
+        &:hover { color: $brand-primary; }
+      }
+      .meta { display: block; font-size: $text-xs; color: $text-muted; margin-top: 2px; }
     }
   }
 
-  .post-content {
-    font-size: 15px; line-height: 1.8; white-space: pre-wrap; margin-bottom: 14px;
-  }
+  .post-title { font-size: $text-xl; font-weight: 700; margin-bottom: $space-3; line-height: 1.4; }
+  .post-content { font-size: $text-base; line-height: 1.8; white-space: pre-wrap; margin-bottom: $space-4; color: $text-primary; }
 
   .post-images {
-    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
-    img { width: 120px; height: 120px; object-fit: cover; border-radius: $radius-sm; }
+    display: flex; flex-wrap: wrap; gap: $space-2; margin-bottom: $space-4;
+    img { width: 120px; height: 120px; object-fit: cover; border-radius: $radius-sm; cursor: zoom-in;
+      transition: opacity $duration-fast;
+      &:hover { opacity: 0.85; }
+      &.single { max-width: 300px; width: auto; aspect-ratio: auto; max-height: 300px; }
+    }
   }
 
   .post-actions {
-    display: flex; gap: 24px; padding-top: 14px; border-top: 1px solid $border-color;
+    display: flex; gap: $space-6; padding-top: $space-4; border-top: 1px solid $border-default;
     .action {
-      display: flex; align-items: center; gap: 4px; font-size: 14px;
-      color: $text-secondary; cursor: pointer;
-      &.active { color: $primary; }
-      &:hover { color: $primary; }
+      display: flex; align-items: center; gap: $space-1; font-size: $text-sm;
+      color: $text-secondary; cursor: pointer; transition: color $duration-fast;
+      &.active, &:hover { color: $brand-primary; }
     }
   }
 }
 
 .comments-section {
-  h3 { font-size: 16px; font-weight: 600; margin-bottom: 14px; }
+  h3 { font-size: $text-base; font-weight: 600; margin-bottom: $space-4; }
 }
 
 .comment-input {
-  display: flex; gap: 10px; margin-bottom: 16px;
+  display: flex; gap: $space-3; margin-bottom: $space-4;
+  :deep(.el-input__wrapper) { background: $bg-card; }
 }
 
-.comment-list { margin-top: 16px; }
+.comment-list { margin-top: $space-4; }
 
 .comment-item {
-  display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid $border-color;
-  .comment-body {
-    flex: 1;
-    .comment-author { font-size: 13px; font-weight: 600; }
-    p { font-size: 14px; line-height: 1.6; margin: 4px 0; }
-    .comment-time { font-size: 12px; color: $text-muted; }
+  display: flex; gap: $space-3; padding: $space-4 0; border-bottom: 1px solid $border-default;
+  &:last-child { border-bottom: none; }
+
+  .comment-body { flex: 1;
+    .comment-author { font-size: $text-sm; font-weight: 600; cursor: pointer;
+      &:hover { color: $brand-primary; }
+    }
+    p { font-size: $text-sm; line-height: 1.6; margin: $space-1 0; color: $text-primary; }
+    .comment-footer { display: flex; align-items: center; gap: $space-3; }
+    .comment-time { font-size: $text-xs; color: $text-muted; }
+    .comment-reply { font-size: $text-xs; color: $brand-primary; cursor: pointer;
+      &:hover { text-decoration: underline; }
+    }
   }
 }
 
-.loading-wrap, .empty-state { padding: 40px 0; }
+.empty-state { padding: $space-12 0; }
+</style>
+
+<style lang="scss">
+.lightbox-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
+  .lightbox-img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 4px; }
+}
+.lightbox-nav {
+  position: absolute; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; pointer-events: none; top: 50%; transform: translateY(-50%);
+  .nav-btn { pointer-events: auto; font-size: 48px; color: #fff; cursor: pointer; opacity: 0.6; transition: opacity 150ms; user-select: none;
+    &:hover { opacity: 1; }
+  }
+}
 </style>

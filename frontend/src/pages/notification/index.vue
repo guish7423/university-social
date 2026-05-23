@@ -12,7 +12,7 @@ async function load() {
     notes.value = await listNotifications()
     unreadCount.value = notes.value.filter((n) => !n.is_read).length
     if (unreadCount.value > 0) markNotificationsRead()
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 function formatTime(t: string) {

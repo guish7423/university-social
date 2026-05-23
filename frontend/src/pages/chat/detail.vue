@@ -44,7 +44,7 @@ onLoad((opts: any) => {
     if (parts.length === 3) {
       try {
         myId.value = JSON.parse(atob(parts[1])).user_id
-      } catch {}
+      } catch (e) { console.error(e) }
     }
   }
   loadMessages()

@@ -25,20 +25,20 @@ onLoad((opts: any) => {
 async function loadUser() {
   try {
     user.value = await getUserInfo(userId.value)
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 async function loadCounts() {
   try {
     counts.value = await getFollowCounts(userId.value)
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 async function checkFollowing() {
   try {
     const res = await checkFollow(userId.value)
     isFollowing.value = res.is_following
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 async function toggleFollow() {
@@ -52,7 +52,7 @@ async function toggleFollow() {
       isFollowing.value = true
       counts.value.followers++
     }
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 function goChat() {

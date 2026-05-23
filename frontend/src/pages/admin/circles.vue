@@ -12,7 +12,7 @@ async function load() {
     const data = await listCircles(offset.value)
     if (data.length < 50) hasMore.value = false
     circles.value = offset.value === 0 ? data : [...circles.value, ...data]
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 

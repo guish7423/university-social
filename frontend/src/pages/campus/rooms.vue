@@ -23,7 +23,7 @@ onMounted(async () => {
     buildings.value = await listBuildings()
     if (buildings.value.length) selectedBuilding.value = buildings.value[0]
     await search()
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 

@@ -8,7 +8,7 @@ const loading = ref(true)
 onMounted(async () => {
   try {
     announcements.value = await listAnnouncements()
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 

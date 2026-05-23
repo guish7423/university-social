@@ -24,9 +24,9 @@ async function loadFollowers(userId: number) {
       try {
         const res = await checkFollow(u.id)
         followState.value[u.id] = res.is_following
-      } catch {}
+      } catch (e) { console.error(e) }
     }
-  } catch {}
+  } catch (e) { console.error(e) }
 }
   loading.value = false
 
@@ -39,7 +39,7 @@ async function toggleFollow(userId: number) {
       await followUser(userId)
       followState.value[userId] = true
     }
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 function goUser(id: number) {

@@ -1,12 +1,10 @@
 <template>
   <div v-if="loading" class="loading-wrap">
-    <el-skeleton :rows="rows" animated :loading="true">
-      <template v-slot:template>
-        <div v-for="i in rows" :key="i" class="skeleton-row">
-          <el-skeleton-item variant="text" :style="{ width: (80 - i * 8) + '%' }" />
-        </div>
-      </template>
-    </el-skeleton>
+    <SkeletonCard
+      v-for="i in (rows || 3)" :key="i"
+      :variant="skeletonVariant"
+      :has-images="skeletonImages"
+    />
   </div>
   <div v-else-if="!data && empty" class="empty-container">
     <slot name="empty">
@@ -23,28 +21,32 @@
 </template>
 
 <script setup lang="ts">
+import SkeletonCard from "./SkeletonCard.vue"
+
 interface EmptyConfig {
   description?: string
   action?: { label: string; handler: () => void }
 }
 
-defineProps<{
+withDefaults(defineProps<{
   loading: boolean
   data?: any
   rows?: number
+  skeletonVariant?: 'post-card' | 'circle-card' | 'user-card' | 'detail'
+  skeletonImages?: boolean
   empty?: EmptyConfig
-}>()
+}>(), {
+  rows: 3,
+  skeletonVariant: 'post-card',
+  skeletonImages: false,
+})
 </script>
 
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
 .loading-wrap {
-  padding: $space-6 0;
-}
-
-.skeleton-row {
-  margin-bottom: $space-4;
+  padding: $space-2 0;
 }
 
 .empty-container {

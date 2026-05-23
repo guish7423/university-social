@@ -24,7 +24,7 @@ const filtered = computed(() => {
 })
 
 onMounted(async () => {
-  try { entries.value = await listDirectory() } catch {}
+  try { entries.value = await listDirectory() } catch (e) { console.error(e) }
   loading.value = false
 })
 

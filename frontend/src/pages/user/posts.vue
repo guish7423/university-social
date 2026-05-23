@@ -13,7 +13,7 @@ async function fetchPosts() {
   loading.value = true
   try {
     posts.value = await userPosts(userStore.id || 0)
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 

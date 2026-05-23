@@ -42,7 +42,7 @@
 
       <dv-border-box-8 class="chart-wrapper">
         <template #title>
-          <span class="chart-title">📊 30日趋势</span>
+          <span class="chart-title">30日趋势</span>
         </template>
         <div class="chart-header">
           <el-radio-group v-model="chartMetric" size="small">
@@ -58,7 +58,7 @@
         <el-col :span="12">
           <dv-border-box-12 class="chart-wrapper">
             <template #title>
-              <span class="chart-title">📈 增量对比</span>
+              <span class="chart-title">增量对比</span>
             </template>
             <div ref="lineChartRef" style="height:300px" />
           </dv-border-box-12>
@@ -66,7 +66,7 @@
         <el-col :span="12">
           <dv-border-box-12 class="chart-wrapper">
             <template #title>
-              <span class="chart-title">🍩 DAU 占比</span>
+              <span class="chart-title">DAU 占比</span>
             </template>
             <div ref="pieChartRef" style="height:300px" />
           </dv-border-box-12>

@@ -21,7 +21,7 @@ onMounted(async () => {
     recentUsers.value = u || []
     recentPosts.value = p || []
     recentReports.value = r || []
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 </script>

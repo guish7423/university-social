@@ -9,7 +9,7 @@ const submitting = ref(false)
 const imageFiles = ref<string[]>([])
 
 async function loadTopics() {
-  try { topics.value = await listTopics() } catch {}
+  try { topics.value = await listTopics() } catch (e) { console.error(e) }
 }
 loadTopics()
 
@@ -21,7 +21,7 @@ async function chooseImage() {
   try {
     const res = await uni.chooseImage({ count: 9 - imageFiles.value.length })
     imageFiles.value = [...imageFiles.value, ...res.tempFilePaths]
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 function removeImage(index: number) {

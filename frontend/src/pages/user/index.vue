@@ -33,7 +33,7 @@ onMounted(async () => {
     try {
       const info = await getProfile()
       userStore.setUserInfo(info)
-    } catch {}
+    } catch (e) { console.error(e) }
   }
   loading.value = false
 })

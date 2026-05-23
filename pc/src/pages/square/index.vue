@@ -14,10 +14,7 @@
       </el-radio-group>
     </div>
 
-    <LoadingWrapper :loading="loading && !posts.length" :empty="{}">
-      <template #loading>
-        <div class="loading-area"><el-skeleton :rows="5" animated /></div>
-      </template>
+    <LoadingWrapper :loading="loading && !posts.length" :data="posts.length" :empty="{}" skeleton-variant="post-card" skeleton-images>
 
       <template #empty>
         <div class="empty-state">

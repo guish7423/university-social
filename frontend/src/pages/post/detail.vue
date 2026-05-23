@@ -28,15 +28,15 @@ async function loadPost(id: number) {
   try {
     post.value = await getPost(id)
     if (post.value?.author?.id) checkFollowState(post.value.author.id)
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 async function checkFollowState(userId: number) {
-  try { isFollowingAuthor.value = (await checkFollow(userId)).is_following } catch {}
+  try { isFollowingAuthor.value = (await checkFollow(userId)).is_following } catch (e) { console.error(e) }
 }
 
 async function loadComments(id: number) {
-  try { comments.value = await listComments(id) } catch {}
+  try { comments.value = await listComments(id) } catch (e) { console.error(e) }
 }
 
 async function handleComment() {
@@ -47,7 +47,7 @@ async function handleComment() {
     commentText.value = ""
     if (post.value) post.value.comment_count++
     loadComments(postId.value)
-  } catch {}
+  } catch (e) { console.error(e) }
   submitting.value = false
 }
 
@@ -69,7 +69,7 @@ async function toggleFollowAuthor() {
       await followUser(post.value.author.id)
       isFollowingAuthor.value = true
     }
-  } catch {}
+  } catch (e) { console.error(e) }
   followLoading.value = false
 }
 

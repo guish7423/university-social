@@ -44,7 +44,7 @@ try {
     const route = (pages[pages.length - 1] as any).$page?.fullPath
     if (route) activePath.value = route
   }
-} catch {}
+} catch (e) { console.error(e) }
 
 const navItems = [
   { icon: "◈", label: "动态广场", path: "/pages/square/index", tab: true },

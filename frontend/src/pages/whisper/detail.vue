@@ -26,13 +26,13 @@ onMounted(() => {
 async function loadWhisper(id: number) {
   try {
     whisper.value = await getWhisper(id)
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 async function loadComments(id: number) {
   try {
     comments.value = await listWhisperComments(id)
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 async function handleLike() {
@@ -50,7 +50,7 @@ async function submitComment() {
     commentText.value = ""
     comments.value = await listWhisperComments(whisper.value.id)
     uni.showToast({ title: "评论成功", icon: "success" })
-  } catch {}
+  } catch (e) { console.error(e) }
   submitting.value = false
 }
 

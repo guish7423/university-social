@@ -13,7 +13,7 @@ async function load() {
     const data = await listReports(statusFilter.value, offset.value)
     if (data.length < 20) hasMore.value = false
     reports.value = offset.value === 0 ? data : [...reports.value, ...data]
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 

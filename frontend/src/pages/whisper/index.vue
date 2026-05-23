@@ -26,7 +26,7 @@ onMounted(async () => {
     const [w, s] = await Promise.all([listWhispers(), whisperSummary()])
     whispers.value = w
     summary.value = s
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 
@@ -74,7 +74,7 @@ async function submitWhisper() {
     formContent.value = ""
     const w = await listWhispers()
     whispers.value = w
-  } catch {}
+  } catch (e) { console.error(e) }
   creating.value = false
 }
 </script>

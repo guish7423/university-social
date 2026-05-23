@@ -4,6 +4,7 @@ import path from "path"
 
 export default defineConfig({
   plugins: [vue()],
+  base: process.env.VITE_BASE ? process.env.VITE_BASE : '/',
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -13,8 +14,9 @@ export default defineConfig({
     port: 5174,
     proxy: {
       "/api": {
-        target: "http://localhost:8081",
+        target: "http://localhost:8080",
         changeOrigin: true,
+        ws: true,
       },
     },
   },

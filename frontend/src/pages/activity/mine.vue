@@ -13,7 +13,7 @@ onMounted(async () => {
     const res = await myActivities()
     created.value = res.created
     joined.value = res.joined
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 

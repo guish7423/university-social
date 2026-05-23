@@ -12,7 +12,7 @@ async function load() {
     const data = await listPosts(offset.value)
     if (data.length < 50) hasMore.value = false
     posts.value = offset.value === 0 ? data : [...posts.value, ...data]
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 

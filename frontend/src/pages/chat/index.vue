@@ -1,7 +1,9 @@
 <template>
   <view class="chat-list">
-    <view v-if="convs.length === 0" class="empty">
-      <text class="empty-text">暂无对话</text>
+    <view v-if="convs.length === 0" class="empty-state">
+      <text class="empty-title">暂无对话</text>
+      <text class="empty-desc">去广场发现有趣的人，开始聊天吧</text>
+      <u-button type="primary" shape="circle" class="empty-btn" @click="uni.navigateTo({ url: '/pages/square/index' })">去广场逛逛</u-button>
     </view>
     <view v-for="c in convs" :key="c.other_user_id" class="conv-item" @click="goChat(c.other_user_id, c.other_nickname)">
       <image class="avatar" :src="c.other_avatar || '/static/default-avatar.png'" />
@@ -52,9 +54,11 @@ function formatTime(t: string) {
 </script>
 
 <style scoped>
-.chat-list { min-height: 100vh; background: #F7F4F0; }
-.empty { display: flex; justify-content: center; padding-top: 120rpx; }
-.empty-text { color: #8E9BAB; font-size: 28rpx; }
+.empty-state { display: flex; flex-direction: column; align-items: center; padding: 120rpx 0; gap: 16rpx; }
+.empty-title { font-size: 30rpx; font-weight: 600; color: #1E2A3A; }
+.empty-desc { font-size: 26rpx; color: #8E9BAB; }
+.empty-btn { margin-top: 8rpx; }
+
 .conv-item { display: flex; padding: 24rpx 30rpx; background: #fff; border-bottom: 1rpx solid #eee; align-items: center; }
 .conv-item:active { background: #f5f5f5; }
 .avatar { width: 88rpx; height: 88rpx; border-radius: 50%; margin-right: 24rpx; flex-shrink: 0; }

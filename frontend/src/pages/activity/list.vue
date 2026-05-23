@@ -15,7 +15,7 @@ onMounted(async () => {
     const [typs] = await Promise.all([activityTypes()])
     types.value = typs
     await loadActivities()
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 
@@ -87,8 +87,10 @@ function formatTime(t: string) {
       </view>
     </view>
 
-    <view v-if="!loading && activities.length === 0" class="empty">
-      <text>暂无活动</text>
+    <view v-if="!loading && activities.length === 0" class="empty-state">
+      <text class="empty-title">暂无活动</text>
+      <text class="empty-desc">快来创建第一个校园活动吧</text>
+      <u-button type="primary" shape="circle" class="empty-btn" @click="goCreate">创建活动</u-button>
     </view>
 
     <view class="fab" @click="goCreate">
@@ -185,7 +187,10 @@ page { background: #f5f7fa; }
   font-weight: 500;
 }
 
-.empty { text-align: center; padding: 100rpx 0; color: #999; font-size: 28rpx; }
+.empty-state { text-align: center; padding: 100rpx 0; }
+.empty-title { font-size: 30rpx; font-weight: 600; color: #1E2A3A; }
+.empty-desc { font-size: 26rpx; color: #8E9BAB; margin-top: 8rpx; }
+.empty-btn { margin-top: 24rpx; }
 
 .fab {
   position: fixed;

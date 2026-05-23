@@ -66,6 +66,10 @@ func Setup(db *sql.DB, cfg *config.Config, rdb *cache.Cache) *gin.Engine {
 	r.Static("/uploads", cfg.UploadDir)
 
 	api := r.Group("/api/v1")
+
+	api.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
 	{
 		api.POST("/auth/login", authHandler.WxLogin)
 		api.POST("/auth/dev-login", authHandler.DevLogin)

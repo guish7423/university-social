@@ -1,58 +1,53 @@
 #!/bin/bash
 set -euo pipefail
 
-# ========================================
-# 大学社交平台 — 一键部署脚本
-# 用法: bash scripts/deploy.sh [env]
-# ========================================
-
 ENV=${1:-production}
-ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-echo "🚀 部署模式: $ENV"
-echo "📂 项目目录: $ROOT_DIR"
+ROOT_DIR="$(cd "$(dirname "$0")/.. && pwd)"
+echo "Deploy mode: $ENV"
+echo "Project dir: $ROOT_DIR"
 
 cd "$ROOT_DIR"
 
-# 1. 环境变量
-if [ ! -f .env ]; then
-  if [ -f .env.example ]; then
-    echo "📝 从 .env.example 创建 .env"
-    cp .env.example .env
+if [ ! -f backend/.env ]; then
+  if [ -f backend/.env.example ]; then
+    cp backend/.env.example backend/.env
   else
-    echo "❌ .env 不存在，中止"
+    echo "Error: backend/.env not found"
     exit 1
   fi
 fi
-source .env 2>/dev/null || true
 
-# 2. 运行数据库迁移
-echo "🗄️  运行数据库迁移..."
-cd backend && go run cmd/migrate/main.go && cd "$ROOT_DIR"
+echo "Running database migrations..."
+cd backend && go run cmd/migrate/main.go
+cd "$ROOT_DIR"
 
-# 3. 构建前端
-if [ -d frontend ]; then
-  echo "🎨 构建前端..."
-  cd frontend && npm install --silent && npm run build && cd "$ROOT_DIR"
+echo "Building backend binary..."
+cd backend && CGO_ENABLED=0 go build -o server ./cmd/server/
+cd "$ROOT_DIR"
+
+if [ -d pc ]; then
+  echo "Building PC frontend..."
+  cd pc && npm ci --silent && npx vite build
+  cd "$ROOT_DIR"
 fi
 
-# 4. 构建管理后台
 if [ -d admin ]; then
-  echo "⚙️  构建管理后台..."
-  cd admin && npm install --silent && npm run build && cd "$ROOT_DIR"
+  echo "Building admin..."
+  cd admin && npm ci --silent && npx vite build
+  cd "$ROOT_DIR"
 fi
 
-# 5. Docker Compose
 if [ "$ENV" = "production" ]; then
-  echo "🐳 启动 Docker Compose..."
+  echo "Starting Docker Compose..."
   docker compose up -d --build
-
-  echo "📋 服务状态:"
+  echo "Services:"
   docker compose ps
-
-  echo "✅ 部署完成！"
-  echo "   API: http://localhost:8081"
-  echo "   前端: http://localhost:3000 (需通过 Nginx 或小程序开发者工具)"
+  echo "Deploy complete!"
 else
-  echo "✅ 本地部署准备完成。"
-  echo "   运行: cd backend && go run ./cmd/server/"
+  echo "Starting backend..."
+  cd backend && nohup ./server > /tmp/server.log 2>&1 &
+  echo "Backend PID: $!"
+  cd "$ROOT_DIR"
+  echo "Local deploy ready."
+  echo "  Backend: http://localhost:8080"
 fi

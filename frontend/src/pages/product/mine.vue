@@ -14,7 +14,7 @@ onMounted(async () => {
     products.value = res.products
     total.value = res.total
     active.value = res.active
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 

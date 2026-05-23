@@ -1,6 +1,7 @@
 <template>
-  <div class="layout">
-    <aside class="sidebar">
+  <div class="layout" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+    <div v-if="isMobile && sidebarOpen" class="sidebar-overlay" @click="sidebarOpen = false" />
+    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed, 'mobile-open': isMobile && sidebarOpen }">
       <div class="logo" @click="$router.push('/home')">
         <div class="logo-icon">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -8,8 +9,12 @@
             <path d="M8 14h12M14 8v12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
           </svg>
         </div>
-        <span class="logo-text">校园社</span>
-        <span class="logo-badge">洛阳高校</span>
+        <span v-show="!sidebarCollapsed" class="logo-text">校园社</span>
+        <span v-show="!sidebarCollapsed" class="logo-badge">洛阳高校</span>
+      </div>
+
+      <div class="sidebar-collapse-btn" @click="toggleSidebar">
+        <el-icon :class="{ rotated: sidebarCollapsed }"><Fold /></el-icon>
       </div>
 
       <nav class="nav-groups">
@@ -19,12 +24,12 @@
             <template v-for="item in group.items" :key="item.path">
               <el-menu-item v-if="!item.children" :index="item.path">
                 <el-icon><component :is="item.icon" /></el-icon>
-                <span>{{ item.label }}</span>
+                  <span v-show="!sidebarCollapsed">{{ item.label }}</span>
               </el-menu-item>
               <el-sub-menu v-else :index="item.path">
                 <template #title>
                   <el-icon><component :is="item.icon" /></el-icon>
-                  <span>{{ item.label }}</span>
+                  <span v-show="!sidebarCollapsed">{{ item.label }}</span>
                 </template>
                 <el-menu-item v-for="child in item.children" :key="child.path" :index="child.path">
                   {{ child.label }}
@@ -50,6 +55,12 @@
     <main class="main-area">
       <header class="top-bar">
         <div class="top-bar-left">
+          <el-button text class="hamburger-btn" @click="sidebarOpen = true" v-if="isMobile">
+            <el-icon size="20"><Expand /></el-icon>
+          </el-button>
+          <el-button text class="collapse-btn" @click="toggleSidebar" v-else>
+            <el-icon><Fold /></el-icon>
+          </el-button>
           <el-button text class="search-btn" @click="$router.push('/search')">
             <el-icon><Search /></el-icon>
             <span>搜索校园社...</span>
@@ -94,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue"
+import { computed, onMounted, onUnmounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user"
 import { unreadCount as fetchUnreadCount } from "@/api/chat"
@@ -103,13 +114,27 @@ import {
   HomeFilled, MessageBox, Connection, Calendar, ShoppingCart,
   WarningFilled, ChatDotSquare, UserFilled, ChatLineSquare,
   Reading, Coin, School, Link, Bell, Edit, Search,
-  ArrowRight, ArrowDown, Notebook, InfoFilled, Key
+  ArrowRight, ArrowDown, Notebook, InfoFilled, Key, Expand, Fold
 } from "@element-plus/icons-vue"
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const unreadCount = ref(0)
+const sidebarCollapsed = ref(localStorage.getItem('sidebar_collapsed') === 'true')
+const sidebarOpen = ref(false)
+const isMobile = ref(window.innerWidth < 768)
+
+function toggleSidebar() {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+  localStorage.setItem('sidebar_collapsed', String(sidebarCollapsed.value))
+}
+
+function handleResize() {
+  isMobile.value = window.innerWidth < 768
+  if (!isMobile.value) sidebarOpen.value = false
+}
+
 
 const navGroups = computed(() => [
   {
@@ -198,6 +223,13 @@ function handleLogout() {
   router.push("/login")
 }
 
+  onMounted(() => {
+    window.addEventListener('resize', handleResize)
+  })
+  onUnmounted(() => {
+    window.removeEventListener('resize', handleResize)
+  })
+
 onMounted(async () => {
   try {
     const res = await fetchUnreadCount()
@@ -208,12 +240,41 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
-
 .layout {
   display: flex;
   height: 100vh;
   overflow: hidden;
   background: $bg-app;
+  position: relative;
+}
+
+// ═══ Sidebar Overlay (mobile) ═══
+.sidebar-overlay {
+  display: none;
+  @media (max-width: 767px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9;
+  }
+}
+.sidebar.mobile-open {
+  @media (max-width: 767px) {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 11;
+    width: $sidebar-width;
+  }
+}
+.sidebar:not(.mobile-open) {
+  @media (max-width: 767px) {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 11;
+  }
 }
 
 // ═══ Sidebar ═══
@@ -225,6 +286,27 @@ onMounted(async () => {
   border-right: 1px solid $border-default;
   flex-shrink: 0;
   z-index: 10;
+  transition: width $duration-normal $ease-out, transform $duration-normal $ease-out;
+  overflow: hidden;
+
+  &.collapsed {
+    width: 64px;
+  }
+}
+
+.sidebar-collapse-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+  margin: 0 $space-3 $space-2;
+  cursor: pointer;
+  color: $text-muted;
+  border-radius: $radius-sm;
+  transition: background $duration-fast;
+  &:hover { background: rgba($brand-primary-hex, 0.1); color: $text-primary; }
+  .el-icon { transition: transform $duration-normal; }
+  .rotated { transform: rotate(180deg); }
 }
 
 .logo {
@@ -235,6 +317,7 @@ onMounted(async () => {
   cursor: pointer;
   user-select: none;
 
+  transition: padding $duration-normal;
   .logo-icon { flex-shrink: 0; }
   .logo-text {
     font-size: $text-lg;
@@ -242,6 +325,12 @@ onMounted(async () => {
     letter-spacing: 1px;
   }
   .logo-badge {
+  .logo-text, .logo-badge { transition: opacity $duration-fast; }
+  .collapsed & {
+    justify-content: center;
+    padding: $space-4 $space-2;
+    .logo-text, .logo-badge { opacity: 0; }
+  }
     font-size: 10px;
     color: $brand-primary;
     background: rgba($brand-primary-hex, 0.12);
@@ -253,9 +342,21 @@ onMounted(async () => {
 
 .nav-groups {
   flex: 1;
-  overflow-y: auto;
   padding: 0 $space-2;
-}
+
+.collapsed & {
+    :deep(.el-menu-item) {
+      justify-content: center;
+      padding: 0 !important;
+      .el-icon { margin-right: 0 !important; }
+    }
+    :deep(.el-sub-menu__title) {
+      justify-content: center;
+      padding: 0 6px !important;
+      .el-icon { margin-right: 0 !important; }
+    }
+    :deep(.el-sub-menu) { display: none; }
+  }
 
 .nav-group {
   margin-bottom: $space-2;
@@ -270,7 +371,6 @@ onMounted(async () => {
   padding: $space-3 $space-3 $space-2;
 }
 
-.nav-menu {
   background: transparent;
   border-right: none;
 
@@ -304,6 +404,8 @@ onMounted(async () => {
 .sidebar-footer {
   padding: $space-3;
   border-top: 1px solid $border-default;
+  transition: opacity $duration-fast;
+.collapsed & { opacity: 0; pointer-events: none; }
 }
 
 .user-card {
@@ -336,6 +438,7 @@ onMounted(async () => {
     }
   }
   .user-arrow { color: $text-muted; font-size: 14px; }
+.collapsed & { display: none; }
 }
 
 // ═══ Main ═══
@@ -346,8 +449,9 @@ onMounted(async () => {
   overflow: hidden;
   min-width: 0;
   background: $bg-app;
-  }
+}
 
+// ═══ Top Bar ═══
 .top-bar {
   display: flex;
   align-items: center;
@@ -358,13 +462,18 @@ onMounted(async () => {
   flex-shrink: 0;
   background: $bg-app;
 
-  .top-bar-left {
+.top-bar-left {
     display: flex;
     align-items: center;
     gap: $space-3;
   }
 
-  .search-btn {
+.hamburger-btn, .collapse-btn {
+    color: $text-muted;
+    &:hover { color: $text-primary; }
+  }
+
+.search-btn {
     color: $text-muted;
     display: flex;
     align-items: center;
@@ -376,20 +485,23 @@ onMounted(async () => {
     border: 1px solid $border-default;
     min-width: 200px;
     justify-content: flex-start;
-
-    &:hover {
+    @media (max-width: 767px) {
+      min-width: 120px;
+      span { display: none; }
+    }
+:hover {
       border-color: rgba($brand-primary-hex, 0.4);
       color: $text-secondary;
     }
   }
 
-  .top-bar-right {
+.top-bar-right {
     display: flex;
     align-items: center;
     gap: $space-2;
   }
 
-  .user-dropdown-btn {
+.user-dropdown-btn {
     color: $text-secondary;
     display: flex;
     align-items: center;
@@ -406,10 +518,14 @@ onMounted(async () => {
   line-height: 18px;
 }
 
+// ═══ Content Area ═══
 .content-area {
   flex: 1;
   overflow-y: auto;
   padding: $space-6;
   background: $bg-app;
+  @media (max-width: 767px) {
+    padding: $space-4;
+  }
 }
 </style>

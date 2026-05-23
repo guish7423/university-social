@@ -42,7 +42,7 @@
           </div>
 
           <div v-if="trendingLoading" class="loading-area">
-            <el-skeleton :rows="4" animated />
+            <SkeletonCard v-for="i in 3" :key="i" variant="post-card" />
           </div>
           <div v-else-if="!trendingPostsData.length" class="empty-card">
             <el-empty description="还没有动态" :image-size="80">
@@ -66,7 +66,7 @@
           </div>
 
           <div v-if="circlesLoading" class="loading-area">
-            <el-skeleton :rows="2" animated />
+            <SkeletonCard v-for="i in 2" :key="i" variant="circle-card" />
           </div>
           <div v-else-if="!circles.length" class="empty-card" @click="$router.push('/circle/create')">
             <p>还没有圈子，创建一个吧！</p>
@@ -140,6 +140,7 @@ import PostCard from "@/components/PostCard.vue"
 import CircleCard from "@/components/CircleCard.vue"
 import { ElMessage } from "element-plus"
 import { Edit } from "@element-plus/icons-vue"
+import SkeletonCard from "@/components/SkeletonCard.vue"
 
 const userStore = useUserStore()
 const trendingLoading = ref(true)

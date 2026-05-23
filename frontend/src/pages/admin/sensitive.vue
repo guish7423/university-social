@@ -7,7 +7,7 @@ const newWord = ref("")
 const loading = ref(true)
 
 onMounted(async () => {
-  try { words.value = await listSensitive() } catch {}
+  try { words.value = await listSensitive() } catch (e) { console.error(e) }
   loading.value = false
 })
 

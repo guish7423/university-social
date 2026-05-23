@@ -19,7 +19,7 @@ async function load() {
   try {
     balance.value = await getPointsBalance()
     leaderboard.value = (await getPointsLeaderboard()).leaderboard ?? []
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 onMounted(load)

@@ -73,7 +73,7 @@ async function sendComment() {
     await createActivityComment(activity.value.id, commentText.value.trim())
     commentText.value = ""
     comments.value = await listActivityComments(activity.value.id)
-  } catch {}
+  } catch (e) { console.error(e) }
   sending.value = false
 }
 

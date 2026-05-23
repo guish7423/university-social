@@ -13,14 +13,14 @@ onMounted(() => {
 })
 
 async function loadFriends() {
-  try { friends.value = (await listFriends()) || [] } catch {}
+  try { friends.value = (await listFriends()) || [] } catch (e) { console.error(e) }
 }
 
 async function loadPendingCount() {
   try {
     const reqs = await listFriendRequests()
     pendingCount.value = (reqs || []).length
-  } catch {}
+  } catch (e) { console.error(e) }
 }
 
 function goRequests() {

@@ -36,7 +36,7 @@ onMounted(async () => {
     topics.value = t || []
     banners.value = b || []
     announcements.value = a || []
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 

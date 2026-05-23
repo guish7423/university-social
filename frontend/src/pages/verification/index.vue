@@ -19,7 +19,7 @@ onMounted(async () => {
     const status = await getVerificationStatus()
     verified.value = status.verified
     if (status.verified) step.value = "done"
-  } catch {}
+  } catch (e) { console.error(e) }
 })
 
 async function handleSend() {

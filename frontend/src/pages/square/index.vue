@@ -35,7 +35,7 @@ async function fetchPosts() {
     const data = await listPosts()
     posts.value = data || []
     hasMore.value = (data?.length || 0) >= 20
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 }
 
@@ -116,7 +116,7 @@ async function handleLike(post: PostData) {
     const res = await toggleLike(post.id)
     post.is_liked = res.liked
     post.like_count += res.liked ? 1 : -1
-  } catch {}
+  } catch (e) { console.error(e) }
   post._liking = false
 }
 
@@ -214,7 +214,7 @@ const skeletonItems = ref([1, 2, 3])
             <view v-if="post?.images?.length" class="post-card-images">
               <image v-for="(img, j) in post.images.slice(0, 3)" :key="j"
                 :class="['post-card-image', post.images.length === 1 ? 'single' : '']"
-                :src="img" mode="aspectFill" @click.stop="previewImage(img)" />
+                :src="img" mode="aspectFill" lazy-load @click.stop="previewImage(img)" />
               <view v-if="post.images.length > 3" class="image-more">+{{ post.images.length - 3 }}</view>
             </view>
 

@@ -8,7 +8,7 @@ const loading = ref(true)
 onMounted(async () => {
   try {
     requests.value = await listFriendRequests()
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 

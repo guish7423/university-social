@@ -130,7 +130,7 @@ export default {
       try {
         await markHelpful(item.id)
         item.helpful_count = (item.helpful_count || 0) + 1
-      } catch {}
+      } catch (e) { console.error(e) }
     }
   }
 }

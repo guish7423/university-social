@@ -18,7 +18,7 @@ onMounted(async () => {
     categories.value = cats
     trending.value = trend
     await loadProducts()
-  } catch {}
+  } catch (e) { console.error(e) }
   loading.value = false
 })
 
@@ -123,8 +123,10 @@ const conditionLabels: Record<string, string> = {
       </view>
     </view>
 
-    <view v-if="!loading && products.length === 0" class="empty">
-      <text>该分类暂无商品</text>
+    <view v-if="!loading && products.length === 0" class="empty-state">
+      <text class="empty-title">该分类暂无商品</text>
+      <text class="empty-desc">来发布你的闲置物品吧</text>
+      <u-button type="primary" shape="circle" class="empty-btn" @click="goCreate">发布商品</u-button>
     </view>
 
     <view class="fab" @click="goCreate">
