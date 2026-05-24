@@ -15,10 +15,10 @@
     <p class="post-content">{{ post.content }}</p>
 
     <div v-if="post.images?.length" class="post-images">
-      <img
+      <AppImage
         v-for="(img, i) in post.images" :key="i"
-        :src="img" @click.stop="lightboxIndex = i"
-        :class="{ 'single': post.images.length === 1 }"
+        :src="img" img-class="post-image"
+        @click.stop="lightboxIndex = i"
       />
     </div>
 
@@ -56,6 +56,7 @@ import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useTimeFormat } from "@/composables/useTimeFormat"
 import ImagePreview from "@/components/ImagePreview.vue"
+import AppImage from '@/components/AppImage.vue'
 
 export interface PostCardData {
   id: number

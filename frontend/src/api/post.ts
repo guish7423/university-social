@@ -121,3 +121,7 @@ export function followingPosts(offset = 0, limit = 20) {
 export function userPosts(userId: number, offset = 0, limit = 20) {
 	return request<PostData[]>({ url: `/users/${userId}/posts`, method: "GET", data: { offset, limit } })
 }
+
+export function updatePost(id: number, data: { content: string; images?: string[] }) {
+  return request<PostData>({ url: `/posts/${id}`, method: "PUT", data })
+}

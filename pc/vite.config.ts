@@ -1,9 +1,40 @@
 import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
+import { VitePWA } from 'vite-plugin-pwa'
 import path from "path"
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['icons/*.svg'],
+      manifest: {
+        name: '大学社交',
+        short_name: '校园社',
+        description: '校园社交平台',
+        theme_color: '#C67A6A',
+        background_color: '#1a1a2e',
+        display: 'standalone',
+        icons: [
+          { src: 'icons/icon-192x192.svg', sizes: '192x192', type: 'image/svg+xml' },
+          { src: 'icons/icon-512x512.svg', sizes: '512x512', type: 'image/svg+xml' },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https?:\/\/.*\/api\/v1\/posts/,
+            handler: 'NetworkFirst',
+          },
+          {
+            urlPattern: /^https?:\/\/.*\/uploads\//,
+            handler: 'CacheFirst',
+          },
+        ],
+      },
+    }),
+  ],
   base: process.env.VITE_BASE ? process.env.VITE_BASE : '/',
   resolve: {
     alias: {

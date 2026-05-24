@@ -327,6 +327,7 @@
         "navigationBarBackgroundColor": "#C67A6A",
         "navigationBarTextStyle": "white"
       }
+    },
     {
       "path": "pages/user/blocked",
       "style": {
@@ -335,6 +336,13 @@
         "navigationBarTextStyle": "white"
       }
     },
+    {
+      "path": "pages/favorite/index",
+      "style": {
+        "navigationBarTitleText": "我的收藏",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
     }
   ],
   "globalStyle": {

@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { getPost, listComments, createComment, toggleLike, type PostData, type CommentData } from "@/api/post"
+import { ref, onMounted, computed } from "vue"
+import { getPost, listComments, createComment, toggleLike, updatePost, type PostData, type CommentData } from "@/api/post"
 import { followUser, unfollowUser, checkFollow } from "@/api/follow"
 import ReportPopup from "@/components/ReportPopup.vue"
+import { useUserStore } from "@/store/user"
+
+const userStore = useUserStore()
+const isOwner = computed(() => post.value?.user_id === userStore.id)
 
 const post = ref<PostData | null>(null)
 const comments = ref<CommentData[]>([])
@@ -12,6 +16,8 @@ const postId = ref(0)
 const isFollowingAuthor = ref(false)
 const followLoading = ref(false)
 const showReport = ref(false)
+const editContent = ref("")
+const editing = ref(false)
 const imageIndex = ref(0)
 
 onMounted(() => {
@@ -30,6 +36,7 @@ async function loadPost(id: number) {
     if (post.value?.author?.id) checkFollowState(post.value.author.id)
   } catch (e) { console.error(e) }
 }
+    editContent.value = post.value?.content || ""
 
 async function checkFollowState(userId: number) {
   try { isFollowingAuthor.value = (await checkFollow(userId)).is_following } catch (e) { console.error(e) }
@@ -73,6 +80,27 @@ async function toggleFollowAuthor() {
   followLoading.value = false
 }
 
+async function startEdit() {
+  editing.value = true
+  editContent.value = post.value?.content || ""
+}
+
+async function saveEdit() {
+  if (!post.value || !editContent.value.trim()) return
+  try {
+    post.value = await updatePost(postId.value, { content: editContent.value })
+    editing.value = false
+    uni.showToast({ title: "已编辑", icon: "none" })
+  } catch {
+    uni.showToast({ title: "编辑失败", icon: "error" })
+  }
+}
+
+function cancelEdit() {
+  editing.value = false
+  editContent.value = post.value?.content || ""
+}
+
 function formatTime(t: string) {
   if (!t) return ""
   const d = new Date(t)
@@ -109,7 +137,8 @@ function formatTime(t: string) {
             @click="toggleFollowAuthor"
           />
         </view>
-        <text class="post-content">{{ post.content }}</text>
+        <textarea v-if="editing" v-model="editContent" class="edit-textarea" :maxlength="2000" />
+        <text v-else class="post-content">{{ post.content }}</text>
         <view v-if="post.images?.length" class="post-images">
           <swiper class="image-swiper" :indicator-dots="post.images.length > 1" indicator-color="#EAE6E0" indicator-active-color="#C67A6A" @change="(e: any) => imageIndex = e.detail.current">
             <swiper-item v-for="(img, i) in post.images" :key="i">
@@ -130,6 +159,10 @@ function formatTime(t: string) {
         <view class="action-btn">
           <u-icon name="chat" color="#B8C2CE" size="36" />
           <text class="action-text">{{ post.comment_count || 0 }} 评论</text>
+        </view>
+        <view v-if="isOwner" class="action-btn" @click="editing ? saveEdit() : startEdit()">
+          <u-icon :name="editing ? 'checkmark' : 'edit-pen'" color="#C67A6A" size="36" />
+          <text class="action-text">{{ editing ? '保存' : '编辑' }}</text>
         </view>
         <view class="action-btn" @click="showReport = true">
           <u-icon name="info-circle" color="#B8C2CE" size="36" />
