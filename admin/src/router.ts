@@ -10,6 +10,11 @@ import SensitiveWords from "@/views/SensitiveWords.vue"
 import Reports from "@/views/Reports.vue"
 import DataScreen from "@/views/DataScreen.vue"
 import OperationLogs from "@/views/OperationLogs.vue"
+import FoundItems from "@/views/FoundItems.vue"
+import Universities from "@/views/Universities.vue"
+import Activities from "@/views/Activities.vue"
+import Courses from "@/views/Courses.vue"
+import Verifications from "@/views/Verifications.vue"
 
 
 const routes = [
@@ -26,6 +31,11 @@ const routes = [
   { path: "/datascreen", component: DataScreen, meta: { title: "数据大屏" } },
   { path: "/login", component: () => import("@/views/Login.vue"), meta: { title: "登录", hideInMenu: true } },
   { path: "/products", component: Products, meta: { title: "商品管理" } },
+  { path: "/lost-items", component: FoundItems, meta: { title: "失物招领" } },
+  { path: "/universities", component: Universities, meta: { title: "高校管理" } },
+  { path: "/activities", component: Activities, meta: { title: "活动管理" } },
+  { path: "/courses", component: Courses, meta: { title: "课程管理" } },
+  { path: "/verifications", component: Verifications, meta: { title: "认证审核" } },
 ]
 
 export default createRouter({

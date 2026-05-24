@@ -260,6 +260,17 @@ blockHandler := handler.NewBlockHandler(blockRepo)
 			admin.DELETE("/sensitive-words/:word", sensitiveHandler.Remove)
 			admin.GET("/stats/daily", adminHandler.DailyStats)
 			admin.GET("/operation-logs", adminHandler.ListLogs)
+			admin.GET("/lost-items", adminHandler.ListFoundItems)
+			admin.DELETE("/lost-items/:id", adminHandler.DeleteFoundItem)
+			admin.GET("/universities", adminHandler.ListUniversities)
+			admin.DELETE("/universities/:id", adminHandler.DeleteUniversity)
+			admin.GET("/activities", adminHandler.ListAdminActivities)
+			admin.DELETE("/activities/:id", adminHandler.DeleteActivity)
+			admin.GET("/courses", adminHandler.ListAdminCourses)
+			admin.DELETE("/courses/:id", adminHandler.DeleteCourse)
+			admin.GET("/verifications", adminHandler.ListVerifications)
+			admin.POST("/verifications/:id/approve", adminHandler.ApproveVerification)
+			admin.POST("/verifications/:id/reject", adminHandler.RejectVerification)
 		}
 	}
 

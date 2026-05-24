@@ -393,3 +393,320 @@ func (h *AdminHandler) DeleteProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
 	h.logOp(c, "delete_product", "product", id, nil)
 }
+
+
+func (h *AdminHandler) ListFoundItems(c *gin.Context) {
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+
+	type Item struct {
+		ID        int64  `json:"id"`
+		UserID    int64  `json:"user_id"`
+		Title     string `json:"title"`
+		Category  string `json:"category"`
+		Status    int    `json:"status"`
+		CreatedAt string `json:"created_at"`
+		Nickname  string `json:"nickname"`
+		Avatar    string `json:"avatar"`
+	}
+
+	rows, err := h.db.Query(
+		`SELECT l.id, l.user_id, l.title, l.category, l.status, l.created_at,
+		        COALESCE(u.nickname, ''), COALESCE(u.avatar, '')
+		 FROM lost_items l
+		 LEFT JOIN users u ON l.user_id = u.id
+		 ORDER BY l.id DESC LIMIT $1 OFFSET $2`, limit, offset,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取失物招领列表失败"})
+		return
+	}
+	defer rows.Close()
+
+	var items []*Item
+	for rows.Next() {
+		var i Item
+		var createdAt string
+		if err := rows.Scan(&i.ID, &i.UserID, &i.Title, &i.Category, &i.Status, &createdAt, &i.Nickname, &i.Avatar); err != nil {
+			continue
+		}
+		i.CreatedAt = createdAt
+		items = append(items, &i)
+	}
+	if items == nil {
+		items = []*Item{}
+	}
+	c.JSON(http.StatusOK, items)
+}
+
+func (h *AdminHandler) DeleteFoundItem(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	_, err = h.db.Exec("DELETE FROM lost_items WHERE id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
+	h.logOp(c, "delete_found_item", "lost_item", id, nil)
+}
+
+func (h *AdminHandler) ListUniversities(c *gin.Context) {
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+
+	type Item struct {
+		ID          int64  `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		MemberCount int    `json:"member_count"`
+		CreatedAt   string `json:"created_at"`
+	}
+
+	rows, err := h.db.Query(
+		`SELECT id, name, COALESCE(description, ''), COALESCE(member_count, 0), created_at
+		 FROM universities ORDER BY id DESC LIMIT $1 OFFSET $2`, limit, offset,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取高校列表失败"})
+		return
+	}
+	defer rows.Close()
+
+	var items []*Item
+	for rows.Next() {
+		var i Item
+		var createdAt string
+		if err := rows.Scan(&i.ID, &i.Name, &i.Description, &i.MemberCount, &createdAt); err != nil {
+			continue
+		}
+		i.CreatedAt = createdAt
+		items = append(items, &i)
+	}
+	if items == nil {
+		items = []*Item{}
+	}
+	c.JSON(http.StatusOK, items)
+}
+
+func (h *AdminHandler) DeleteUniversity(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	_, err = h.db.Exec("DELETE FROM universities WHERE id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
+	h.logOp(c, "delete_university", "university", id, nil)
+}
+
+func (h *AdminHandler) ListAdminActivities(c *gin.Context) {
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+
+	type Item struct {
+		ID        int64  `json:"id"`
+		Title     string `json:"title"`
+		Type      string `json:"type"`
+		Status    int    `json:"status"`
+		CreatedAt string `json:"created_at"`
+		Nickname  string `json:"nickname"`
+	}
+
+	rows, err := h.db.Query(
+		`SELECT a.id, a.title, a.type, a.status, a.created_at,
+		        COALESCE(u.nickname, '')
+		 FROM activities a
+		 LEFT JOIN users u ON a.user_id = u.id
+		 ORDER BY a.id DESC LIMIT $1 OFFSET $2`, limit, offset,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取活动列表失败"})
+		return
+	}
+	defer rows.Close()
+
+	var items []*Item
+	for rows.Next() {
+		var i Item
+		var createdAt string
+		if err := rows.Scan(&i.ID, &i.Title, &i.Type, &i.Status, &createdAt, &i.Nickname); err != nil {
+			continue
+		}
+		i.CreatedAt = createdAt
+		items = append(items, &i)
+	}
+	if items == nil {
+		items = []*Item{}
+	}
+	c.JSON(http.StatusOK, items)
+}
+
+func (h *AdminHandler) DeleteActivity(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	_, err = h.db.Exec("DELETE FROM activities WHERE id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
+	h.logOp(c, "delete_activity", "activity", id, nil)
+}
+
+func (h *AdminHandler) ListAdminCourses(c *gin.Context) {
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+
+	type Item struct {
+		ID        int64   `json:"id"`
+		Name      string  `json:"name"`
+		Code      string  `json:"code"`
+		Department string `json:"department"`
+		Teacher   string  `json:"teacher"`
+		Credit    float64 `json:"credit"`
+		AvgRating float64 `json:"avg_rating"`
+		CreatedAt string  `json:"created_at"`
+	}
+
+	rows, err := h.db.Query(
+		`SELECT id, name, COALESCE(code, ''), COALESCE(department, ''), COALESCE(teacher, ''),
+		        COALESCE(credit, 0), COALESCE(avg_rating, 0), created_at
+		 FROM courses ORDER BY id DESC LIMIT $1 OFFSET $2`, limit, offset,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取课程列表失败"})
+		return
+	}
+	defer rows.Close()
+
+	var items []*Item
+	for rows.Next() {
+		var i Item
+		var createdAt string
+		if err := rows.Scan(&i.ID, &i.Name, &i.Code, &i.Department, &i.Teacher, &i.Credit, &i.AvgRating, &createdAt); err != nil {
+			continue
+		}
+		i.CreatedAt = createdAt
+		items = append(items, &i)
+	}
+	if items == nil {
+		items = []*Item{}
+	}
+	c.JSON(http.StatusOK, items)
+}
+
+func (h *AdminHandler) DeleteCourse(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	_, err = h.db.Exec("DELETE FROM courses WHERE id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
+	h.logOp(c, "delete_course", "course", id, nil)
+}
+
+func (h *AdminHandler) ListVerifications(c *gin.Context) {
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+
+	type Item struct {
+		ID        int64  `json:"id"`
+		UserID    int64  `json:"user_id"`
+		Code      string `json:"code"`
+		Type      string `json:"type"`
+		Status    string `json:"status"`
+		CreatedAt string `json:"created_at"`
+		Nickname  string `json:"nickname"`
+		IsVerified bool  `json:"is_verified"`
+	}
+
+	rows, err := h.db.Query(
+		`SELECT v.id, v.user_id, v.code, COALESCE(v.type, ''),
+		        CASE WHEN v.used_at IS NOT NULL THEN 'verified' WHEN v.expires_at < NOW() THEN 'expired' ELSE 'pending' END,
+		        v.created_at, COALESCE(u.nickname, ''), COALESCE(u.is_verified, false)
+		 FROM verification_codes v
+		 LEFT JOIN users u ON v.user_id = u.id
+		 ORDER BY v.id DESC LIMIT $1 OFFSET $2`, limit, offset,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取认证记录失败"})
+		return
+	}
+	defer rows.Close()
+
+	var items []*Item
+	for rows.Next() {
+		var i Item
+		var createdAt string
+		if err := rows.Scan(&i.ID, &i.UserID, &i.Code, &i.Type, &i.Status, &createdAt, &i.Nickname, &i.IsVerified); err != nil {
+			continue
+		}
+		i.CreatedAt = createdAt
+		items = append(items, &i)
+	}
+	if items == nil {
+		items = []*Item{}
+	}
+	c.JSON(http.StatusOK, items)
+}
+
+func (h *AdminHandler) ApproveVerification(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	// Get user_id from the verification code
+	var userID int64
+	err = h.db.QueryRow("SELECT user_id FROM verification_codes WHERE id = $1", id).Scan(&userID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "认证记录不存在"})
+		return
+	}
+	// Mark code as used
+	_, err = h.db.Exec("UPDATE verification_codes SET used_at = NOW() WHERE id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "操作失败"})
+		return
+	}
+	// Set user as verified
+	_, err = h.db.Exec("UPDATE users SET is_verified = true WHERE id = $1", userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "更新用户状态失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已通过认证"})
+	h.logOp(c, "approve_verification", "verification", id, gin.H{"user_id": userID})
+}
+
+func (h *AdminHandler) RejectVerification(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	// Delete the verification code record
+	_, err = h.db.Exec("DELETE FROM verification_codes WHERE id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "操作失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已拒绝"})
+	h.logOp(c, "reject_verification", "verification", id, nil)
+}

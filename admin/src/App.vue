@@ -44,6 +44,26 @@
             <el-icon><ChatDotSquare /></el-icon>
             <span>举报管理</span>
           </el-menu-item>
+          <el-menu-item index="/lost-items">
+            <el-icon><Search /></el-icon>
+            <span>失物招领</span>
+          </el-menu-item>
+          <el-menu-item index="/universities">
+            <el-icon><School /></el-icon>
+            <span>高校管理</span>
+          </el-menu-item>
+          <el-menu-item index="/activities">
+            <el-icon><Pointer /></el-icon>
+            <span>活动管理</span>
+          </el-menu-item>
+          <el-menu-item index="/courses">
+            <el-icon><Reading /></el-icon>
+            <span>课程管理</span>
+          </el-menu-item>
+          <el-menu-item index="/verifications">
+            <el-icon><CircleCheck /></el-icon>
+            <span>认证审核</span>
+          </el-menu-item>
         </el-menu>
       </dv-border-box-12>
     </div>
@@ -70,7 +90,7 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router"
 import { ref, onMounted } from "vue"
-import { Sunny, Moon, Goods } from "@element-plus/icons-vue"
+import { Sunny, Moon, Goods, Search, School, Pointer, Reading, CircleCheck } from "@element-plus/icons-vue"
 const route = useRoute()
 
 const currentTheme = ref("dark")
