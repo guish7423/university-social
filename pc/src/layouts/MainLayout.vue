@@ -38,6 +38,22 @@
           </div>
           <el-icon class="user-arrow"><ArrowRight /></el-icon>
         </div>
+      <div class="more-section">
+        <div class="more-header" @click="showMore = !showMore">
+          <span class="more-label" v-show="!sidebarCollapsed">更多功能</span>
+          <el-icon :class="{ rotated: showMore }" class="more-arrow"><ArrowDown /></el-icon>
+        </div>
+        <transition name="collapse">
+          <div v-show="showMore" class="more-body">
+            <el-menu :default-active="activeRoute" router class="nav-menu more-menu">
+              <el-menu-item v-for="item in moreItems" :key="item.path" :index="item.path">
+                <el-icon><component :is="item.icon" /></el-icon>
+                <span>{{ item.label }}</span>
+              </el-menu-item>
+            </el-menu>
+          </div>
+        </transition>
+      </div>
       </div>
     </aside>
 
@@ -174,6 +190,20 @@ const navGroups = computed(() => [
     ],
   }
 ])
+
+const showMore = ref(false)
+const moreItems = [
+  { path: "/campus/calendar", icon: School, label: "校园服务" },
+  { path: "/courses", icon: Notebook, label: "课程" },
+  { path: "/activities", icon: Calendar, label: "活动" },
+  { path: "/products", icon: ShoppingCart, label: "二手" },
+  { path: "/found", icon: WarningFilled, label: "失物" },
+  { path: "/favorites", icon: Star, label: "收藏" },
+  { path: "/whispers", icon: ChatDotSquare, label: "树洞" },
+  { path: "/points", icon: Coin, label: "积分" },
+  { path: "/verification", icon: InfoFilled, label: "认证" },
+  { path: "/invite", icon: Key, label: "邀请码" },
+]
 
 
 const breadcrumbs = computed(() => {
@@ -365,6 +395,36 @@ onUnmounted(() => {
     :deep(.el-sub-menu) { display: none; }
   }
 
+// ═══ More Section ═══
+.more-section {
+  border-top: 1px solid rgba($brand-primary-hex, 0.08);
+  margin-top: $space-1;
+  padding-top: $space-1;
+
+  .more-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-2 $space-3;
+    cursor: pointer;
+    border-radius: $radius-sm;
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 500;
+    transition: background $duration-fast, color $duration-fast;
+    user-select: none;
+    &:hover { background: rgba($brand-primary-hex, 0.06); color: $text-primary; }
+  }
+  .more-arrow { font-size: 12px; transition: transform $duration-fast; }
+  .more-arrow.rotated { transform: rotate(180deg); }
+  .more-body {
+    .el-menu-item { height: 34px; line-height: 34px; font-size: 13px; color: $text-secondary; }
+  }
+}
+
+.collapse-enter-active, .collapse-leave-active { transition: all 0.2s ease-out; overflow: hidden; }
+.collapse-enter-from, .collapse-leave-to { opacity: 0; max-height: 0; }
+.collapse-enter-to, .collapse-leave-from { opacity: 1; max-height: 400px; }
 .nav-group {
   margin-bottom: $space-2;
 }
