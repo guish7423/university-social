@@ -84,6 +84,7 @@ const digits = ["4", "0", "4"]
   border: 1px solid var(--border-light);
   border-radius: $radius-xl;
   padding: $space-16 $space-12;
+  margin: 0 auto;
   max-width: 440px;
   width: 100%;
   box-shadow: var(--shadow-lg);

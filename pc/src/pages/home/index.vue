@@ -224,7 +224,9 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-.home-page { max-width: 1100px; }
+  margin: 0 auto;
+ margin: 0 auto;
+.home-page { max-width: 1100px;
 
 // ═══ Hero ═══
 .hero {
@@ -322,6 +324,7 @@ onMounted(async () => {
 }
 
 .hero-text {
+  
   max-width: 500px;
 }
 

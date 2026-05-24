@@ -128,6 +128,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
+ margin: 0 auto;
 .points-page { max-width: 640px; }
 
 .daily-card {

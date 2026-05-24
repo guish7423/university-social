@@ -128,6 +128,7 @@ onMounted(async () => {
 @use "@/styles/variables" as *;
 @use "sass:color";
 
+ margin: 0 auto;
 .notif-page { max-width: 640px; }
 
 .tab-bar {

@@ -41,5 +41,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
+ margin: 0 auto;
 .circles-page { max-width: 700px; }
 </style>

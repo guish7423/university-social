@@ -96,6 +96,7 @@ loadMore()
 @use "@/styles/variables.scss" as *;
 @use "sass:color";
 
+ margin: 0 auto;
 .whisper-page { max-width: 640px; }
 .page-header {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;

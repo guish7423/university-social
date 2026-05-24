@@ -132,6 +132,7 @@ onUnmounted(() => {
 
 .chat-detail-page {
   display: flex; flex-direction: column; height: calc(100vh - 120px);
+  margin: 0 auto;
   max-width: 640px;
 }
 

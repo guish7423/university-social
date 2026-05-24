@@ -129,6 +129,7 @@ function handleCircle(post: PostCardData) {
 @use "@/styles/variables.scss" as *;
 
 .favorite-page {
+  margin: 0 auto;
   max-width: 640px;
   margin: 0 auto;
 }

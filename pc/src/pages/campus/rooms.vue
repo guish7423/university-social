@@ -58,6 +58,7 @@ function capacityLevel(c: number) {
 <style scoped lang="scss">
 @use "sass:color";
 @use "@/styles/variables.scss" as *;
+ margin: 0 auto;
 .campus-rooms { max-width: 900px; }
 .loading-wrap, .empty-state { padding: 40px 0; }
 .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 14px; }

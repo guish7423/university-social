@@ -49,6 +49,7 @@ loadMore()
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
+ margin: 0 auto;
 .found-page { max-width: 780px; }
 .page-header {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;

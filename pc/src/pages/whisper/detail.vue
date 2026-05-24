@@ -111,6 +111,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
+  margin: 0 auto;
 .detail-page { max-width: 640px; margin: 0 auto; }
 .back-btn { margin-bottom: 16px; }
 

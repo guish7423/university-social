@@ -49,6 +49,7 @@ async function handleSearch() {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
+ margin: 0 auto;
 .course-page { max-width: 780px; }
 
 .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
