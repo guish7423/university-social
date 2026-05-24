@@ -229,6 +229,7 @@ func Setup(db *sql.DB, cfg *config.Config, rdb *cache.Cache) *gin.Engine {
 			admin.POST("/posts/:id/unfeature", bannerHandler.UnsetFeatured)
 			admin.DELETE("/sensitive-words/:word", sensitiveHandler.Remove)
 			admin.GET("/stats/daily", adminHandler.DailyStats)
+			admin.GET("/operation-logs", adminHandler.ListLogs)
 		}
 	}
 

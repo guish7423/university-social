@@ -272,3 +272,54 @@ func (h *AdminHandler) DeleteCircle(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
 	h.logOp(c, "delete_circle", "circle", id, nil)
 }
+
+func (h *AdminHandler) ListLogs(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+	offset := (page - 1) * limit
+
+	var total int
+	h.db.QueryRow("SELECT COUNT(*) FROM operation_logs").Scan(&total)
+
+	type LogItem struct {
+		ID         int64  `json:"id"`
+		AdminID    int64  `json:"admin_id"`
+		AdminName  string `json:"admin_name"`
+		Action     string `json:"action"`
+		TargetType string `json:"target_type"`
+		TargetID   int64  `json:"target_id"`
+		Detail     any    `json:"detail,omitempty"`
+		CreatedAt  string `json:"created_at"`
+	}
+
+	rows, err := h.db.Query(
+		"SELECT id, admin_id, admin_name, action, target_type, target_id, COALESCE(detail::text, ''), created_at"+
+		" FROM operation_logs ORDER BY id DESC LIMIT $1 OFFSET $2",
+		limit, offset,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取操作日志失败"})
+		return
+	}
+	defer rows.Close()
+
+	var logs []*LogItem
+	for rows.Next() {
+		var l LogItem
+		var detailStr, createdAt string
+		if err := rows.Scan(&l.ID, &l.AdminID, &l.AdminName, &l.Action, &l.TargetType, &l.TargetID, &detailStr, &createdAt); err != nil {
+			continue
+		}
+		l.CreatedAt = createdAt
+		if detailStr != "" {
+			var detail any
+			json.Unmarshal([]byte(detailStr), &detail)
+			l.Detail = detail
+		}
+		logs = append(logs, &l)
+	}
+	if logs == nil {
+		logs = []*LogItem{}
+	}
+	c.JSON(http.StatusOK, gin.H{"logs": logs, "total": total})
+}
