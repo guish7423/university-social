@@ -1,0 +1,81 @@
+/* ═══════════════════════════════════════
+   Admin Panel Theme System
+   ═══════════════════════════════════════ */
+
+/* ── Dark theme (default) ── */
+:root {
+  --admin-bg: #1a1e2e;
+  --admin-bg-card: #222639;
+  --admin-bg-sidebar: #141824;
+  --admin-bg-header: #1e2237;
+  --admin-text: #e8e6e3;
+  --admin-text-secondary: #bfcbd9;
+  --admin-text-muted: #8b95a0;
+  --admin-border: #2a2e42;
+  --admin-border-light: #333752;
+}
+
+/* ── Light theme ── */
+[data-theme="light"] {
+  --admin-bg: #f0f2f5;
+  --admin-bg-card: #ffffff;
+  --admin-bg-sidebar: #141824;  /* keep dark sidebar */
+  --admin-bg-header: #ffffff;
+  --admin-text: #333333;
+  --admin-text-secondary: #606266;
+  --admin-text-muted: #909399;
+  --admin-border: #dcdfe6;
+  --admin-border-light: #e4e7ed;
+}
+
+/* ── Layout overrides using CSS vars ── */
+body {
+  background: var(--admin-bg) !important;
+  color: var(--admin-text) !important;
+}
+
+.app-shell {
+  background: var(--admin-bg);
+}
+
+.sidebar-section .sidebar-box {
+  background: var(--admin-bg-sidebar) !important;
+}
+
+.header-content {
+  background: var(--admin-bg-header) !important;
+}
+
+/* ── Element Plus light variables for dark mode ── */
+:root {
+  --el-bg-color: var(--admin-bg-card) !important;
+  --el-bg-color-overlay: var(--admin-bg-card) !important;
+  --el-text-color-primary: var(--admin-text) !important;
+  --el-text-color-regular: var(--admin-text-secondary) !important;
+  --el-text-color-secondary: var(--admin-text-muted) !important;
+  --el-border-color: var(--admin-border) !important;
+  --el-border-color-light: var(--admin-border-light) !important;
+  --el-fill-color: var(--admin-bg) !important;
+  --el-fill-color-light: var(--admin-bg-card) !important;
+  --el-bg-color-page: var(--admin-bg) !important;
+}
+
+[data-theme="light"] {
+  --el-bg-color: #ffffff !important;
+  --el-bg-color-overlay: #ffffff !important;
+  --el-text-color-primary: #303133 !important;
+  --el-text-color-regular: #606266 !important;
+  --el-text-color-secondary: #909399 !important;
+  --el-border-color: #dcdfe6 !important;
+  --el-border-color-light: #e4e7ed !important;
+  --el-fill-color: #f0f2f5 !important;
+  --el-fill-color-light: #f5f7fa !important;
+  --el-bg-color-page: #f0f2f5 !important;
+}
+
+/* ── DataV overrides for dark mode ── */
+:root .dv-border-box-12,
+:root .dv-border-box-7 {
+  --border-color1: rgba(64, 158, 255, 0.3);
+  --border-color2: rgba(64, 158, 255, 0.6);
+}
