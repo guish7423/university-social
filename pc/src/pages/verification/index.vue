@@ -1,5 +1,6 @@
 <template>
   <div class="verif-page">
+  <div class="verif-page">
     <PageHeader title="实名认证" />
     <div v-if="status !== null" class="status-banner">
       <el-alert v-if="status" title="已认证" type="success" :closable="false" description="你已完成实名认证" show-icon />
@@ -78,7 +79,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-.verif-page { max-width: 500px; }
+.verif-page { max-width: 500px; margin: 0 auto; }
 .status-banner { margin-bottom: $space-5; }
 .verif-form { margin-top: $space-5; }
 .code-row { display: flex; gap: 10px; }

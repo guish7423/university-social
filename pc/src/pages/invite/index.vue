@@ -137,4 +137,5 @@ onMounted(async () => {
 }
 
 .loading-wrap, .empty-state { padding: 40px 0; }
+.invite-page { max-width: 640px; margin: 0 auto; }
 </style>
