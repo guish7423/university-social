@@ -10,7 +10,7 @@
       <div class="product-grid">
         <div v-for="p in products" class="product-card stagger-item" :key="p.id" @click="$router.push('/products/' + p.id)">
           <div class="img-wrap">
-            <img v-if="p.images?.length" :src="p.images[0]" />
+            <img v-if="p.images?.length" :src="p.images[0]" loading="lazy" />
             <div v-else class="no-img">暂无图片</div>
           </div>
           <div class="card-body">

@@ -1,6 +1,6 @@
 <template>
   <div class="course-page">
-    <h1>课程评价</h1>
+  <PageHeader title="课程评价" />
     <el-input v-model="query" placeholder="搜索课程、老师..." size="large" clearable @keyup.enter="handleSearch" style="margin:16px 0">
       <template #prefix><el-icon><Search /></el-icon></template>
     </el-input>
@@ -30,6 +30,7 @@
 import { ref } from "vue"
 import { searchCourses } from "@/api/course"
 import type { CourseData } from "@/api/course"
+import PageHeader from "@/components/PageHeader.vue"
 
 const query = ref("")
 const courses = ref<CourseData[]>([])
@@ -49,7 +50,6 @@ async function handleSearch() {
 @use "@/styles/variables.scss" as *;
 
 .course-page { max-width: 780px; }
-h1 { font-size: 22px; font-weight: 700; }
 
 .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 
@@ -60,5 +60,10 @@ h1 { font-size: 22px; font-weight: 700; }
   .meta { display: flex; gap: 10px; font-size: 13px; color: $text-secondary; margin-bottom: 8px; }
   .rating { margin-bottom: 8px; }
   .extra { display: flex; gap: 12px; font-size: 12px; color: $text-muted; }
+}
+
+.course-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 </style>

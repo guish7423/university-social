@@ -10,7 +10,7 @@
         <h1>{{ circle.name }}</h1>
         <p>{{ circle.description }}</p>
         <span class="meta">{{ circle.member_count }} 人 · {{ circle.post_count }} 帖</span>
-      </div>
+        </div>
       <el-button v-if="!circle.is_joined" type="primary" @click="handleJoin">加入圈子</el-button>
       <el-button v-else @click="handleLeave">退出圈子</el-button>
       <el-button v-if="circle.is_joined" type="primary" @click="showCreate = true">发帖</el-button>

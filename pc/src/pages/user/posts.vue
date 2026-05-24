@@ -1,50 +1,73 @@
 <template>
   <div class="list-page">
     <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn">返回</el-button>
-    <h1>TA的帖子</h1>
-    <div v-if="loading" class="loading-wrap"><el-skeleton :rows="4" animated /></div>
-    <div v-else-if="!posts.length" class="empty-state"><el-empty description="暂无帖子" /></div>
-    <div v-else class="post-list">
-      <div v-for="p in posts" :key="p.id" class="post-card" @click="$router.push('/post/' + p.id)">
-        <p>{{ p.content.slice(0, 150) }}</p>
-        <div class="meta">
-          <span>{{ p.like_count }} 赞</span>
-          <span>{{ p.comment_count }} 评论</span>
+    <PageHeader title="TA的帖子" />
+
+    <LoadingWrapper :loading="loading && !posts.length" :data="posts.length" skeleton-variant="post-card" skeleton-images>
+      <template #empty>
+        <el-empty description="暂无帖子" />
+      </template>
+
+      <template #default>
+        <div class="post-list">
+          <PostCard
+            v-for="p in posts"
+            :key="p.id"
+            :post="p"
+            class="stagger-item"
+            @like="handleLike"
+            @comment="(p: any) => $router.push('/post/' + p.id)"
+          />
         </div>
-      </div>
-    </div>
+        <div v-if="hasMore" class="load-more">
+          <el-button :loading="loading" @click="loadMore" text>加载更多</el-button>
+        </div>
+        <div v-if="!hasMore && posts.length > 0" class="no-more">没有更多了</div>
+      </template>
+    </LoadingWrapper>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
-import { userPosts } from "@/api/post"
 import type { PostData } from "@/api/post"
+import { userPosts, toggleLike } from "@/api/post"
+import { usePagination } from "@/composables/usePagination"
+import PageHeader from "@/components/PageHeader.vue"
+import PostCard from "@/components/PostCard.vue"
+import LoadingWrapper from "@/components/LoadingWrapper.vue"
 import { ArrowLeft } from "@element-plus/icons-vue"
 
 const route = useRoute()
 const userId = Number(route.params.id)
-const posts = ref<PostData[]>([])
-const loading = ref(true)
 
-onMounted(async () => {
-  try { posts.value = await userPosts(userId) }
-  catch { /* handled by interceptor */ } finally { loading.value = false }
+const { items: posts, loading, hasMore, loadMore } = usePagination<PostData>({
+  fetchFn: (offset, limit) => userPosts(userId, offset, limit),
 })
+
+async function handleLike(post: PostData) {
+  try {
+    const res = await toggleLike(post.id)
+    post.is_liked = res.liked
+    post.like_count += res.liked ? 1 : -1
+  } catch { /* handled by interceptor */ }
+}
+
+loadMore()
 </script>
 
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
 .list-page { max-width: 640px; }
-h1 { font-size: 20px; font-weight: 700; margin: 16px 0; }
-.post-list { display: flex; flex-direction: column; gap: 8px; }
-.post-card {
-  background: $bg-card; border: 1px solid $border-color;
-  border-radius: $radius-md; padding: 14px; cursor: pointer;
-  p { font-size: 14px; line-height: 1.6; margin-bottom: 8px; }
-  .meta { display: flex; gap: 12px; font-size: 12px; color: $text-muted; }
-  &:hover { border-color: $primary-light; }
+.back-btn { margin-bottom: 4px; }
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
 }
+
+.load-more { text-align: center; padding: $space-6 0; }
+.no-more { text-align: center; padding: $space-6 0; color: $text-muted; font-size: $text-sm; }
 </style>

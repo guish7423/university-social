@@ -33,6 +33,26 @@
       </div>
     </section>
 
+    <section v-if="banners.length" class="banner-section">
+      <el-carousel height="200px" indicator-position="outside" :interval="5000" arrow="hover">
+        <el-carousel-item v-for="b in banners" :key="b.id">
+          <a v-if="b.link_url" :href="b.link_url" target="_blank" class="banner-link">
+            <img :src="b.image_url" :alt="b.title" class="banner-img" />
+            <div class="banner-overlay">
+              <h3 class="banner-title">{{ b.title }}</h3>
+            </div>
+          </a>
+          <div v-else class="banner-link">
+            <img :src="b.image_url" :alt="b.title" class="banner-img" />
+            <div class="banner-overlay">
+              <h3 class="banner-title">{{ b.title }}</h3>
+            </div>
+          </div>
+        </el-carousel-item>
+      </el-carousel>
+    </section>
+
+
     <div class="home-grid">
       <div class="grid-main">
         <section class="section">
@@ -133,6 +153,7 @@
 import { ref, onMounted } from "vue"
 import { useUserStore } from "@/stores/user"
 import { trendingPosts, toggleLike } from "@/api/post"
+import { listBanners } from "@/api/social"
 import { listCircles, joinCircle, leaveCircle } from "@/api/circle"
 import type { PostCardData } from "@/components/PostCard.vue"
 import type { CircleCardData } from "@/components/CircleCard.vue"
@@ -141,6 +162,8 @@ import CircleCard from "@/components/CircleCard.vue"
 import { ElMessage } from "element-plus"
 import { Edit } from "@element-plus/icons-vue"
 import SkeletonCard from "@/components/SkeletonCard.vue"
+
+const banners = ref<{ id: number; title: string; image_url: string; link_url: string }[]>([])
 
 const userStore = useUserStore()
 const trendingLoading = ref(true)
@@ -181,7 +204,13 @@ async function handleLeave(circle: CircleCardData) {
   } catch { /* */ }
 }
 
+
 onMounted(async () => {
+    try {
+      banners.value = (await listBanners()) as any
+    } catch { /* */ }
+
+
   try {
     trendingPostsData.value = (await trendingPosts()) as unknown as PostCardData[]
   } catch { /* */ } finally { trendingLoading.value = false }
@@ -204,6 +233,63 @@ onMounted(async () => {
   overflow: hidden;
   margin-bottom: $space-8;
   min-height: 200px;
+}
+
+// ═══ Banner Carousel ═══
+.banner-section {
+  margin-bottom: $space-6;
+  border-radius: $radius-lg;
+  overflow: hidden;
+
+  .banner-link {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+  }
+
+  .banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .banner-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: $space-6;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  }
+
+  .banner-title {
+    font-size: $text-xl;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+}
+
+:deep(.el-carousel__indicator--outside) {
+  padding: 6px 4px 0;
+}
+
+:deep(.el-carousel__button) {
+  background: oklch(0.45 0.01 30);
+  opacity: 0.5;
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+:deep(.el-carousel__indicator.is-active .el-carousel__button) {
+  background: $brand-primary;
+  opacity: 1;
+  width: 30px;
 }
 
 .hero-bg {

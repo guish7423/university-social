@@ -5,11 +5,26 @@
       <el-button type="primary" @click="showCreate = true">倾诉</el-button>
     </div>
 
-    <div v-if="loading && !whispers.length" class="loading-wrap"><el-skeleton :rows="5" animated /></div>
+    <div v-if="loading && !whispers.length" class="loading-wrap">
+      <div v-for="n in 3" :key="n" class="skeleton-card">
+        <div class="skeleton-row skeleton-author" />
+        <div class="skeleton-row skeleton-line" />
+        <div class="skeleton-row skeleton-line skeleton-line-short" />
+        <div class="skeleton-row skeleton-footer" />
+      </div>
+    </div>
     <div v-else-if="!whispers.length" class="empty-state"><el-empty description="暂无树洞消息" /></div>
     <div v-else class="whisper-list">
       <div v-for="w in whispers" class="whisper-card stagger-item" :key="w.id" @click="$router.push('/whispers/' + w.id)">
-        <p class="content">{{ w.content }}</p>
+        <div class="author-row">
+          <div v-if="w.is_anonymous" class="anon-avatar" :style="{ background: anonGradient(w.user_id) }">{{ w.content.charAt(0) }}</div>
+          <template v-else-if="w.author">
+            <img :src="w.author.avatar" class="real-avatar" loading="lazy" />
+            <span class="nickname">{{ w.author.nickname }}</span>
+          </template>
+          <span v-if="w.is_anonymous" class="whisper-id">树洞 #{{ String(w.user_id).slice(-4) }}</span>
+        </div>
+        <p class="content clamp-3">{{ w.content }}</p>
         <div class="footer">
           <span class="time">{{ formatTime(w.created_at) }}</span>
           <span><el-icon><Goods /></el-icon> {{ w.like_count }}</span>
@@ -49,9 +64,9 @@ const { items: whispers, loading, hasMore, loadMore, reset } = usePagination<Whi
 const showCreate = ref(false)
 const text = ref("")
 const anonymous = ref(true)
-  const submitting = ref(false)
+const submitting = ref(false)
 
-  async function handleSubmit() {
+async function handleSubmit() {
   if (!text.value.trim()) return
   submitting.value = true
   try {
@@ -60,13 +75,29 @@ const anonymous = ref(true)
     text.value = ""
     reset()
   } finally { submitting.value = false }
-  }
+}
+
+const anonColors = [
+  'linear-gradient(135deg, #D4A574, #B8865E)',
+  'linear-gradient(135deg, #5B8C5A, #3D6B3E)',
+  'linear-gradient(135deg, #5B7FB4, #3D5F8E)',
+  'linear-gradient(135deg, #8B6FAF, #6B4F8E)',
+  'linear-gradient(135deg, #4A9E9E, #2C7E7E)',
+  'linear-gradient(135deg, #C47A5A, #A45A3A)',
+  'linear-gradient(135deg, #9A5A8A, #7A3A6A)',
+  'linear-gradient(135deg, #5A8A7A, #3A6A5A)',
+]
+
+function anonGradient(userId: number): string {
+  return anonColors[userId % anonColors.length]
+}
 
 loadMore()
 </script>
 
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
+@use "sass:color";
 
 .whisper-page { max-width: 640px; }
 .page-header {
@@ -78,11 +109,20 @@ loadMore()
 
 .whisper-card {
   background: $bg-card; border: 1px solid $border-color;
-  border-radius: $radius-md; padding: 16px; cursor: pointer; transition: all 0.2s;
-  &:hover { border-color: rgba($brand-primary-hex, 0.3); }
+  border-radius: $radius-md; padding: 16px; cursor: pointer;
+  transition: all 0.25s ease;
+  &:hover {
+    border-color: rgba($brand-primary-hex, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
   .content {
     font-size: 14px; line-height: 1.7; margin-bottom: 10px;
     font-style: italic; color: $text-secondary;
+  }
+  .clamp-3 {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden; word-break: break-word;
   }
   .footer {
     display: flex; gap: 14px; font-size: 12px; color: $text-muted;
@@ -90,6 +130,43 @@ loadMore()
     .el-icon { vertical-align: middle; margin-right: 3px; }
   }
 }
+
+.author-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  .nickname { font-size: 13px; font-weight: 600; }
+  .whisper-id { font-size: 11px; color: $text-muted; margin-left: auto; }
+}
+
+.anon-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+
+.real-avatar {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+}
+
 .load-more { text-align: center; padding: 20px 0; }
 .no-more { text-align: center; padding: 20px 0; color: $text-muted; font-size: 13px; }
+
+.skeleton-card {
+  background: $bg-card; border: 1px solid $border-color;
+  border-radius: $radius-md; padding: 16px;
+  .skeleton-row {
+    background: linear-gradient(90deg, color.change($border-color, $alpha: 0.4) 25%, color.change($border-color, $alpha: 0.1) 50%, color.change($border-color, $alpha: 0.4) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: 4px; height: 12px; margin-bottom: 8px;
+  }
+  .skeleton-author { width: 80px; height: 10px; }
+  .skeleton-line { width: 100%; }
+  .skeleton-line-short { width: 60%; }
+  .skeleton-footer { width: 120px; height: 10px; margin-bottom: 0; }
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 </style>

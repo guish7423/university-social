@@ -2,9 +2,14 @@
   <div class="chat-detail-page">
     <div class="chat-header">
       <el-button text :icon="ArrowLeft" @click="$router.push('/chat')" />
-      <span class="chat-title">{{ peerName }}</span>
-      <el-tag v-if="online" size="small" type="success" effect="dark">在线</el-tag>
-      <el-tag v-else size="small" type="info" effect="plain">离线</el-tag>
+      <el-avatar :size="32" :src="peerAvatar" class="header-avatar" />
+      <div class="header-info">
+        <span class="chat-title">{{ peerName }}</span>
+        <div class="header-status">
+          <el-tag v-if="online" size="small" type="success" effect="dark">在线</el-tag>
+          <el-tag v-else size="small" type="info" effect="plain">离线</el-tag>
+        </div>
+      </div>
     </div>
     <div class="messages" ref="msgContainer">
       <div v-if="loading" class="loading-wrap"><el-skeleton :rows="5" animated /></div>
@@ -27,6 +32,7 @@ import { ref, onMounted, onUnmounted, nextTick, watch } from "vue"
 import { useRoute } from "vue-router"
 import { useUserStore } from "@/stores/user"
 import { getMessages } from "@/api/chat"
+import { getUserInfo } from "@/api/auth"
 import type { MessageData } from "@/api/chat"
 import { useWebSocket } from "@/composables/useWebSocket"
 import dayjs from "dayjs"
@@ -44,6 +50,7 @@ const online = ref(false)
 const typing = ref(false)
 let typingTimer: ReturnType<typeof setTimeout> | null = null
 const peerName = ref("")
+const peerAvatar = ref("")
 const msgContainer = ref<HTMLElement | null>(null)
 
 const { connect, sendMessage: wsSend, lastMessage, connected } = useWebSocket(userId)
@@ -94,9 +101,15 @@ function onTyping() {
 onMounted(async () => {
   connect()
   try {
-    const msgs = await getMessages(peerId)
+    const [msgs, profile] = await Promise.all([
+      getMessages(peerId),
+      getUserInfo(peerId).catch(() => null)
+    ])
     messages.value = msgs
-    if (msgs.length) {
+    if (profile) {
+      peerName.value = profile.nickname
+      peerAvatar.value = profile.avatar
+    } else if (msgs.length) {
       const peer = msgs.find(m => m.from_user_id !== userId)
       if (peer) peerName.value = `用户 ${peer.from_user_id}`
     }
@@ -118,9 +131,16 @@ onUnmounted(() => {
 }
 
 .chat-header {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 10px;
   padding-bottom: 12px; border-bottom: 1px solid $border-color; margin-bottom: 12px;
+}
+
+.header-avatar { flex-shrink: 0; }
+
+.header-info {
+  flex: 1; min-width: 0;
   .chat-title { font-size: 16px; font-weight: 600; }
+  .header-status { margin-top: 2px; }
 }
 
 .typing-hint {
@@ -132,23 +152,16 @@ onUnmounted(() => {
   display: flex; flex-direction: column; gap: 12px;
 }
 
-.msg {
-  max-width: 70%;
-  .bubble {
-    padding: 10px 14px; border-radius: $radius-md; font-size: 14px; line-height: 1.5;
-  }
-  .time { font-size: 11px; color: $text-muted; margin-top: 4px; }
+.msg { max-width: 70%; }
+.msg .bubble { padding: 10px 14px; border-radius: $radius-md; font-size: 14px; line-height: 1.5; }
+.msg .time { font-size: 11px; color: $text-muted; margin-top: 4px; }
 
-  &.self {
-    align-self: flex-end;
-    .bubble { background: $primary; color: white; border-bottom-right-radius: 4px; }
-    .time { text-align: right; }
-  }
-  &.peer {
-    align-self: flex-start;
-    .bubble { background: $bg-card; border: 1px solid $border-color; border-bottom-left-radius: 4px; }
-  }
-}
+.msg.self { align-self: flex-end; }
+.msg.self .bubble { background: $primary; color: white; border-bottom-right-radius: 4px; }
+.msg.self .time { text-align: right; }
+
+.msg.peer { align-self: flex-start; }
+.msg.peer .bubble { background: $bg-card; border: 1px solid $border-color; border-bottom-left-radius: 4px; }
 
 .input-area {
   display: flex; gap: 10px; padding-top: 12px; border-top: 1px solid $border-color;

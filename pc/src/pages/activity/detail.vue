@@ -1,8 +1,8 @@
 <template>
   <div v-if="loading" class="loading-wrap"><el-skeleton :rows="6" animated /></div>
   <div v-else-if="!activity" class="empty-state"><el-empty description="活动不存在" /></div>
-  <div v-else class="detail-page">
-    <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn">返回</el-button>
+  <div v-else class="detail-page stagger-item">
+    <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn stagger-item">返回</el-button>
     <div class="activity-detail">
       <div class="header">
         <el-tag size="small">{{ activity.activity_type }}</el-tag>
@@ -15,7 +15,7 @@
       </div>
       <p class="description">{{ activity.description }}</p>
       <div v-if="activity.images?.length" class="images">
-        <img v-for="(img, i) in activity.images" :key="i" :src="img" />
+        <img v-for="(img, i) in activity.images" :key="i" :src="img" loading="lazy" @click="lightboxIndex = i" />
       </div>
       <div class="actions">
         <el-button v-if="!activity.is_participant && activity.status === 0" type="primary" @click="handleJoin">
@@ -25,6 +25,8 @@
       </div>
     </div>
   </div>
+    <ImagePreview :images="activity?.images || []" v-model="lightboxIndex" />
+
 </template>
 
 <script setup lang="ts">
@@ -34,6 +36,9 @@ import { getActivity, joinActivity, leaveActivity } from "@/api/activity"
 import type { ActivityData } from "@/api/activity"
 import dayjs from "dayjs"
 import { ArrowLeft } from "@element-plus/icons-vue"
+import ImagePreview from "@/components/ImagePreview.vue"
+
+const lightboxIndex = ref<number | null>(null)
 
 const route = useRoute()
 const router = useRouter()
@@ -79,11 +84,15 @@ onMounted(async () => {
   .header { margin-bottom: 16px; h1 { font-size: 22px; font-weight: 700; margin-top: 8px; } }
   .meta-grid {
     display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: $text-secondary;
-    margin-bottom: 16px; .el-icon { vertical-align: middle; margin-right: 4px; }
+    margin-bottom: 16px; transition: all 0.3s ease;
+.el-icon { vertical-align: middle; margin-right: 4px; }
   }
   .description { font-size: 14px; line-height: 1.8; margin-bottom: 16px; }
   .images { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
-    img { width: 100px; height: 100px; object-fit: cover; border-radius: $radius-sm; }
+    img { width: 100px; height: 100px; object-fit: cover; border-radius: $radius-sm;
+      transition: transform 0.3s ease;
+      &:hover { transform: scale(1.08); }
+    }
   }
   .actions { padding-top: 16px; border-top: 1px solid $border-color; }
 }

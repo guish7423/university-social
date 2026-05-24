@@ -40,9 +40,19 @@
       </el-table-column>
     </el-table>
 
-    <div v-if="hasMore" class="load-more">
-      <el-button :loading="loading" text @click="loadMore">加载更多</el-button>
+    <div class="pagination-wrap">
+      <el-pagination
+        v-if="total > PAGE_LIMIT"
+        v-model:current-page="page"
+        :page-size="PAGE_LIMIT"
+        :total="total"
+        layout="prev, pager, next, total"
+        background
+        small
+        @current-change="handlePageChange"
+      />
     </div>
+
 
     <el-dialog v-model="detailVisible" title="用户详情" width="500">
       <template v-if="detailUser">
@@ -81,12 +91,13 @@ const loading = ref(false)
 const searchQuery = ref("")
 const detailVisible = ref(false)
 const detailUser = ref<User | null>(null)
-const offset = ref(0)
-const hasMore = ref(true)
+const page = ref(1)
+const total = ref(0)
 const PAGE_LIMIT = 50
 
+
 async function load(reset = true) {
-  if (reset) { offset.value = 0; hasMore.value = true }
+  if (reset) { offset.value = 0; hasMore.value = true; page.value = 1 }
   loading.value = true
   try {
     const params: any = { offset: offset.value, limit: PAGE_LIMIT }
@@ -140,4 +151,4 @@ onMounted(() => load())
 .detail-header { display: flex; gap: 16px; margin-bottom: 20px; align-items: center; }
 .detail-meta h3 { margin: 0; font-size: 18px; }
 .detail-id { margin: 4px 0 0; font-size: 12px; color: #909399; }
-</style>
+.pagination-wrap { text-align: center; padding: 16px 0; }

@@ -65,15 +65,7 @@
       </div>
     </div>
 
-    <Teleport to="body">
-      <div v-if="lightboxIndex !== null" class="lightbox-overlay" @click="lightboxIndex = null">
-        <img :src="post?.images?.[lightboxIndex!]" class="lightbox-img" @click.stop />
-        <div class="lightbox-nav">
-          <span v-if="lightboxIndex! > 0" @click.stop="lightboxIndex!--" class="nav-btn">‹</span>
-          <span v-if="lightboxIndex! < (post?.images?.length || 1) - 1" @click.stop="lightboxIndex!++" class="nav-btn">›</span>
-        </div>
-      </div>
-    </Teleport>
+    <ImagePreview :images="post?.images || []" v-model="lightboxIndex" />
   </div>
 </template>
 
@@ -83,6 +75,8 @@ import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user"
 import { getPost, deletePost, listComments, createComment, toggleLike } from "@/api/post"
 import type { PostData, CommentData } from "@/api/post"
+import ImagePreview from "@/components/ImagePreview.vue"
+
 import SkeletonCard from "@/components/SkeletonCard.vue"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"

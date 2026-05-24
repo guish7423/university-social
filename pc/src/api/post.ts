@@ -3,6 +3,7 @@ import request from "./request"
 export interface PostData {
   id: number
   user_id: number
+  title?: string
   content: string
   images: string[]
   topic_id?: number

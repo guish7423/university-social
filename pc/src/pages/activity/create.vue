@@ -1,32 +1,34 @@
 <template>
   <div class="create-page">
-    <h1>发起活动</h1>
-    <el-form @submit.prevent="handleSubmit">
-      <el-form-item label="活动标题">
-        <el-input v-model="title" placeholder="活动名称" maxlength="60" />
-      </el-form-item>
-      <el-form-item label="活动类型">
-        <el-input v-model="activityType" placeholder="如：运动、学习、娱乐等" />
-      </el-form-item>
-      <el-form-item label="活动地点">
-        <el-input v-model="location" placeholder="活动地点" />
-      </el-form-item>
-      <el-form-item label="开始时间">
-        <el-date-picker v-model="startTime" type="datetime" placeholder="选择开始时间" />
-      </el-form-item>
-      <el-form-item label="人数上限">
-        <el-input-number v-model="maxParticipants" :min="2" :max="200" />
-      </el-form-item>
-      <el-form-item label="活动描述">
-        <el-input v-model="description" type="textarea" :rows="4" placeholder="描述你的活动..." />
-      </el-form-item>
-      <div class="form-actions">
-        <el-button @click="$router.back()">取消</el-button>
-        <el-button type="primary" :loading="submitting" :disabled="!title.trim()" native-type="submit">
-          发起
-        </el-button>
-      </div>
-    </el-form>
+  <PageHeader title="发起活动" />
+    <div class="card-wrap stagger-item">
+      <el-form @submit.prevent="handleSubmit">
+        <el-form-item label="活动标题">
+          <el-input v-model="title" placeholder="活动名称" maxlength="60" />
+        </el-form-item>
+        <el-form-item label="活动类型">
+          <el-input v-model="activityType" placeholder="如：运动、学习、娱乐等" />
+        </el-form-item>
+        <el-form-item label="活动地点">
+          <el-input v-model="location" placeholder="活动地点" />
+        </el-form-item>
+        <el-form-item label="开始时间">
+          <el-date-picker v-model="startTime" type="datetime" placeholder="选择开始时间" />
+        </el-form-item>
+        <el-form-item label="人数上限">
+          <el-input-number v-model="maxParticipants" :min="2" :max="200" />
+        </el-form-item>
+        <el-form-item label="活动描述">
+          <el-input v-model="description" type="textarea" :rows="4" placeholder="描述你的活动..." />
+        </el-form-item>
+        <div class="form-actions">
+          <el-button @click="$router.back()">取消</el-button>
+          <el-button type="primary" :loading="submitting" :disabled="!title.trim()" native-type="submit">
+            发起
+          </el-button>
+        </div>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -35,6 +37,7 @@ import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { createActivity } from "@/api/activity"
 import dayjs from "dayjs"
+import PageHeader from "@/components/PageHeader.vue"
 
 const router = useRouter()
 const title = ref("")
@@ -63,7 +66,12 @@ async function handleSubmit() {
 </script>
 
 <style scoped lang="scss">
+@use "@/styles/variables.scss" as *;
+
 .create-page { max-width: 560px; }
-h1 { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+.card-wrap {
+  background: $bg-card; border: 1px solid $border-color;
+  border-radius: $radius-md; padding: 24px;
+}
 .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
 </style>

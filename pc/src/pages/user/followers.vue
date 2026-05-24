@@ -1,15 +1,30 @@
 <template>
   <div class="list-page">
     <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn">返回</el-button>
-    <h1>粉丝</h1>
-    <div v-if="loading" class="loading-wrap"><el-skeleton :rows="4" animated /></div>
-    <div v-else-if="!list.length" class="empty-state"><el-empty description="暂无粉丝" /></div>
-    <div v-else class="user-list">
-      <div v-for="u in list" :key="u.id" class="user-row" @click="$router.push('/user/' + u.id)">
-        <el-avatar :size="36" :src="u.avatar" />
-        <span class="name">{{ u.nickname }}</span>
-      </div>
-    </div>
+    <PageHeader title="粉丝" />
+
+    <LoadingWrapper :loading="loading && !list.length" :data="list.length" skeleton-variant="post-card">
+      <template #empty>
+        <el-empty description="暂无粉丝" />
+      </template>
+
+      <template #default>
+        <div class="user-grid">
+          <div
+            v-for="u in list"
+            :key="u.id"
+            class="user-card stagger-item"
+            @click="$router.push('/user/' + u.id)"
+          >
+            <el-avatar :size="48" :src="u.avatar" />
+            <div class="user-info">
+              <div class="name">{{ u.nickname }}</div>
+              <div v-if="u.school" class="school">{{ u.school }}</div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </LoadingWrapper>
   </div>
 </template>
 
@@ -18,6 +33,8 @@ import { ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import { getFollowers } from "@/api/social"
 import type { UserInfo } from "@/api/auth"
+import PageHeader from "@/components/PageHeader.vue"
+import LoadingWrapper from "@/components/LoadingWrapper.vue"
 import { ArrowLeft } from "@element-plus/icons-vue"
 
 const route = useRoute()
@@ -36,13 +53,49 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-.list-page { max-width: 560px; }
-h1 { font-size: 20px; font-weight: 700; margin: 16px 0; }
-.user-list { display: flex; flex-direction: column; gap: 6px; }
-.user-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px; border-radius: $radius-sm; cursor: pointer;
-  &:hover { background: $bg-card; }
-  .name { font-size: 14px; font-weight: 600; }
+.list-page { max-width: 640px; }
+.back-btn { margin-bottom: 4px; }
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    border-color: $primary-light;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+
+    .name {
+      font-size: 15px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .school {
+      font-size: 12px;
+      color: $text-muted;
+      margin-top: 2px;
+    }
+  }
 }
 </style>

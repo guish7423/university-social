@@ -1,11 +1,11 @@
 <template>
   <div v-if="loading" class="loading-wrap"><el-skeleton :rows="6" animated /></div>
   <div v-else-if="!product" class="empty-state"><el-empty description="商品不存在" /></div>
-  <div v-else class="detail-page">
+  <div v-else class="detail-page stagger-item">
     <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn">返回</el-button>
     <div class="product-detail">
       <div class="product-images">
-        <img v-for="(img, i) in product.images" :key="i" :src="img" />
+        <img v-for="(img, i) in product.images" :key="i" :src="img" loading="lazy" @click="lightboxIndex = i" />
       </div>
       <div class="product-info">
         <el-tag v-if="product.status === 1" type="danger" size="small">已售出</el-tag>
@@ -29,6 +29,8 @@
       </div>
     </div>
   </div>
+    <ImagePreview :images="product?.images || []" v-model="lightboxIndex" />
+
 </template>
 
 <script setup lang="ts">
@@ -38,6 +40,9 @@ import { getProduct, deleteProduct, markSold } from "@/api/product"
 import type { ProductData } from "@/api/product"
 import { ArrowLeft } from "@element-plus/icons-vue"
 import { ElMessageBox } from "element-plus"
+import ImagePreview from "@/components/ImagePreview.vue"
+
+const lightboxIndex = ref<number | null>(null)
 
 const route = useRoute()
 const router = useRouter()
@@ -72,7 +77,9 @@ onMounted(async () => {
 .product-detail { display: flex; gap: 24px;
   .product-images {
     flex-shrink: 0; width: 300px;
-    img { width: 100%; border-radius: $radius-md; margin-bottom: 8px; }
+    img { width: 100%; border-radius: $radius-md; margin-bottom: 8px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: zoom-in;
+      &:hover { transform: scale(1.02); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+    }
   }
   .product-info { flex: 1;
     h1 { font-size: 20px; font-weight: 700; margin: 8px 0; }

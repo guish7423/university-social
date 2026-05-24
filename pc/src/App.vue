@@ -1,12 +1,16 @@
 <template>
-  <router-view v-slot="{ Component, route }">
-    <Transition name="page" mode="out-in">
-      <component :is="Component" :key="route.path" />
-    </Transition>
-  </router-view>
+  <ErrorBoundary>
+    <router-view v-slot="{ Component, route }">
+      <Transition name="page" mode="out-in">
+        <component :is="Component" :key="route.path" />
+      </Transition>
+    </router-view>
+  </ErrorBoundary>
 </template>
 
 <script setup lang="ts">
+import ErrorBoundary from "@/components/ErrorBoundary.vue"
+
 import { onMounted } from "vue"
 import { useUserStore } from "@/stores/user"
 import { getProfile } from "@/api/auth"

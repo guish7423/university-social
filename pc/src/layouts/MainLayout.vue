@@ -93,13 +93,24 @@
 
       <BreadcrumbBar :breadcrumbs="breadcrumbs" />
 
-      <div class="content-area">
+      <div ref="contentRef" class="content-area">
         <router-view v-slot="{ Component }">
           <transition name="page" mode="out-in">
             <component :is="Component" />
           </transition>
         </router-view>
       </div>
+
+      <transition name="fade">
+        <el-button
+          v-show="showBackToTop"
+          class="back-to-top"
+          circle
+          @click="scrollToTop"
+        >
+          <el-icon><ArrowUp /></el-icon>
+        </el-button>
+      </transition>
     </main>
   </div>
 </template>
@@ -114,7 +125,7 @@ import {
   HomeFilled, MessageBox, Connection, Calendar, ShoppingCart,
   WarningFilled, ChatDotSquare, UserFilled, ChatLineSquare,
   Reading, Coin, School, Link, Bell, Edit, Search,
-  ArrowRight, ArrowDown, Notebook, InfoFilled, Key, Expand, Fold
+  ArrowRight, ArrowDown, ArrowUp, Notebook, InfoFilled, Key, Expand, Fold
 } from "@element-plus/icons-vue"
 
 const route = useRoute()
@@ -124,6 +135,9 @@ const unreadCount = ref(0)
 const sidebarCollapsed = ref(localStorage.getItem('sidebar_collapsed') === 'true')
 const sidebarOpen = ref(false)
 const isMobile = ref(window.innerWidth < 768)
+const showBackToTop = ref(false)
+const contentRef = ref<HTMLElement | null>(null)
+let pollTimer: ReturnType<typeof setInterval>
 
 function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value
@@ -135,6 +149,13 @@ function handleResize() {
   if (!isMobile.value) sidebarOpen.value = false
 }
 
+function onContentScroll() {
+  showBackToTop.value = contentRef.value ? contentRef.value.scrollTop > 300 : false
+}
+
+function scrollToTop() {
+  contentRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 const navGroups = computed(() => [
   {
@@ -225,9 +246,11 @@ function handleLogout() {
 
   onMounted(() => {
     window.addEventListener('resize', handleResize)
+    contentRef.value?.addEventListener('scroll', onContentScroll)
   })
   onUnmounted(() => {
     window.removeEventListener('resize', handleResize)
+    contentRef.value?.removeEventListener('scroll', onContentScroll)
   })
 
 onMounted(async () => {
@@ -235,6 +258,16 @@ onMounted(async () => {
     const res = await fetchUnreadCount()
     unreadCount.value = res.count
   } catch { /* interceptor handles 401 */ }
+  pollTimer = setInterval(async () => {
+    try {
+      const res = await fetchUnreadCount()
+      unreadCount.value = res.count
+    } catch { /* */ }
+  }, 30000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
 })
 </script>
 
@@ -529,3 +562,31 @@ onMounted(async () => {
   }
 }
 </style>
+
+.back-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 100;
+  --el-button-size: 48px;
+  font-size: 20px;
+  background: linear-gradient(135deg, $brand-primary, #a86555) !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba($brand-primary-hex, 0.3) !important;
+  color: #fff !important;
+  transition: all $duration-normal $ease-out;
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 24px rgba($brand-primary-hex, 0.45) !important;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

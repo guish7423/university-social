@@ -5,28 +5,29 @@
       <el-button type="primary" :loading="creating" @click="handleCreate">生成邀请码</el-button>
     </div>
 
-    <el-card shadow="never" class="redeem-card">
+    <div class="redeem-card">
       <h3>兑换邀请码</h3>
       <div class="redeem-input">
-        <el-input v-model="redeemCode" placeholder="输入邀请码" size="large" />
+        <el-input v-model="redeemCode" placeholder="输入邀请码" size="large" clearable />
         <el-button type="primary" :loading="redeeming" :disabled="!redeemCode.trim()" @click="handleRedeem">兑换</el-button>
       </div>
-    </el-card>
+    </div>
 
     <div class="section-header"><h2>我的邀请码</h2></div>
+
     <div v-if="loading" class="loading-wrap"><el-skeleton :rows="4" animated /></div>
-    <div v-else-if="!codes.length" class="empty-state"><el-empty description="暂无邀请码" /></div>
-    <el-table v-else :data="codes" stripe>
-      <el-table-column prop="code" label="邀请码">
-        <template #default="{row}"><el-tag>{{ row.code }}</el-tag></template>
-      </el-table-column>
-      <el-table-column prop="created_at" label="创建时间" />
-      <el-table-column label="状态">
-        <template #default="{row}">
-          <el-tag :type="row.is_used ? 'info' : 'success'">{{ row.is_used ? '已使用' : '未使用' }}</el-tag>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div v-else-if="!codes.length" class="empty-state"><el-empty description="暂无邀请码" :image-size="80" /></div>
+    <div v-else class="codes-grid">
+      <div v-for="c in codes" :key="c.id" class="code-card stagger-item">
+        <div class="code-value">{{ c.code }}</div>
+        <div class="code-meta">
+          <span class="code-time">{{ formatDateTime(c.created_at) }}</span>
+          <el-tag :type="c.is_used ? 'info' : 'success'" size="small" effect="dark">
+            {{ c.is_used ? '已使用' : '未使用' }}
+          </el-tag>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -74,11 +75,66 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-@use "@/styles/variables.scss" as *;
+@use "@/styles/variables" as *;
+
 .invite-page { max-width: 700px; }
-.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; h1 { font-size: 22px; font-weight: 700; } }
-.redeem-card { margin-bottom: 24px; h3 { font-size: 15px; margin-bottom: 12px; } }
-.redeem-input { display: flex; gap: 10px; }
-.section-header { margin-bottom: 14px; h2 { font-size: 17px; font-weight: 600; } }
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  h1 { font-size: 22px; font-weight: 700; }
+}
+
+.redeem-card {
+  background: $bg-card; border: 1px solid $border-color; border-radius: $radius-md;
+  padding: 24px; margin-bottom: 24px;
+
+  h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+
+  .redeem-input {
+    display: flex; gap: 10px;
+  }
+}
+
+.section-header {
+  margin-bottom: 14px;
+  h2 { font-size: 17px; font-weight: 600; }
+}
+
+.codes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.code-card {
+  background: $bg-card; border: 1px solid $border-color;
+  border-radius: $radius-md; padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: default;
+
+  &:hover {
+    border-color: $primary-light;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  .code-value {
+    font-family: "DM Mono", "SF Mono", "Fira Code", monospace;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: $primary;
+    margin-bottom: 12px;
+  }
+
+  .code-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .code-time { font-size: 12px; color: $text-muted; }
+  }
+}
+
 .loading-wrap, .empty-state { padding: 40px 0; }
 </style>

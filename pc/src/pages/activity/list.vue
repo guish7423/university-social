@@ -58,7 +58,7 @@ loadMore()
 .activity-card {
   background: $bg-card; border: 1px solid $border-color;
   border-radius: $radius-md; padding: 18px; cursor: pointer; transition: all 0.2s;
-  &:hover { border-color: $primary-light; }
+  &:hover { border-color: $primary-light; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
   .card-header {
     display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;

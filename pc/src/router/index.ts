@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/user"
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
+
     {
       path: "/login",
       name: "Login",
@@ -45,16 +46,30 @@ const router = createRouter({
         { path: "whispers", name: "Whispers", meta: { title: "树洞" }, component: () => import("@/pages/whisper/index.vue") },
         { path: "whispers/:id", name: "WhisperDetail", meta: { title: "树洞详情" }, component: () => import("@/pages/whisper/detail.vue") },
         { path: "courses", name: "Courses", meta: { title: "课程" }, component: () => import("@/pages/course/index.vue") },
+        { path: "courses/:id", name: "CourseDetail", meta: { title: "课程详情" }, component: () => import("@/pages/course/detail.vue") },
         { path: "verification", name: "Verification", meta: { title: "认证" }, component: () => import("@/pages/verification/index.vue") },
         { path: "campus/calendar", name: "CampusCalendar", meta: { title: "校历" }, component: () => import("@/pages/campus/calendar.vue") },
         { path: "campus/directory", name: "CampusDirectory", meta: { title: "通讯录" }, component: () => import("@/pages/campus/directory.vue") },
         { path: "campus/rooms", name: "CampusRooms", meta: { title: "空教室" }, component: () => import("@/pages/campus/rooms.vue") },
         { path: "campus", redirect: "/campus/calendar" },
+        { path: "topics", name: "Topics", meta: { title: "话题" }, component: () => import("@/pages/topic/index.vue") },
+        { path: "reviews", name: "Reviews", meta: { title: "评价" }, component: () => import("@/pages/review/index.vue") },
+        { path: "reviews/create", name: "CreateReview", meta: { title: "发起评价" }, component: () => import("@/pages/review/create.vue") },
+        { path: "reviews/:id", name: "ReviewDetail", meta: { title: "评价详情" }, component: () => import("@/pages/review/detail.vue") },
+
+        { path: "announcements", name: "Announcements", meta: { title: "公告" }, component: () => import("@/pages/announcement/index.vue") },
+        { path: "circles/:id/members", name: "CircleMembers", meta: { title: "成员" }, component: () => import("@/pages/circle/members.vue") },
+
         { path: "invite", name: "Invite", meta: { title: "邀请码" }, component: () => import("@/pages/invite/index.vue") },
         { path: "/:pathMatch(.*)*", name: "NotFound", component: () => import("@/pages/error/NotFound.vue") },
       ],
     },
   ],
+  scrollBehavior(to: any, from: any, savedPosition: any) {
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash, behavior: "smooth" as const }
+    return { top: 0 }
+  },
 })
 
 router.beforeEach((to) => {

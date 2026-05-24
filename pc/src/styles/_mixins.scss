@@ -1,0 +1,120 @@
+// ═══════════════════════════════════════
+// SCSS Mixins & Utilities
+// ═══════════════════════════════════════
+
+// ── Breakpoints ──
+$bp-tablet: 768px;
+$bp-desktop: 1024px;
+$bp-wide: 1440px;
+
+@mixin respond-to($bp) {
+  @if $bp == tablet { @media (min-width: $bp-tablet) { @content; } }
+  @else if $bp == desktop { @media (min-width: $bp-desktop) { @content; } }
+  @else if $bp == wide { @media (min-width: $bp-wide) { @content; } }
+}
+
+// ── Interaction States ──
+@mixin card-hover {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+  &:hover { transform: translateY(-2px); }
+  &:active { transform: translateY(0); }
+}
+
+@mixin clickable {
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  &:hover { opacity: 0.85; }
+  &:active { transform: scale(0.98); }
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid oklch(0.62 0.12 16);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@mixin card-grid($cols: 2) {
+  display: grid;
+  grid-template-columns: repeat($cols, 1fr);
+  gap: 16px;
+}
+
+@mixin text-truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// ── Flex Utilities ──
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ── Image Sizing ──
+@mixin detail-image($size: 200px) {
+  width: $size;
+  height: $size;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+@mixin thumbnail($size: 48px) {
+  width: $size;
+  height: $size;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+// ── Scrollbar ──
+@mixin thin-scrollbar {
+  &::-webkit-scrollbar { width: 6px; height: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: oklch(0.85 0.005 42); border-radius: 3px; }
+}
+
+// ── Empty State ──
+@mixin empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: oklch(0.58 0.006 42);
+  text-align: center;
+  gap: 12px;
+}
+
+// ── Skeleton shimmer ──
+@mixin skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.90 0.003 42) 25%,
+    oklch(0.93 0.004 42) 50%,
+    oklch(0.90 0.003 42) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

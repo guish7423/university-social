@@ -2,7 +2,7 @@
   <div v-if="loading" class="loading-wrap"><el-skeleton :rows="6" animated /></div>
   <div v-else-if="!item" class="empty-state"><el-empty description="信息不存在" /></div>
   <div v-else class="detail-page">
-    <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn">返回</el-button>
+    <el-button text :icon="ArrowLeft" @click="$router.back()" class="back-btn stagger-item">返回</el-button>
     <div class="found-detail">
       <div class="header">
         <el-tag :type="item.category === '寻物' ? 'warning' : 'success'">{{ item.category }}</el-tag>
@@ -17,7 +17,7 @@
         <div v-if="item.contact"><el-icon><Phone /></el-icon> {{ item.contact }}</div>
       </div>
       <div v-if="item.images?.length" class="images">
-        <img v-for="(img, i) in item.images" :key="i" :src="img" />
+        <img v-for="(img, i) in item.images" :key="i" :src="img" loading="lazy" @click="lightboxIndex = i" />
       </div>
       <div class="actions" v-if="item.is_owner && item.status === 0">
         <el-button type="success" @click="handleResolve">标记已解决</el-button>
@@ -25,6 +25,8 @@
       </div>
     </div>
   </div>
+    <ImagePreview :images="item?.images || []" v-model="lightboxIndex" />
+
 </template>
 
 <script setup lang="ts">
@@ -34,6 +36,9 @@ import { getLostItem, deleteLostItem, updateLostItemStatus } from "@/api/found"
 import type { LostItemData } from "@/api/found"
 import { ArrowLeft } from "@element-plus/icons-vue"
 import { ElMessageBox } from "element-plus"
+import ImagePreview from "@/components/ImagePreview.vue"
+
+const lightboxIndex = ref<number | null>(null)
 
 const route = useRoute()
 const router = useRouter()
@@ -74,7 +79,9 @@ onMounted(async () => {
   .description { font-size: 14px; line-height: 1.8; margin-bottom: 16px; }
   .meta { font-size: 13px; color: $text-secondary; margin-bottom: 12px; .el-icon { vertical-align: middle; margin-right: 4px; } }
   .images { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
-    img { width: 100px; height: 100px; object-fit: cover; border-radius: $radius-sm; }
+    img { width: 100px; height: 100px; object-fit: cover; border-radius: $radius-sm; transition: transform 0.3s ease; cursor: zoom-in;
+      &:hover { transform: scale(1.08); }
+    }
   }
   .actions { padding-top: 16px; border-top: 1px solid $border-color; }
 }

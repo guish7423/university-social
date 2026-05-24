@@ -57,7 +57,7 @@ loadMore()
 .found-card {
   background: $bg-card; border: 1px solid $border-color;
   border-radius: $radius-md; padding: 16px; cursor: pointer; transition: all 0.2s;
-  &:hover { border-color: $primary-light; }
+  &:hover { border-color: $primary-light; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
   .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .status.active { color: $accent-green; font-size: 12px; }
   .status.resolved { color: $text-muted; font-size: 12px; }

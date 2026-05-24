@@ -1,8 +1,6 @@
 <template>
   <div class="search-page">
-    <div class="page-header">
-      <h1>搜索</h1>
-    </div>
+    <PageHeader title="搜索" />
     <el-input
       v-model="query" ref="inputRef"
       placeholder="搜索用户、帖子、圈子..." size="large" clearable
@@ -37,7 +35,7 @@
           <h3 v-if="tab === 'all'">用户 <small v-if="users.length">({{ users.length }})</small></h3>
           <div v-if="!users.length && tab !== 'all'" class="empty-state"><el-empty description="未找到用户" /></div>
           <div v-else class="user-list">
-            <div v-for="u in users" :key="u.id" class="user-row" @click="$router.push('/user/' + u.id)">
+            <div v-for="u in users" :key="u.id" class="user-row stagger-item" @click="$router.push('/user/' + u.id)">
               <el-avatar :size="36" :src="u.avatar">{{ u.nickname[0] }}</el-avatar>
               <span class="name">{{ u.nickname }}</span>
               <el-tag v-if="u.friend_status === 'accepted'" size="small" type="success">好友</el-tag>
@@ -50,7 +48,7 @@
           <h3 v-if="tab === 'all'">帖子 <small v-if="posts.length">({{ posts.length }})</small></h3>
           <div v-if="!posts.length && tab !== 'all'" class="empty-state"><el-empty description="未找到帖子" /></div>
           <div v-else class="post-list">
-            <PostCard v-for="p in posts" :key="p.id" :post="p" @click="$router.push('/post/' + p.id)" />
+            <div class="stagger-item" v-for="p in posts" :key="p.id"><PostCard :post="p" @click="$router.push('/post/' + p.id)" /></div>
           </div>
         </div>
 
@@ -58,7 +56,7 @@
           <h3 v-if="tab === 'all'">圈子 <small v-if="circles.length">({{ circles.length }})</small></h3>
           <div v-if="!circles.length && tab !== 'all'" class="empty-state"><el-empty description="未找到圈子" /></div>
           <div v-else class="circle-list">
-            <div v-for="c in circles" :key="c.id" class="circle-item" @click="$router.push('/circles/' + c.id)">
+            <div v-for="c in circles" :key="c.id" class="circle-item stagger-item" @click="$router.push('/circles/' + c.id)">
               <el-avatar :size="32" :src="c.avatar">{{ c.name[0] }}</el-avatar>
               <span class="name">{{ c.name }}</span>
               <span class="meta">{{ c.member_count }} 人</span>
@@ -75,7 +73,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import PageHeader from "@/components/PageHeader.vue"
+
+import { ref, computed, watch } from "vue"
 import { searchUsers } from "@/api/social"
 import { searchPosts } from "@/api/post"
 import { searchCircles } from "@/api/circle"
@@ -112,6 +112,13 @@ async function handleSearch() {
     if (cRes.status === "fulfilled") circles.value = cRes.value
   } finally { searchLoading.value = false }
 }
+
+let debounceTimer: ReturnType<typeof setTimeout>
+watch(query, () => {
+  clearTimeout(debounceTimer)
+  if (!query.value.trim()) { searched.value = false; return }
+  debounceTimer = setTimeout(handleSearch, 300)
+})
 </script>
 
 <style scoped lang="scss">
@@ -119,7 +126,6 @@ async function handleSearch() {
 
 .search-page { max-width: 640px; }
 
-.page-header { margin-bottom: 16px; h1 { font-size: 22px; font-weight: 700; } }
 
 .hint { text-align: center; padding: 40px 0; color: $text-muted; font-size: 14px; }
 
