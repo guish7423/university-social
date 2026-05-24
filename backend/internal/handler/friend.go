@@ -29,6 +29,9 @@ func (h *FriendHandler) SearchUsers(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "搜索失败"})
 		return
 	}
+	if users == nil {
+		users = []*repository.UserSearchResult{}
+	}
 	c.JSON(http.StatusOK, users)
 }
 
@@ -121,6 +124,9 @@ func (h *FriendHandler) ListNotifications(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取失败"})
 		return
+	}
+	if notes == nil {
+		notes = []*model.Notification{}
 	}
 	c.JSON(http.StatusOK, notes)
 }
