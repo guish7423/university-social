@@ -108,3 +108,56 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Dropdown & Select Item Hover ── */
+.el-dropdown-menu__item {
+  transition: all 0.15s ease;
+}
+
+.el-dropdown-menu__item:hover {
+  background: rgba(64, 158, 255, 0.08) !important;
+  color: #409eff !important;
+}
+.el-select-dropdown__item {
+  transition: all 0.15s ease;
+}
+
+.el-select-dropdown__item:hover {
+  background: rgba(64, 158, 255, 0.08) !important;
+  color: #409eff !important;
+}
+.el-select-dropdown__item.selected {
+  color: #409eff !important;
+  font-weight: 600;
+}
+
+/* ── Pagination Hover ── */
+.el-pagination .el-pager li {
+  transition: all 0.15s ease;
+  border-radius: 4px;
+}
+.el-pagination .el-pager li:hover {
+  color: #409eff !important;
+  transform: translateY(-1px);
+}
+.el-pagination .el-pager li.active {
+  color: #409eff !important;
+  background: rgba(64, 158, 255, 0.1) !important;
+  transform: translateY(0);
+}
+.el-pagination .btn-prev, .el-pagination .btn-next {
+  transition: all 0.15s ease;
+  border-radius: 4px;
+}
+.el-pagination .btn-prev:hover, .el-pagination .btn-next:hover {
+  color: #409eff !important;
+  transform: translateY(-1px);
+}
+
+/* ── Switch ── */
+.el-switch {
+  --el-switch-on-color: #409eff;
+}
+.el-switch:hover .el-switch__core {
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.15);
+}
