@@ -1,7 +1,9 @@
 // ═══════════════════════════════════════
 // Design Tokens — 校园社 PC Design System
 // ═══════════════════════════════════════
-
+//
+// Now derived from CSS custom properties for theme switching.
+// See themes.css for :root (dark) and [data-theme="light"] values.
 // ── Brand ──
 $brand-hue: 16;
 $brand-primary: oklch(0.62 0.12 $brand-hue);       // #C67A6A warm terracotta
@@ -16,21 +18,23 @@ $campus-purple: oklch(0.58 0.12 290); // #8B6EC4
 $campus-cyan: oklch(0.65 0.08 200);   // #5EACB8
 
 // ── Neutral (warm-tinted) ──
-$bg-app: oklch(0.14 0.01 30);          // #1A1E2E
-$bg-card: oklch(0.17 0.015 30);        // #232840
-$bg-raised: oklch(0.20 0.015 30);      // #2A2F48
-$bg-sidebar: oklch(0.11 0.01 30);      // #141824
-$bg-hover: oklch(0.23 0.015 30);       // #2E334A
+// ── Neutral (warm-tinted) — now from CSS vars for theme switching ──
+$bg-app: var(--bg-app);
+$bg-card: var(--bg-card);
+$bg-raised: var(--bg-raised);
+$bg-sidebar: var(--bg-sidebar);
+$bg-hover: var(--bg-hover);
 
-$text-primary: oklch(0.92 0.005 30);   // #E8E6E3
-$text-secondary: oklch(0.65 0.01 30);  // #9B97A0
-$text-muted: oklch(0.45 0.01 30);      // #6B6872
+$text-primary: var(--text-primary);
+$text-secondary: var(--text-secondary);
+$text-muted: var(--text-muted);
+$text-inverse: var(--text-inverse);
 $text-inverse: oklch(0.14 0.01 30);    // for light-on-dark
 
-$border-default: oklch(0.22 0.015 30); // #2E3348
-$border-light: oklch(0.26 0.015 30);   // #383D58
+$border-default: var(--border-default);
+$border-light: var(--border-light);
 
-// ── Semantic ──
+// ── Semantic (raw oklch — stays constant across themes) ──
 $color-success: $campus-green;
 $color-warning: $campus-gold;
 $color-danger: oklch(0.58 0.18 30);
@@ -66,12 +70,12 @@ $radius-lg: 1rem;       // 16px
 $radius-xl: 1.5rem;     // 24px
 $radius-full: 9999px;
 
-// ── Shadows (layered elevation) ──
-$shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
-$shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-$shadow-md: 0 4px 12px rgba(0,0,0,0.3);
-$shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
-$shadow-xl: 0 12px 36px rgba(0,0,0,0.5);
+// ── Shadows (layered elevation) — themed ──
+$shadow-xs: var(--shadow-xs);
+$shadow-sm: var(--shadow-sm);
+$shadow-md: var(--shadow-md);
+$shadow-lg: var(--shadow-lg);
+$shadow-xl: var(--shadow-xl);
 
 // ── Animation ──
 $duration-instant: 100ms;

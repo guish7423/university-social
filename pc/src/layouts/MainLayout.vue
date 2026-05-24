@@ -84,6 +84,12 @@
               <el-dropdown-menu>
                 <el-dropdown-item @click="$router.push('/user/' + userStore.userId)">个人主页</el-dropdown-item>
                 <el-dropdown-item @click="$router.push('/profile/edit')">编辑资料</el-dropdown-item>
+                <el-dropdown-item divided @click="toggleTheme">
+                  <el-icon style="margin-right: 6px; vertical-align: -2px;">
+                    <component :is="currentTheme === 'dark' ? Sunny : Moon" />
+                  </el-icon>
+                  {{ currentTheme === 'dark' ? '浅色模式' : '深色模式' }}
+                </el-dropdown-item>
                 <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -121,16 +127,18 @@ import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user"
 import { unreadCount as fetchUnreadCount } from "@/api/chat"
 import BreadcrumbBar from "@/components/BreadcrumbBar.vue"
+import { useTheme } from "@/composables/useTheme"
 import {
   HomeFilled, MessageBox, Connection, Calendar, ShoppingCart,
   WarningFilled, ChatDotSquare, UserFilled, ChatLineSquare,
   Reading, Coin, School, Link, Bell, Edit, Search,
-  ArrowRight, ArrowDown, ArrowUp, Notebook, InfoFilled, Key, Expand, Fold
+  ArrowRight, ArrowDown, ArrowUp, Notebook, InfoFilled, Key, Expand, Fold, Moon, Sunny
 } from "@element-plus/icons-vue"
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+const { theme: currentTheme, toggle: toggleTheme } = useTheme()
 const unreadCount = ref(0)
 const sidebarCollapsed = ref(localStorage.getItem('sidebar_collapsed') === 'true')
 const sidebarOpen = ref(false)

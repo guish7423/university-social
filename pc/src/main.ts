@@ -7,6 +7,7 @@ import { icons } from "./icons"
 import App from "./App.vue"
 import router from "./router"
 import "./styles/global.scss"
+import "./styles/themes.css"
 
 const app = createApp(App)
 app.use(createPinia())

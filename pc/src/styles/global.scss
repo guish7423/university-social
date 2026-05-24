@@ -1,4 +1,5 @@
 @use "./variables.scss" as *;
+@use "./_mixins.scss" as *;
 
 * {
   margin: 0;
@@ -9,13 +10,13 @@
 html, body, #app {
   height: 100%;
   font-family: "DM Sans", "Noto Sans SC", "PingFang SC", sans-serif;
-  background: oklch(0.14 0.01 30);
-  color: oklch(0.92 0.005 30);
+  background: $bg-app;
+  color: $text-primary;
 }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: oklch(0.26 0.015 30); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: $border-light; border-radius: 3px; }
 
 .el-menu { border-right: none !important; }
 
@@ -43,7 +44,7 @@ html, body, #app {
 
 .post-card, .activity-card, .product-card, .found-card, .circle-card {
   transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease !important;
-  &:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--shadow-color, rgba(0,0,0,0.35)); }
   &:active { transform: translateY(0); }
 }
 .post-card:hover {
@@ -67,7 +68,7 @@ html, body, #app {
 .top-bar {
   backdrop-filter: blur(12px) saturate(1.8);
   -webkit-backdrop-filter: blur(12px) saturate(1.8);
-  background: rgba(26, 30, 46, 0.85) !important;
+  background: var(--glass-bg, rgba(26, 30, 46, 0.85)) !important;
 }
 
 /* ═══ Glow Effects ═══ */
@@ -102,174 +103,88 @@ html, body, #app {
 .stagger-item:nth-child(9) { animation-delay: 480ms; }
 .stagger-item:nth-child(10) { animation-delay: 540ms; }
 
-/* ═══ Element Plus Dark Theme Overrides ═══ */
+/* ═══ Element Plus Overrides ═══ */
 :root {
-  --el-color-primary: oklch(0.62 0.12 16);
-  --el-color-primary-light-3: oklch(0.70 0.10 16);
-  --el-color-primary-light-5: oklch(0.78 0.08 16);
-  --el-color-primary-light-7: oklch(0.85 0.06 16);
-  --el-color-primary-light-8: oklch(0.90 0.04 16);
-  --el-color-primary-light-9: oklch(0.94 0.02 16);
-  --el-color-primary-dark-2: oklch(0.50 0.12 16);
-  --el-bg-color: oklch(0.14 0.01 30);
-  --el-bg-color-overlay: oklch(0.17 0.015 30);
-  --el-bg-color-page: oklch(0.14 0.01 30);
-  --el-text-color-primary: oklch(0.92 0.005 30);
-  --el-text-color-regular: oklch(0.65 0.01 30);
-  --el-text-color-secondary: oklch(0.45 0.01 30);
-  --el-border-color: oklch(0.22 0.015 30);
-  --el-border-color-light: oklch(0.26 0.015 30);
-  --el-fill-color: oklch(0.20 0.015 30);
-  --el-fill-color-light: oklch(0.23 0.015 30);
-  --el-fill-color-blank: oklch(0.14 0.01 30);
+  --shadow-color: rgba(0,0,0,0.35);
 }
-/* ═══ Element Plus Dark Theme Overrides ═══ */
+[data-theme="light"] {
+  --shadow-color: rgba(0,0,0,0.1);
+}
+
 .el-card {
-  --el-card-bg-color: oklch(0.17 0.015 30);
-  --el-card-border-color: oklch(0.22 0.015 30);
-  background: oklch(0.17 0.015 30) !important;
-  border: 1px solid oklch(0.22 0.015 30);
-  color: oklch(0.92 0.005 30);
+  background: $bg-card !important;
+  border: 1px solid $border-default;
+  color: $text-primary;
 }
 
 .el-table {
-  --el-table-bg-color: oklch(0.17 0.015 30);
-  --el-table-tr-bg-color: oklch(0.17 0.015 30);
-  --el-table-header-bg-color: oklch(0.14 0.01 30);
-  --el-table-row-hover-bg-color: oklch(0.23 0.015 30);
-  --el-table-border-color: oklch(0.22 0.015 30);
-  --el-table-text-color: oklch(0.92 0.005 30);
-  --el-table-header-text-color: oklch(0.65 0.01 30);
-  background: oklch(0.17 0.015 30) !important;
-  color: oklch(0.92 0.005 30);
+  background: $bg-card !important;
+  color: $text-primary;
 }
 
 .el-dialog {
-  --el-dialog-bg-color: oklch(0.17 0.015 30);
-  --el-dialog-title-text-color: oklch(0.92 0.005 30);
-  background: oklch(0.17 0.015 30) !important;
-  .el-dialog__body { color: oklch(0.92 0.005 30); }
+  background: $bg-card !important;
+  .el-dialog__body { color: $text-primary; }
 }
 
 .el-drawer {
-  --el-drawer-bg-color: oklch(0.17 0.015 30);
-  background: oklch(0.17 0.015 30) !important;
+  background: $bg-card !important;
 }
 
 .el-input__wrapper {
-  background: oklch(0.14 0.01 30) !important;
-  box-shadow: 0 0 0 1px oklch(0.22 0.015 30) inset !important;
-  &:focus-within { box-shadow: 0 0 0 1px oklch(0.62 0.12 16) inset !important; }
+  background: $bg-app !important;
+  box-shadow: 0 0 0 1px $border-default inset !important;
+  &:focus-within { box-shadow: 0 0 0 1px $brand-primary inset !important; }
 }
 
 .el-input__inner {
-  color: oklch(0.92 0.005 30) !important;
-  &::placeholder { color: oklch(0.45 0.01 30) !important; }
-}
-
-.el-select, .el-date-editor {
-  --el-select-bg-color: oklch(0.14 0.01 30);
-  --el-select-input-focus-border-color: oklch(0.62 0.12 16);
-}
-
-.el-tag {
-  --el-tag-bg-color: oklch(0.20 0.015 30);
-  --el-tag-border-color: oklch(0.26 0.015 30);
-  --el-tag-text-color: oklch(0.92 0.005 30);
+  color: $text-primary !important;
+  &::placeholder { color: $text-muted !important; }
 }
 
 .el-message {
-  --el-message-bg-color: oklch(0.17 0.015 30);
-  --el-message-border-color: oklch(0.22 0.015 30);
-  --el-message-text-color: oklch(0.92 0.005 30);
-  background: oklch(0.17 0.015 30) !important;
-}
-
-.el-empty__description p {
-  color: oklch(0.65 0.01 30) !important;
+  background: $bg-card !important;
 }
 
 .el-message-box {
-  --el-messagebox-bg-color: oklch(0.17 0.015 30);
-  --el-messagebox-title-text-color: oklch(0.92 0.005 30);
-  --el-messagebox-content-color: oklch(0.65 0.01 30);
-  background: oklch(0.17 0.015 30) !important;
-  .el-message-box__message { color: oklch(0.65 0.01 30); }
-}
-
-.el-pagination {
-  --el-pagination-bg-color: transparent;
-  --el-pagination-button-color: oklch(0.65 0.01 30);
-  --el-pagination-hover-color: oklch(0.62 0.12 16);
-  button.is-active { color: oklch(0.62 0.12 16); }
-}
-
-.el-tabs__item {
-  color: oklch(0.65 0.01 30) !important;
-  &.is-active { color: oklch(0.62 0.12 16) !important; }
-}
-
-.el-divider {
-  --el-divider-border-color: oklch(0.22 0.015 30);
-}
-
-.el-badge__content {
-  background: oklch(0.58 0.18 30) !important;
-}
-
-.el-avatar {
-  --el-avatar-bg-color: oklch(0.20 0.015 30);
-  --el-avatar-text-color: oklch(0.92 0.005 30);
-}
-
-.el-skeleton__item {
-  --el-skeleton-color: oklch(0.20 0.015 30);
-  --el-skeleton-to-color: oklch(0.23 0.015 30);
+  background: $bg-card !important;
+  .el-message-box__message { color: $text-secondary; }
 }
 
 .el-notification {
-  --el-notification-bg-color: oklch(0.17 0.015 30);
-  --el-notification-title-text-color: oklch(0.92 0.005 30);
-  --el-notification-text-color: oklch(0.65 0.01 30);
-  background: oklch(0.17 0.015 30) !important;
-  border: 1px solid oklch(0.22 0.015 30);
+  background: $bg-card !important;
+  border: 1px solid $border-default;
 }
 
 .el-dropdown-menu {
-  --el-dropdown-menu-bg-color: oklch(0.17 0.015 30);
-  --el-dropdown-menu-item-hover-bg-color: oklch(0.23 0.015 30);
-  --el-dropdown-menu-item-hover-color: oklch(0.92 0.005 30);
-  --el-dropdown-menu-item-color: oklch(0.65 0.01 30);
-  background: oklch(0.17 0.015 30) !important;
-  border: 1px solid oklch(0.22 0.015 30);
+  background: $bg-card !important;
+  border: 1px solid $border-default;
 }
 
 .el-select-dropdown {
-  --el-select-dropdown-bg-color: oklch(0.17 0.015 30);
-  --el-select-dropdown-item-hover-bg-color: oklch(0.23 0.015 30);
-  background: oklch(0.17 0.015 30) !important;
-  border: 1px solid oklch(0.22 0.015 30);
+  background: $bg-card !important;
+  border: 1px solid $border-default;
+}
+
+.el-empty__description p {
+  color: $text-secondary !important;
+}
+
+.el-badge__content {
+  background: $color-danger !important;
 }
 
 .el-breadcrumb__inner {
-  color: oklch(0.65 0.01 30) !important;
+  color: $text-secondary !important;
 }
 .el-breadcrumb__item:last-child .el-breadcrumb__inner {
-  color: oklch(0.92 0.005 30) !important;
-}
-
-.el-link {
-  --el-link-text-color: oklch(0.65 0.12 16);
-}
-
-.el-switch {
-  --el-switch-off-color: oklch(0.26 0.015 30);
+  color: $text-primary !important;
 }
 
 .el-radio__label {
-  color: oklch(0.92 0.005 30) !important;
+  color: $text-primary !important;
 }
 
 .el-checkbox__label {
-  color: oklch(0.92 0.005 30) !important;
+  color: $text-primary !important;
 }

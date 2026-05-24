@@ -154,7 +154,7 @@ loadMore()
   background: $bg-card; border: 1px solid $border-color;
   border-radius: $radius-md; padding: 16px;
   .skeleton-row {
-    background: linear-gradient(90deg, color.change($border-color, $alpha: 0.4) 25%, color.change($border-color, $alpha: 0.1) 50%, color.change($border-color, $alpha: 0.4) 75%);
+    background: linear-gradient(90deg, var(--skeleton-from, oklch(0.20 0.015 30)) 25%, var(--skeleton-to, oklch(0.23 0.015 30)) 50%, var(--skeleton-from, oklch(0.20 0.015 30)) 75%);
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.5s infinite;
     border-radius: 4px; height: 12px; margin-bottom: 8px;

@@ -15,8 +15,12 @@ import { onMounted } from "vue"
 import { useUserStore } from "@/stores/user"
 import { getProfile } from "@/api/auth"
 import router from "@/router"
+import { useTheme } from "@/composables/useTheme"
 
 const userStore = useUserStore()
+
+// Initialize theme (applies persisted preference)
+useTheme()
 
 onMounted(async () => {
   if (!userStore.token) return
