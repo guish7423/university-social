@@ -16,6 +16,7 @@ type Post struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 	Author        *User     `json:"author,omitempty"`
 	IsLiked       bool      `json:"is_liked,omitempty"`
+	IsBlocked     bool      `json:"is_blocked,omitempty"`
 }
 
 type CreatePostRequest struct {

@@ -4,11 +4,13 @@ import { onLoad } from "@dcloudio/uni-app"
 import { useUserStore } from "@/store/user"
 import { getUserInfo } from "@/api/user"
 import { getFollowCounts, checkFollow, followUser, unfollowUser } from "@/api/follow"
+import { checkBlock, blockUser, unblockUser } from "@/api/block"
 
 const userStore = useUserStore()
 const userId = ref(0)
 const user = ref<any>(null)
 const isFollowing = ref(false)
+const isBlocked = ref(false)
 const counts = ref({ following: 0, followers: 0, posts: 0 })
 const loading = ref(true)
 
@@ -18,7 +20,7 @@ onLoad((opts: any) => {
   if (opts.id) {
     userId.value = parseInt(opts.id)
     Promise.all([loadUser(), loadCounts()]).finally(() => { loading.value = false })
-    if (!isSelf.value) checkFollowing()
+    if (!isSelf.value) { checkFollowing(); checkBlockStatus() }
   }
 })
 
@@ -58,6 +60,27 @@ async function toggleFollow() {
 function goChat() {
   uni.navigateTo({ url: `/pages/chat/detail?userId=${userId.value}&nickname=${encodeURIComponent(user.value?.nickname || '')}` })
 }
+
+async function checkBlockStatus() {
+  try {
+    const res = await checkBlock(userId.value)
+    isBlocked.value = res.is_blocked
+  } catch (e) { console.error(e) }
+}
+
+async function toggleBlock() {
+  try {
+    if (isBlocked.value) {
+      await unblockUser(userId.value)
+      isBlocked.value = false
+      uni.showToast({ title: "已取消屏蔽", icon: "none" })
+    } else {
+      await blockUser(userId.value)
+      isBlocked.value = true
+      uni.showToast({ title: "已屏蔽该用户", icon: "none" })
+    }
+  } catch (e) { console.error(e) }
+}
 </script>
 
 <template>
@@ -84,10 +107,15 @@ function goChat() {
           </view>
         </view>
 
-        <view v-if="!isSelf" class="follow-btn" :class="{ following: isFollowing }" @click="toggleFollow">
-          {{ isFollowing ? '已关注' : '+ 关注' }}
+        <view class="action-row">
+          <view v-if="!isSelf" class="follow-btn" :class="{ following: isFollowing }" @click="toggleFollow">
+            {{ isFollowing ? '已关注' : '+ 关注' }}
+          </view>
+          <view class="msg-btn" @click="goChat">发消息</view>
+          <view v-if="!isSelf" class="block-btn" :class="{ blocked: isBlocked }" @click="toggleBlock">
+            {{ isBlocked ? '已屏蔽' : '屏蔽' }}
+          </view>
         </view>
-        <view class="msg-btn" @click="goChat">发消息</view>
       </view>
     </template>
   </view>
@@ -109,6 +137,13 @@ function goChat() {
 .count-item { display: flex; flex-direction: column; align-items: center; gap: 4rpx; }
 .count-num { font-size: 32rpx; font-weight: 600; color: #fff; }
 .count-label { font-size: 22rpx; color: rgba(255,255,255,0.5); }
+.action-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 8rpx;
+  align-items: center;
+}
+
 .follow-btn {
   padding: 12rpx 40rpx;
   border-radius: 30rpx;
@@ -116,7 +151,6 @@ function goChat() {
   font-weight: 500;
   background: #C67A6A;
   color: #fff;
-  margin-top: 8rpx;
   transition: all 0.2s;
   &:active { transform: scale(0.97); }
   &.following { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.75); }
@@ -129,8 +163,20 @@ function goChat() {
   font-weight: 500;
   background: rgba(255,255,255,0.15);
   color: #fff;
-  margin-top: 8rpx;
   transition: all 0.2s;
   &:active { transform: scale(0.97); }
+}
+
+.block-btn {
+  padding: 12rpx 32rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  font-weight: 400;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+  border: 1rpx solid rgba(255,255,255,0.15);
+  transition: all 0.2s;
+  &:active { transform: scale(0.97); }
+  &.blocked { background: rgba(198,122,106,0.2); color: #C67A6A; border-color: #C67A6A; }
 }
 </style>

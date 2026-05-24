@@ -59,6 +59,9 @@ func Setup(db *sql.DB, cfg *config.Config, rdb *cache.Cache) *gin.Engine {
 	wsHub := handler.NewWsHub(msgRepo)
 	campusRepo := repository.NewCampusRepository(db)
 	campusHandler := handler.NewCampusHandler(campusRepo)
+blockRepo := repository.NewBlockRepository(db)
+blockHandler := handler.NewBlockHandler(blockRepo)
+
 
 
 	r := gin.Default()
@@ -199,6 +202,11 @@ func Setup(db *sql.DB, cfg *config.Config, rdb *cache.Cache) *gin.Engine {
 			auth.GET("/campus/directory", campusHandler.ListDirectory)
 			auth.GET("/campus/rooms", campusHandler.ListEmptyRooms)
 			auth.GET("/campus/rooms/buildings", campusHandler.ListBuildings)
+			auth.POST("/users/:id/block", blockHandler.Block)
+			auth.DELETE("/users/:id/block", blockHandler.Unblock)
+			auth.GET("/users/:id/block-status", blockHandler.BlockStatus)
+			auth.GET("/users/blocked", blockHandler.ListBlocked)
+
 		}
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthRequired(cfg))

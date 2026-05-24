@@ -50,7 +50,8 @@ func scanPost(scanner interface {
 			&p.TopicID, &p.School, &p.LikeCount, &p.CommentCount,
 			&p.CreatedAt, &p.UpdatedAt,
 			&p.AuthorNickname, &p.AuthorAvatar,
-			&p.IsLiked)
+			&p.IsLiked,
+			&p.IsBlocked)
 		if err != nil {
 			return nil, err
 		}
@@ -74,13 +75,15 @@ func scanPost(scanner interface {
 }
 
 func (r *PostRepository) FindByID(id int64, currentUserID int64) (*model.Post, error) {
-	query := `SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
+query := `SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
 		p.like_count, p.comment_count, p.created_at, p.updated_at,
 		u.nickname, u.avatar,
-		CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+		CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked,
+		CASE WHEN ub.id IS NOT NULL THEN true ELSE false END as is_blocked
 		FROM posts p
 		JOIN users u ON u.id = p.user_id
 		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $2
+		LEFT JOIN user_blocks ub ON ub.blocker_id = $2 AND ub.blocked_id = p.user_id
 		WHERE p.id = $1`
 	return scanPost(r.db.QueryRow(query, id, currentUserID), true)
 }
@@ -104,11 +107,13 @@ func (r *PostRepository) List(school string, topicID *int64, offset, limit int, 
 		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
 			p.like_count, p.comment_count, p.created_at, p.updated_at,
 			u.nickname, u.avatar,
-			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked,
+			CASE WHEN ub.id IS NOT NULL THEN true ELSE false END as is_blocked
 		FROM posts p
 		JOIN users u ON u.id = p.user_id
 		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
-		WHERE 1=1 %s
+		LEFT JOIN user_blocks ub ON ub.blocker_id = $1 AND ub.blocked_id = p.user_id
+		WHERE ub.id IS NULL %s
 		ORDER BY p.created_at DESC LIMIT $2 OFFSET $3`, where)
 
 	rows, err := r.db.Query(query, args...)
@@ -248,11 +253,13 @@ func (r *PostRepository) SearchPosts(query string, offset, limit int, currentUse
 		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
 			p.like_count, p.comment_count, p.created_at, p.updated_at,
 			u.nickname, u.avatar,
-			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked,
+			CASE WHEN ub.id IS NOT NULL THEN true ELSE false END as is_blocked
 		FROM posts p
 		JOIN users u ON u.id = p.user_id
 		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
-		WHERE p.content ILIKE $4
+		LEFT JOIN user_blocks ub ON ub.blocker_id = $1 AND ub.blocked_id = p.user_id
+		WHERE p.content ILIKE $4 AND ub.id IS NULL
 		ORDER BY similarity(p.content, $5) DESC, p.like_count DESC, p.created_at DESC LIMIT $2 OFFSET $3`, args...)
 	if err != nil {
 		return nil, fmt.Errorf("search posts: %w", err)
@@ -273,11 +280,13 @@ func (r *PostRepository) TrendingPosts(offset, limit int, currentUserID int64) (
 		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
 			p.like_count, p.comment_count, p.created_at, p.updated_at,
 			u.nickname, u.avatar,
-			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked,
+			CASE WHEN ub.id IS NOT NULL THEN true ELSE false END as is_blocked
 		FROM posts p
 		JOIN users u ON u.id = p.user_id
 		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
-		WHERE p.created_at >= CURRENT_DATE - INTERVAL '7 days'
+		LEFT JOIN user_blocks ub ON ub.blocker_id = $1 AND ub.blocked_id = p.user_id
+		WHERE p.created_at >= CURRENT_DATE - INTERVAL '7 days' AND ub.id IS NULL
 		ORDER BY (p.like_count * 3 + p.comment_count * 2) DESC, p.created_at DESC
 		LIMIT $2 OFFSET $3`, args...)
 	if err != nil {
@@ -299,12 +308,14 @@ func (r *PostRepository) FollowingPosts(userID int64, offset, limit int) ([]*mod
 		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
 			p.like_count, p.comment_count, p.created_at, p.updated_at,
 			u.nickname, u.avatar,
-			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked,
+			CASE WHEN ub.id IS NOT NULL THEN true ELSE false END as is_blocked
 		FROM posts p
 		JOIN follows f ON f.following_id = p.user_id
 		JOIN users u ON u.id = p.user_id
 		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $1
-		WHERE f.follower_id = $1
+		LEFT JOIN user_blocks ub ON ub.blocker_id = $1 AND ub.blocked_id = p.user_id
+		WHERE f.follower_id = $1 AND ub.id IS NULL
 		ORDER BY p.created_at DESC LIMIT $2 OFFSET $3`, args...)
 	if err != nil {
 		return nil, fmt.Errorf("following posts: %w", err)
@@ -325,11 +336,13 @@ func (r *PostRepository) ListUserPosts(userID, currentUserID int64, offset, limi
 		`SELECT p.id, p.user_id, p.content, p.images, p.topic_id, p.school,
 			p.like_count, p.comment_count, p.created_at, p.updated_at,
 			u.nickname, u.avatar,
-			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked
+			CASE WHEN l.id IS NOT NULL THEN true ELSE false END as is_liked,
+			CASE WHEN ub.id IS NOT NULL THEN true ELSE false END as is_blocked
 		FROM posts p
 		JOIN users u ON u.id = p.user_id
 		LEFT JOIN likes l ON l.post_id = p.id AND l.user_id = $2
-		WHERE p.user_id = $1
+		LEFT JOIN user_blocks ub ON ub.blocker_id = $2 AND ub.blocked_id = p.user_id
+		WHERE p.user_id = $1 AND ub.id IS NULL
 		ORDER BY p.created_at DESC LIMIT $3 OFFSET $4`, args...)
 	if err != nil {
 		return nil, fmt.Errorf("list user posts: %w", err)

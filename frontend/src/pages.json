@@ -327,6 +327,14 @@
         "navigationBarBackgroundColor": "#C67A6A",
         "navigationBarTextStyle": "white"
       }
+    {
+      "path": "pages/user/blocked",
+      "style": {
+        "navigationBarTitleText": "屏蔽列表",
+        "navigationBarBackgroundColor": "#C67A6A",
+        "navigationBarTextStyle": "white"
+      }
+    },
     }
   ],
   "globalStyle": {
