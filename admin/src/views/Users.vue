@@ -105,7 +105,7 @@ async function load(pageNum = 1) {
     const res = await api.get("/admin/users", { params })
     users.value = res.data.users
     total.value = res.data.total
-  } catch {} finally { loading.value = false }
+  } catch { ElMessage.error("加载失败") } finally { loading.value = false }
 }
 
 function handlePageChange(pageNum: number) {

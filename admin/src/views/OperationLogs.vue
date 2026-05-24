@@ -42,6 +42,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import api from "@/api"
+import { ElMessage } from "element-plus"
 
 interface OperationLog {
   id: number
@@ -97,7 +98,7 @@ async function load(p?: number) {
     })
     logs.value = res.data.logs || []
     total.value = res.data.total || 0
-  } catch {} finally {
+  } catch { ElMessage.error("加载失败") } finally {
     loading.value = false
   }
 }

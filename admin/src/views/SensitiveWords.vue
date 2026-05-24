@@ -42,7 +42,7 @@ async function load() {
   try {
     const res = await api.get("/admin/sensitive-words")
     wordList.value = res.data || []
-  } catch {} finally { loading.value = false }
+  } catch { ElMessage.error("加载失败") } finally { loading.value = false }
 }
 
 async function handleAdd() {
@@ -54,7 +54,7 @@ async function handleAdd() {
     showAdd.value = false
     form.word = ""
     load()
-  } catch {} finally { adding.value = false }
+  } catch { ElMessage.error("操作失败") } finally { adding.value = false }
 }
 
 async function handleRemove(word: string) {

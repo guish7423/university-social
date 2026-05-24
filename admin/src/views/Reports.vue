@@ -61,7 +61,7 @@ async function load() {
     if (statusFilter.value) params.status = statusFilter.value
     const res = await api.get("/admin/reports", { params })
     reports.value = res.data
-  } catch {} finally { loading.value = false }
+  } catch { ElMessage.error("加载失败") } finally { loading.value = false }
 }
 
 function statusTag(s: string) {

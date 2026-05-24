@@ -43,7 +43,7 @@ async function load() {
   try {
     const res = await api.get("/admin/posts")
     posts.value = res.data
-  } catch {} finally { loading.value = false }
+  } catch { ElMessage.error("加载失败") } finally { loading.value = false }
 }
 
 async function loadFeatured() {
@@ -51,7 +51,7 @@ async function loadFeatured() {
   try {
     const res = await api.get("/posts/featured")
     featuredPosts.value = res.data
-  } catch {} finally { loading.value = false }
+  } catch { ElMessage.error("加载失败") } finally { loading.value = false }
 }
 
 async function handleFeature(id: number) {
