@@ -10,10 +10,17 @@
         <h1>{{ circle.name }}</h1>
         <p>{{ circle.description }}</p>
         <span class="meta">{{ circle.member_count }} 人 · {{ circle.post_count }} 帖</span>
-        </div>
-      <el-button v-if="!circle.is_joined" type="primary" @click="handleJoin">加入圈子</el-button>
-      <el-button v-else @click="handleLeave">退出圈子</el-button>
-      <el-button v-if="circle.is_joined" type="primary" @click="showCreate = true">发帖</el-button>
+      </div>
+      <div class="circle-actions">
+        <el-button v-if="isCreator" @click="openManageRequests">管理申请</el-button>
+        <template v-else>
+          <el-button v-if="circle.is_joined" @click="handleLeave">退出圈子</el-button>
+          <el-button v-else-if="circle.join_type === 'approve' && circle.has_pending_request" disabled>审核中</el-button>
+          <el-button v-else-if="circle.join_type === 'approve'" type="primary" @click="handleJoin">申请加入</el-button>
+          <el-button v-else type="primary" @click="handleJoin">加入圈子</el-button>
+        </template>
+        <el-button v-if="circle.is_joined" type="primary" @click="showCreate = true">发帖</el-button>
+      </div>
     </div>
 
     <div v-if="postsLoading" class="loading-wrap"><el-skeleton :rows="3" animated /></div>
@@ -40,20 +47,37 @@
         <el-button type="primary" :loading="submitting" :disabled="!postContent.trim()" @click="handleCreatePost">发布</el-button>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="showManageDialog" title="加入申请管理" width="480">
+      <div v-if="!pendingRequests.length" class="empty-state"><el-empty description="暂无待审核申请" /></div>
+      <div v-else class="request-list">
+        <div v-for="req in pendingRequests" :key="req.id" class="request-card">
+          <el-avatar :size="36" :src="req.user?.avatar" />
+          <span class="req-name">{{ req.user?.nickname }}</span>
+          <span class="req-time">{{ formatTime(req.created_at) }}</span>
+          <div class="req-actions">
+            <el-button size="small" type="primary" :loading="managing" @click="handleRequestAction(req.id, 'approve')">通过</el-button>
+            <el-button size="small" :loading="managing" @click="handleRequestAction(req.id, 'reject')">拒绝</el-button>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, onMounted, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { getCircle, joinCircle, leaveCircle, listCirclePosts, createCirclePost } from "@/api/circle"
-import type { CircleData, CirclePostData } from "@/api/circle"
+import { useUserStore } from "@/stores/user"
+import { getCircle, joinCircle, leaveCircle, listCirclePosts, createCirclePost, listJoinRequests, handleJoinRequest } from "@/api/circle"
+import type { CircleData, CirclePostData, JoinRequestData } from "@/api/circle"
 import { useTimeFormat } from "@/composables/useTimeFormat"
 import { ElMessage } from "element-plus"
 import { ArrowLeft } from "@element-plus/icons-vue"
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const circle = ref<CircleData | null>(null)
 const posts = ref<CirclePostData[]>([])
@@ -62,16 +86,26 @@ const postsLoading = ref(true)
 const showCreate = ref(false)
 const postContent = ref("")
 const submitting = ref(false)
+const showManageDialog = ref(false)
+const pendingRequests = ref<JoinRequestData[]>([])
+const managing = ref(false)
+
+const isCreator = computed(() => circle.value && userStore.userId === circle.value.creator_id)
 
 const { formatTime } = useTimeFormat()
 
 async function handleJoin() {
   if (!circle.value) return
   try {
-    await joinCircle(circle.value.id)
-    circle.value.is_joined = true
-    circle.value.member_count++
-    ElMessage.success("已加入圈子")
+    const res = await joinCircle(circle.value.id)
+    if (circle.value.join_type === 'approve') {
+      circle.value.has_pending_request = true
+      ElMessage.success(res.message || "已发送加入申请")
+    } else {
+      circle.value.is_joined = true
+      circle.value.member_count++
+      ElMessage.success(res.message || "已加入圈子")
+    }
   } catch { /* handled by interceptor */ }
 }
 
@@ -96,6 +130,26 @@ async function handleCreatePost() {
     posts.value = await listCirclePosts(circle.value.id)
   } catch { /* handled by interceptor */ }
   finally { submitting.value = false }
+}
+
+async function openManageRequests() {
+  showManageDialog.value = true
+  if (!circle.value) return
+  try {
+    pendingRequests.value = await listJoinRequests(circle.value.id)
+  } catch { /* handled */ }
+}
+
+async function handleRequestAction(requestId: number, action: 'approve' | 'reject') {
+  if (!circle.value) return
+  managing.value = true
+  try {
+    await handleJoinRequest(circle.value.id, requestId, action)
+    ElMessage.success(action === 'approve' ? '已通过' : '已拒绝')
+    if (action === 'approve') circle.value.member_count++
+    pendingRequests.value = await listJoinRequests(circle.value.id)
+  } catch { /* handled */ }
+  finally { managing.value = false }
 }
 
 onMounted(async () => {
@@ -124,6 +178,10 @@ onMounted(async () => {
     p { font-size: 13px; color: $text-secondary; margin: 4px 0; }
     .meta { font-size: 12px; color: $text-muted; }
   }
+  .circle-actions {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 }
 
 .post-card {
@@ -139,5 +197,17 @@ onMounted(async () => {
     display: flex; gap: 16px; font-size: 12px; color: $text-muted;
     .el-icon { vertical-align: middle; margin-right: 3px; }
   }
+}
+
+.request-list {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.request-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px; border-radius: 8px;
+  border: 1px solid $border-color;
+  .req-name { flex: 1; font-size: 14px; font-weight: 500; }
+  .req-time { font-size: 11px; color: $text-muted; }
+  .req-actions { display: flex; gap: 8px; }
 }
 </style>

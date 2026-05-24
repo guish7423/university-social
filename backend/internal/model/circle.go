@@ -12,6 +12,7 @@ type Circle struct {
 	MemberCount int       `json:"member_count"`
 	PostCount   int       `json:"post_count"`
 	JoinType    string    `json:"join_type"`
+	HasPendingRequest bool `json:"has_pending_request,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 	IsMember    bool      `json:"is_member,omitempty"`
 	Creator     *User     `json:"creator,omitempty"`

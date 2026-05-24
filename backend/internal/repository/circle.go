@@ -21,7 +21,8 @@ func (r *CircleRepository) List(offset, limit int, userID int64) ([]*model.Circl
 	rows, err := r.db.Query(
 		`SELECT c.id, c.name, c.description, c.icon, c.cover, c.creator_id,
 		        c.member_count, c.post_count, c.join_type, c.created_at,
-		        CASE WHEN cm.id IS NOT NULL THEN true ELSE false END
+		        CASE WHEN cm.id IS NOT NULL THEN true ELSE false END,
+		        EXISTS(SELECT 1 FROM circle_join_requests WHERE circle_id = c.id AND user_id = $3 AND status = 'pending')
 		 FROM circles c
 		 LEFT JOIN circle_members cm ON cm.circle_id = c.id AND cm.user_id = $3
 		 ORDER BY c.member_count DESC LIMIT $1 OFFSET $2`,
@@ -36,7 +37,7 @@ func (r *CircleRepository) List(offset, limit int, userID int64) ([]*model.Circl
 	for rows.Next() {
 		var c model.Circle
 		if err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.Icon, &c.Cover,
-			&c.CreatorID, &c.MemberCount, &c.PostCount, &c.JoinType, &c.CreatedAt, &c.IsMember); err != nil {
+			&c.CreatorID, &c.MemberCount, &c.PostCount, &c.JoinType, &c.CreatedAt, &c.IsMember, &c.HasPendingRequest); err != nil {
 			return nil, err
 		}
 		circles = append(circles, &c)
@@ -49,12 +50,13 @@ func (r *CircleRepository) GetByID(id, userID int64) (*model.Circle, error) {
 	err := r.db.QueryRow(
 		`SELECT c.id, c.name, c.description, c.icon, c.cover, c.creator_id,
 		        c.member_count, c.post_count, c.join_type, c.created_at,
-		        CASE WHEN cm.id IS NOT NULL THEN true ELSE false END
+		        CASE WHEN cm.id IS NOT NULL THEN true ELSE false END,
+		        EXISTS(SELECT 1 FROM circle_join_requests WHERE circle_id = c.id AND user_id = $2 AND status = 'pending')
 		 FROM circles c
 		 LEFT JOIN circle_members cm ON cm.circle_id = c.id AND cm.user_id = $2
 		 WHERE c.id = $1`, id, userID,
 	).Scan(&c.ID, &c.Name, &c.Description, &c.Icon, &c.Cover,
-		&c.CreatorID, &c.MemberCount, &c.PostCount, &c.JoinType, &c.CreatedAt, &c.IsMember)
+		&c.CreatorID, &c.MemberCount, &c.PostCount, &c.JoinType, &c.CreatedAt, &c.IsMember, &c.HasPendingRequest)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

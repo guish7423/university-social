@@ -7,8 +7,22 @@ export interface CircleData {
   avatar: string
   member_count: number
   post_count: number
+  join_type: string
+  has_pending_request: boolean
   is_joined: boolean
+  creator_id: number
   created_at: string
+}
+
+export interface JoinRequestData {
+  id: number
+  circle_id: number
+  user_id: number
+  status: string
+  created_at: string
+  handled_at?: string
+  handler_id?: number
+  user?: { nickname: string; avatar: string }
 }
 
 export interface CirclePostData {
@@ -62,4 +76,13 @@ export function createCirclePost(circleId: number, data: { content: string; imag
 
 export function searchCircles(q: string) {
   return request.get<any, CircleData[]>("/circles/search", { params: { q } })
+}
+
+
+export function listJoinRequests(circleId: number) {
+  return request.get<any, JoinRequestData[]>(`/circles/${circleId}/join-requests`)
+}
+
+export function handleJoinRequest(circleId: number, requestId: number, action: 'approve' | 'reject') {
+  return request.post<any, { message: string }>(`/circles/join-requests/${requestId}/handle`, { action })
 }
