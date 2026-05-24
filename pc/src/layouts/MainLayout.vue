@@ -21,21 +21,10 @@
         <div v-for="group in navGroups" :key="group.label" class="nav-group">
           <div class="nav-group-label">{{ group.label }}</div>
           <el-menu :default-active="activeRoute" router class="nav-menu">
-            <template v-for="item in group.items" :key="item.path">
-              <el-menu-item v-if="!item.children" :index="item.path">
-                <el-icon><component :is="item.icon" /></el-icon>
-                  <span v-show="!sidebarCollapsed">{{ item.label }}</span>
-              </el-menu-item>
-              <el-sub-menu v-else :index="item.path">
-                <template #title>
-                  <el-icon><component :is="item.icon" /></el-icon>
-                  <span v-show="!sidebarCollapsed">{{ item.label }}</span>
-                </template>
-                <el-menu-item v-for="child in item.children" :key="child.path" :index="child.path">
-                  {{ child.label }}
-                </el-menu-item>
-              </el-sub-menu>
-            </template>
+            <el-menu-item v-for="item in group.items" :key="item.path" :index="item.path">
+              <el-icon><component :is="item.icon" /></el-icon>
+              <span v-show="!sidebarCollapsed">{{ item.label }}</span>
+            </el-menu-item>
           </el-menu>
         </div>
       </nav>
@@ -183,32 +172,9 @@ const navGroups = computed(() => [
       { path: "/chat", icon: ChatLineSquare, label: "聊天" },
       { path: "/notifications", icon: Bell, label: "通知" },
     ],
-  },
-  {
-    label: "校园",
-    items: [
-      { path: "/campus", icon: School, label: "校园服务", children: [
-        { path: "/campus/calendar", label: "校历" },
-        { path: "/campus/directory", label: "通讯录" },
-        { path: "/campus/rooms", label: "空教室" },
-      ]},
-      { path: "/courses", icon: Notebook, label: "课程" },
-      { path: "/verification", icon: InfoFilled, label: "认证" },
-      { path: "/invite", icon: Key, label: "邀请码" },
-    ],
-  },
-  {
-    label: "生活",
-    items: [
-      { path: "/activities", icon: Calendar, label: "活动" },
-      { path: "/products", icon: ShoppingCart, label: "二手" },
-      { path: "/found", icon: WarningFilled, label: "失物招领" },
-      { path: "/favorites", icon: Star, label: "收藏" },
-      { path: "/whispers", icon: ChatDotSquare, label: "树洞" },
-      { path: "/points", icon: Coin, label: "积分" },
-    ],
-  },
+  }
 ])
+
 
 const breadcrumbs = computed(() => {
   const path = route.path
@@ -231,19 +197,11 @@ const activeRoute = computed(() => {
   const path = route.path
   if (path.startsWith("/post/") || path.startsWith("/post/create")) return "/square"
   if (path.startsWith("/user/") || path.startsWith("/profile/")) return "/home"
-  if (path.startsWith("/campus/")) return "/campus/calendar"
   if (path.startsWith("/notifications")) return "/notifications"
   if (path.startsWith("/chat/")) return "/chat"
   for (const group of navGroups.value) {
     for (const item of group.items) {
-      if (path.startsWith(item.path)) {
-        if (item.children) {
-          for (const child of item.children) {
-            if (path.startsWith(child.path)) return child.path
-          }
-        }
-        return item.path
-      }
+      if (path.startsWith(item.path)) return item.path
     }
   }
   return path
@@ -386,6 +344,12 @@ onUnmounted(() => {
 .nav-groups {
   flex: 1;
   padding: 0 $space-2;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 220px);
+
+  flex: 1;
+  padding: 0 $space-2;
 
 .collapsed & {
     :deep(.el-menu-item) {
@@ -444,10 +408,12 @@ onUnmounted(() => {
 }
 
 // ═══ Footer ═══
+// ═══ Footer ═══
 .sidebar-footer {
-  padding: $space-3;
+  padding: $space-2 $space-3;
   border-top: 1px solid $border-default;
   transition: opacity $duration-fast;
+  flex-shrink: 0;
 .collapsed & { opacity: 0; pointer-events: none; }
 }
 

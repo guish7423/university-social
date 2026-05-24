@@ -13,6 +13,23 @@
       按 Enter 搜索
     </div>
 
+    <div v-if="!query && !searched" class="suggestions">
+      <div class="suggestion-group">
+        <div class="sg-title">热门搜索</div>
+        <div class="sg-tags">
+          <el-tag v-for="tag in hotTags" :key="tag" round @click="query = tag; handleSearch()">{{ tag }}</el-tag>
+        </div>
+      </div>
+      <div class="suggestion-group">
+        <div class="sg-title">快捷入口</div>
+        <div class="sg-links">
+          <div class="quick-link" @click="$router.push('/square')"><el-icon><MessageBox /></el-icon><span>浏览广场</span></div>
+          <div class="quick-link" @click="$router.push('/circles')"><el-icon><Connection /></el-icon><span>发现圈子</span></div>
+          <div class="quick-link" @click="$router.push('/notifications')"><el-icon><Bell /></el-icon><span>查看通知</span></div>
+        </div>
+      </div>
+    </div>
+
     <div v-if="searched">
       <div v-if="searchLoading" class="loading-wrap"><el-skeleton :rows="4" animated /></div>
       <template v-else>
@@ -79,12 +96,14 @@ import { ref, computed, watch } from "vue"
 import { searchUsers } from "@/api/social"
 import { searchPosts } from "@/api/post"
 import { searchCircles } from "@/api/circle"
+import { MessageBox, Connection, Bell } from "@element-plus/icons-vue"
 import PostCard from "@/components/PostCard.vue"
 import type { PostData } from "@/api/post"
 import type { CircleData } from "@/api/circle"
 import type { UserInfo } from "@/api/auth"
 
 const query = ref("")
+const hotTags = ["校园活动", "二手交易", "找搭子", "选课", "失物招领", "考研交流"]
 const searched = ref(false)
 const searchLoading = ref(false)
 const tab = ref("all")
@@ -124,7 +143,7 @@ watch(query, () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-.search-page { max-width: 640px; }
+.search-page { max-width: 640px; margin: 0 auto; }
 
 
 .hint { text-align: center; padding: 40px 0; color: $text-muted; font-size: 14px; }
@@ -157,4 +176,22 @@ watch(query, () => {
 }
 
 .loading-wrap { padding: 40px 0; }
+
+
+.suggestions { margin-top: 24px; }
+.suggestion-group { margin-bottom: 24px; }
+.sg-title { font-size: 13px; font-weight: 600; color: $text-muted; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.sg-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.sg-tags .el-tag { cursor: pointer; transition: all 0.2s ease; }
+.sg-tags .el-tag:hover { transform: translateY(-1px); }
+.sg-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.quick-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px; border-radius: $radius-sm; cursor: pointer;
+  background: $bg-card; border: 1px solid $border-default;
+  transition: all 0.2s ease; font-size: 13px;
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .el-icon { font-size: 18px; color: $brand-primary; }
+}
+
 </style>
