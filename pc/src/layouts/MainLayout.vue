@@ -84,6 +84,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item @click="$router.push('/user/' + userStore.userId)">个人主页</el-dropdown-item>
                 <el-dropdown-item @click="$router.push('/profile/edit')">编辑资料</el-dropdown-item>
+                <el-dropdown-item @click="$router.push('/account/security')">账号安全</el-dropdown-item>
                 <el-dropdown-item divided @click="toggleTheme">
                   <el-icon style="margin-right: 6px; vertical-align: -2px;">
                     <component :is="currentTheme === 'dark' ? Sunny : Moon" />

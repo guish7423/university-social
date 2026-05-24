@@ -32,3 +32,7 @@ export function updateProfile(data: { nickname?: string; avatar?: string; school
 export function getUserInfo(id: number) {
   return request.get<any, UserInfo>(`/users/${id}`)
 }
+
+export function changePassword(data: { old_password: string; new_password: string }) {
+  return request.put<any, { message: string }>("/user/password", data)
+}

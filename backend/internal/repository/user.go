@@ -66,3 +66,17 @@ func (r *UserRepository) UpdateProfile(id int64, nickname, avatar, school string
 	)
 	return err
 }
+
+func (r *UserRepository) GetPasswordHash(id int64) (string, error) {
+	var hash string
+	err := r.db.QueryRow("SELECT password_hash FROM users WHERE id = $1", id).Scan(&hash)
+	if err != nil {
+		return "", fmt.Errorf("get password hash: %w", err)
+	}
+	return hash, nil
+}
+
+func (r *UserRepository) UpdatePassword(id int64, hash string) error {
+	_, err := r.db.Exec("UPDATE users SET password_hash=$1, updated_at=NOW() WHERE id=$2", hash, id)
+	return err
+}
