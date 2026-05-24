@@ -50,6 +50,9 @@ import { useUserStore } from "@/stores/user"
 import { getProfile, updateProfile } from "@/api/auth"
 import PageHeader from "@/components/PageHeader.vue"
 import { Camera } from "@element-plus/icons-vue"
+import { useImageUpload } from "@/composables/useImageUpload"
+import { ElMessage } from "element-plus"
+const { uploading: avatarUploading, uploadImage } = useImageUpload()
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -64,12 +67,15 @@ function triggerUpload() {
   fileInput.value?.click()
 }
 
-function handleFileChange(e: Event) {
-  // UI-only preview — real upload not implemented
+async function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement
-  if (input.files?.length) {
-    const url = URL.createObjectURL(input.files[0])
+  if (!input.files?.length) return
+  try {
+    const url = await uploadImage(input.files[0])
     avatar.value = url
+    ElMessage.success("头像上传成功")
+  } catch {
+    ElMessage.error("头像上传失败")
   }
 }
 

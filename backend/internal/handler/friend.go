@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/guish/university-social/internal/model"
 	"github.com/guish/university-social/internal/repository"
 )
 
@@ -95,6 +96,9 @@ func (h *FriendHandler) ListFriends(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取失败"})
 		return
 	}
+	if friends == nil {
+		friends = []*model.User{}
+	}
 	c.JSON(http.StatusOK, friends)
 }
 
@@ -104,6 +108,9 @@ func (h *FriendHandler) ListRequests(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取失败"})
 		return
+	}
+	if requests == nil {
+		requests = []*model.User{}
 	}
 	c.JSON(http.StatusOK, requests)
 }

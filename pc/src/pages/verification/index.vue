@@ -1,6 +1,5 @@
 <template>
   <div class="verif-page">
-  <div class="verif-page">
     <PageHeader title="实名认证" />
     <div v-if="status !== null" class="status-banner">
       <el-alert v-if="status" title="已认证" type="success" :closable="false" description="你已完成实名认证" show-icon />
