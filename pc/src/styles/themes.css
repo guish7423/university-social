@@ -3,6 +3,13 @@
    ═══════════════════════════════════════ */
 
 /* ── Dark Theme (default) ── */
+*, *::before, *::after {
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
 :root {
   /* Brand (same in both themes) */
   --brand-primary: oklch(0.62 0.12 16);           /* #C67A6A */
@@ -151,4 +158,11 @@
   --el-switch-off-color: var(--border-light);
   --el-select-bg-color: var(--bg-app);
   --el-select-input-focus-border-color: var(--brand-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
