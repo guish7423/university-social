@@ -323,3 +323,73 @@ func (h *AdminHandler) ListLogs(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"logs": logs, "total": total})
 }
+
+func (h *AdminHandler) ListProducts(c *gin.Context) {
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+
+	col := `p.id, p.user_id, p.title, p.description, p.price,
+		p.original_price, p.category, p.condition, p.images, p.contact,
+		p.status, p.like_count, p.comment_count, p.created_at, p.updated_at, false as is_liked`
+	rows, err := h.db.Query(`SELECT `+col+` FROM products p ORDER BY p.id DESC LIMIT $1 OFFSET $2`, limit, offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取商品列表失败"})
+		return
+	}
+	defer rows.Close()
+
+	type ProductItem struct {
+		ID            int64   `json:"id"`
+		UserID        int64   `json:"user_id"`
+		Title         string  `json:"title"`
+		Description   string  `json:"description"`
+		Price         float64 `json:"price"`
+		OriginalPrice *float64 `json:"original_price,omitempty"`
+		Category      string  `json:"category"`
+		Condition     string  `json:"condition"`
+		Status        int     `json:"status"`
+		LikeCount     int     `json:"like_count"`
+		CommentCount  int     `json:"comment_count"`
+		CreatedAt     string  `json:"created_at"`
+		AuthorName    string  `json:"author_name"`
+	}
+
+	var products []*ProductItem
+	for rows.Next() {
+		var p ProductItem
+		var desc, cond sql.NullString
+		var origP sql.NullFloat64
+		var createdAt string
+		if err := rows.Scan(&p.ID, &p.UserID, &p.Title, &desc, &p.Price,
+			&origP, &p.Category, &cond, nil, nil,
+			&p.Status, &p.LikeCount, &p.CommentCount, &createdAt, nil, nil); err != nil {
+			continue
+		}
+		p.Description = desc.String
+		if origP.Valid { p.OriginalPrice = &origP.Float64 }
+		p.Condition = cond.String
+		p.CreatedAt = createdAt
+		// Get author name
+		h.db.QueryRow("SELECT nickname FROM users WHERE id = $1", p.UserID).Scan(&p.AuthorName)
+		products = append(products, &p)
+	}
+	if products == nil {
+		products = []*ProductItem{}
+	}
+	c.JSON(http.StatusOK, products)
+}
+
+func (h *AdminHandler) DeleteProduct(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	_, err = h.db.Exec("DELETE FROM products WHERE id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
+	h.logOp(c, "delete_product", "product", id, nil)
+}

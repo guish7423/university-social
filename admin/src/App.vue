@@ -24,6 +24,10 @@
             <el-icon><Collection /></el-icon>
             <span>圈子管理</span>
           </el-menu-item>
+          <el-menu-item index="/products">
+            <el-icon><Goods /></el-icon>
+            <span>商品管理</span>
+          </el-menu-item>
           <el-menu-item index="/banners">
             <el-icon><Picture /></el-icon>
             <span>Banner管理</span>
@@ -66,7 +70,7 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router"
 import { ref, onMounted } from "vue"
-import { Sunny, Moon } from "@element-plus/icons-vue"
+import { Sunny, Moon, Goods } from "@element-plus/icons-vue"
 const route = useRoute()
 
 const currentTheme = ref("dark")
@@ -90,7 +94,7 @@ onMounted(() => {
 @import "./styles/animations.css";
 
 <style>
-body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--admin-bg, #f0f2f5); }
+body { margin: 0; font-family: "DM Sans", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--admin-bg, #f0f2f5); scroll-behavior: smooth; }
 .app-shell { display: flex; height: 100vh; overflow: hidden; background: var(--admin-bg, #f0f2f5); }
 .sidebar-section { width: 220px; flex-shrink: 0; padding: 4px 0 4px 4px; }
 .sidebar-box { height: 100%; padding: 8px; }

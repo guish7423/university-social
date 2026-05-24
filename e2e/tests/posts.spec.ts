@@ -3,9 +3,9 @@ import { test, expect } from '@playwright/test'
 test.describe('Posts', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login')
-    await page.fill('input[placeholder*="用户名"]', 'testuser')
-    await page.click('button:has-text("开发者登录")')
-    await page.waitForURL('/')
+    await page.locator('input[placeholder*="昵称"]').fill('testuser')
+    await page.getByRole('button', { name: '进入校园社' }).click()
+    await expect(page.locator('.layout')).toBeVisible({ timeout: 15000 })
   })
 
   test('square page loads posts', async ({ page }) => {

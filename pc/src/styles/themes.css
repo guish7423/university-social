@@ -1,6 +1,13 @@
 /* ═══════════════════════════════════════
    Theme System — CSS Custom Properties
+   Theme System — CSS Custom Properties
    ═══════════════════════════════════════ */
+
+/* ── Selection — warm accent to match brand ── */
+::selection {
+  background: oklch(0.62 0.12 16 / 0.35);
+  color: oklch(0.92 0.005 30);
+}
 
 /* ── Dark Theme (default) ── */
 *, *::before, *::after {

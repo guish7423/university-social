@@ -294,3 +294,29 @@ func (r *ProductRepository) ToFixed(f float64, precision int) float64 {
 	pow := math.Pow(10, float64(precision))
 	return math.Round(f*pow) / pow
 }
+
+func (r *ProductRepository) AdminList(offset, limit int) ([]*model.Product, error) {
+	col := `p.id, p.user_id, p.title, p.description, p.price,
+		p.original_price, p.category, p.condition, p.images, p.contact,
+		p.status, p.like_count, p.comment_count, p.created_at, p.updated_at, false as is_liked`
+	rows, err := r.db.Query(`SELECT `+col+` FROM products p ORDER BY p.id DESC LIMIT $1 OFFSET $2`, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("admin list products: %w", err)
+	}
+	defer rows.Close()
+
+	var products []*model.Product
+	for rows.Next() {
+		p, err := r.scanProduct(rows, 0)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, p)
+	}
+	return products, nil
+}
+
+func (r *ProductRepository) AdminDelete(id int64) error {
+	_, err := r.db.Exec("DELETE FROM products WHERE id = $1", id)
+	return err
+}

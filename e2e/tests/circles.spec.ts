@@ -3,9 +3,9 @@ import { test, expect } from '@playwright/test'
 test.describe('Circles', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login')
-    await page.fill('input[placeholder*="用户名"]', 'testuser')
-    await page.click('button:has-text("开发者登录")')
-    await page.waitForURL('/')
+    await page.locator('input[placeholder*="昵称"]').fill('testuser')
+    await page.getByRole('button', { name: '进入校园社' }).click()
+    await expect(page.locator('.layout')).toBeVisible({ timeout: 15000 })
   })
 
   test('circle list loads', async ({ page }) => {
@@ -18,6 +18,6 @@ test.describe('Circles', () => {
     const firstCircle = page.locator('.circle-card').first()
     await expect(firstCircle).toBeVisible({ timeout: 10000 })
     await firstCircle.click()
-    await expect(page.locator('.circle-detail')).toBeVisible({ timeout: 5000 })
+    await expect(page.locator('.detail-page')).toBeVisible({ timeout: 5000 })
   })
 })

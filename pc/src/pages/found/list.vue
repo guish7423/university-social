@@ -4,12 +4,19 @@
       <h1>失物招领</h1>
       <el-button type="primary" @click="$router.push('/found/create')">发布信息</el-button>
     </div>
-    <LoadingWrapper :loading="loading && !items.length" :data="items.length" skeleton-variant="post-card" :rows="4">
+    <!-- Category Tabs + Search -->
+    <div class="toolbar">
+      <div class="tabs">
+        <button v-for="t in categories" :key="t.key" :class="['tab-btn', { active: activeTab === t.key }]" @click="activeTab = t.key">{{ t.label }}</button>
+      </div>
+      <el-input v-model="searchQuery" placeholder="搜索失物..." size="small" clearable class="search-input" />
+    </div>
+    <LoadingWrapper :loading="loading && !filtered.length" :data="filtered.length" skeleton-variant="post-card" :rows="4">
       <template #empty>
         <el-empty description="暂无失物信息" />
       </template>
       <div class="found-grid">
-        <div v-for="item in items" class="found-card stagger-item" :key="item.id" @click="$router.push('/found/' + item.id)">
+        <div v-for="item in filtered" class="found-card stagger-item" :key="item.id" @click="$router.push('/found/' + item.id)">
           <div class="card-header">
             <el-tag :type="item.category === '寻物' ? 'warning' : 'success'" size="small">{{ item.category }}</el-tag>
             <span :class="['status', item.status === 0 ? 'active' : 'resolved']">{{ item.status === 0 ? '进行中' : '已解决' }}</span>
@@ -25,7 +32,7 @@
       <div v-if="hasMore" class="load-more">
         <el-button :loading="loading" @click="loadMore" text>加载更多</el-button>
       </div>
-      <div v-if="!hasMore && items.length > 0" class="no-more">没有更多了</div>
+      <div v-if="!hasMore && filtered.length > 0" class="no-more">没有更多了</div>
     </LoadingWrapper>
   </div>
 </template>
@@ -35,10 +42,31 @@
 import type { LostItemData } from "@/api/found"
 import LoadingWrapper from "@/components/LoadingWrapper.vue"
 import { usePagination } from "@/composables/usePagination"
+import { ref, computed } from "vue"
 import { useTimeFormat } from "@/composables/useTimeFormat"
 import { listLostItems } from "@/api/found"
 
 const { formatTime } = useTimeFormat()
+const activeTab = ref('all')
+const searchQuery = ref('')
+const categories = [
+  { key: 'all', label: '全部' },
+  { key: '寻物', label: '寻物' },
+  { key: '招领', label: '招领' },
+]
+
+const filtered = computed(() => {
+  let list = items.value
+  if (activeTab.value !== 'all') {
+    list = list.filter(i => i.category === activeTab.value)
+  }
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.trim().toLowerCase()
+    list = list.filter(i => i.title?.toLowerCase().includes(q) || i.description?.toLowerCase().includes(q))
+  }
+  return list
+})
+
 const { items, loading, hasMore, loadMore } = usePagination<LostItemData>({
   fetchFn: (offset, limit) => listLostItems({ offset, limit }),
 })

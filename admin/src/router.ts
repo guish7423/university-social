@@ -3,6 +3,7 @@ import Dashboard from "@/views/Dashboard.vue"
 import Users from "@/views/Users.vue"
 import Posts from "@/views/Posts.vue"
 import Circles from "@/views/Circles.vue"
+import Products from "@/views/Products.vue"
 import Banners from "@/views/Banners.vue"
 import Announcements from "@/views/Announcements.vue"
 import SensitiveWords from "@/views/SensitiveWords.vue"
@@ -24,6 +25,7 @@ const routes = [
   { path: "/operation-logs", component: OperationLogs, meta: { title: "操作日志" } },
   { path: "/datascreen", component: DataScreen, meta: { title: "数据大屏" } },
   { path: "/login", component: () => import("@/views/Login.vue"), meta: { title: "登录", hideInMenu: true } },
+  { path: "/products", component: Products, meta: { title: "商品管理" } },
 ]
 
 export default createRouter({

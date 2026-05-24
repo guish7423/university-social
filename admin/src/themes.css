@@ -2,6 +2,16 @@
    Admin Panel Theme System
    ═══════════════════════════════════════ */
 
+/* ── Selection — matches dark theme ── */
+::selection {
+  background: rgba(94, 143, 212, 0.35);
+  color: #e8e6e3;
+}
+[data-theme="light"] ::selection {
+  background: rgba(94, 143, 212, 0.25);
+  color: #1a1e2e;
+}
+
 /* ── Dark theme (default) ── */
 :root {
   --admin-bg: #1a1e2e;

@@ -4,6 +4,19 @@
       <h1>二手</h1>
       <el-button type="primary" @click="$router.push('/product/create')">发布闲置</el-button>
     </div>
+
+    <!-- Category Tabs + Sort -->
+    <div class="toolbar">
+      <div class="tabs">
+        <button v-for="t in categories" :key="t.key" :class="['tab-btn', { active: activeTab === t.key }]" @click="activeTab = t.key">{{ t.label }}</button>
+      </div>
+      <el-select v-model="sortBy" size="small" class="sort-select">
+        <el-option label="最新发布" value="newest" />
+        <el-option label="价格从低" value="price_low" />
+        <el-option label="价格从高" value="price_high" />
+      </el-select>
+    </div>
+
     <LoadingWrapper :loading="loading && !products.length" :data="products.length" skeleton-variant="post-card" :rows="4">
       <template #empty>
         <el-empty description="暂无商品" />
@@ -35,15 +48,31 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
+import { ref, watch } from "vue"
 import type { ProductData } from "@/api/product"
 import { usePagination } from "@/composables/usePagination"
 import { listProducts } from "@/api/product"
 import LoadingWrapper from "@/components/LoadingWrapper.vue"
 
-const { items: products, loading, hasMore, loadMore } = usePagination<ProductData>({
-  fetchFn: (offset, limit) => listProducts({ offset, limit }),
+const activeTab = ref('all')
+const sortBy = ref('newest')
+
+const categories = [
+  { key: 'all', label: '全部' },
+  { key: '电子/数码', label: '电子/数码' },
+  { key: '教材/书籍', label: '教材/书籍' },
+  { key: '生活/日用品', label: '生活/日用品' },
+  { key: '其他', label: '其他' },
+]
+
+
+const { items: products, loading, hasMore, loadMore, reset } = usePagination<ProductData>({
+  fetchFn: (offset, limit) => listProducts({
+    offset, limit,
+    category: activeTab.value === 'all' ? undefined : activeTab.value,
+    sort: sortBy.value,
+  }),
 })
 
 loadMore()
@@ -54,23 +83,30 @@ loadMore()
 
 .products-page { max-width: 900px; }
 .page-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
   h1 { font-size: 22px; font-weight: 700; }
 }
-
+.toolbar {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+  .tabs { display: flex; gap: 4px; }
+  .tab-btn {
+    padding: 6px 16px; border-radius: 20px; border: none; font-size: 13px; cursor: pointer;
+    background: transparent; color: $text-secondary; transition: all 0.2s;
+    &:hover { background: color-mix(in oklch, $primary 8%, transparent); color: $primary; }
+    &.active { background: $primary; color: #fff; }
+  }
+  .sort-select { width: 130px; }
+}
 .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
-
 .product-card {
   background: $bg-card; border: 1px solid $border-color;
   border-radius: $radius-md; overflow: hidden; cursor: pointer; transition: all 0.2s;
   &:hover { border-color: $primary-light; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-
   .img-wrap {
     height: 160px; overflow: hidden;
     img { width: 100%; height: 100%; object-fit: cover; }
     .no-img { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: $text-muted; font-size: 13px; background: $bg-sidebar; }
   }
-
   .card-body { padding: 12px;
     h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .price { margin-bottom: 6px;
