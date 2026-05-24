@@ -69,6 +69,7 @@ blockHandler := handler.NewBlockHandler(blockRepo)
 
 	r := gin.Default()
 	r.Use(middleware.CORS())
+	r.Use(middleware.RateLimit(100, 20))
 	r.Static("/uploads", cfg.UploadDir)
 
 	api := r.Group("/api/v1")

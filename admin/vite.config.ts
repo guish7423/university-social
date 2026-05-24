@@ -10,6 +10,17 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'echarts': ['echarts'],
+          'element-plus': ['element-plus', '@element-plus/icons-vue'],
+          'datav': ['@kjgl77/datav-vue3'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     proxy: {
