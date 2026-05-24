@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"database/sql"
-	"net/http"
-	"strconv"
+"database/sql"
+"encoding/json"
+"net/http"
+"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -16,6 +17,20 @@ type AdminHandler struct {
 
 func NewAdminHandler(db *sql.DB) *AdminHandler {
 	return &AdminHandler{db: db}
+}
+
+func (h *AdminHandler) logOp(c *gin.Context, action, targetType string, targetID int64, detail any) {
+	adminID := c.GetInt64("user_id")
+	var adminName string
+	h.db.QueryRow("SELECT nickname FROM users WHERE id = $1", adminID).Scan(&adminName)
+	var detailJSON []byte
+	if detail != nil {
+		detailJSON, _ = json.Marshal(detail)
+	}
+	h.db.Exec(
+		"INSERT INTO operation_logs (admin_id, admin_name, action, target_type, target_id, detail) VALUES ($1,$2,$3,$4,$5,$6)",
+		adminID, adminName, action, targetType, targetID, detailJSON,
+	)
 }
 
 func (h *AdminHandler) Dashboard(c *gin.Context) {
@@ -138,6 +153,7 @@ func (h *AdminHandler) BanUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "已封禁"})
+	h.logOp(c, "ban_user", "user", id, nil)
 }
 
 func (h *AdminHandler) UnbanUser(c *gin.Context) {
@@ -152,6 +168,7 @@ func (h *AdminHandler) UnbanUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "已解封"})
+	h.logOp(c, "unban_user", "user", id, nil)
 }
 
 func (h *AdminHandler) ListPosts(c *gin.Context) {
@@ -199,6 +216,7 @@ func (h *AdminHandler) DeletePost(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
+	h.logOp(c, "delete_post", "post", id, nil)
 }
 
 func (h *AdminHandler) ListCircles(c *gin.Context) {
@@ -252,4 +270,5 @@ func (h *AdminHandler) DeleteCircle(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "已删除"})
+	h.logOp(c, "delete_circle", "circle", id, nil)
 }
