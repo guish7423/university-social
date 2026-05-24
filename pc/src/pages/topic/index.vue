@@ -44,7 +44,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .topics-page { max-width: 1100px; }
 
 .topic-grid {

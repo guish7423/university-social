@@ -102,7 +102,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .edit-page { max-width: 520px; }
 
 .edit-card {

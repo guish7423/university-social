@@ -77,7 +77,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables" as *;
 
- margin: 0 auto;
 .invite-page { max-width: 700px; }
 
 .page-header {

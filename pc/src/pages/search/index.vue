@@ -124,7 +124,6 @@ watch(query, () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .search-page { max-width: 640px; }
 
 

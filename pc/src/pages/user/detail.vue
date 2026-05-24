@@ -160,7 +160,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-  margin: 0 auto;
 .user-page { max-width: 720px; margin: 0 auto; }
 
 .profile-banner {

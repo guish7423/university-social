@@ -78,7 +78,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .verif-page { max-width: 500px; }
 .status-banner { margin-bottom: $space-5; }
 .verif-form { margin-top: $space-5; }

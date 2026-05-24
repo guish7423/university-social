@@ -37,13 +37,13 @@
       <el-carousel height="200px" indicator-position="outside" :interval="5000" arrow="hover">
         <el-carousel-item v-for="b in banners" :key="b.id">
           <a v-if="b.link_url" :href="b.link_url" target="_blank" class="banner-link">
-            <img :src="b.image_url" :alt="b.title" class="banner-img" />
+            <AppImage :src="b.image_url" :alt="b.title" img-class="banner-img" />
             <div class="banner-overlay">
               <h3 class="banner-title">{{ b.title }}</h3>
             </div>
           </a>
           <div v-else class="banner-link">
-            <img :src="b.image_url" :alt="b.title" class="banner-img" />
+            <AppImage :src="b.image_url" :alt="b.title" img-class="banner-img" />
             <div class="banner-overlay">
               <h3 class="banner-title">{{ b.title }}</h3>
             </div>
@@ -162,6 +162,7 @@ import CircleCard from "@/components/CircleCard.vue"
 import { ElMessage } from "element-plus"
 import { Edit } from "@element-plus/icons-vue"
 import SkeletonCard from "@/components/SkeletonCard.vue"
+import AppImage from "@/components/AppImage.vue"
 
 const banners = ref<{ id: number; title: string; image_url: string; link_url: string }[]>([])
 
@@ -224,9 +225,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-  margin: 0 auto;
- margin: 0 auto;
-.home-page { max-width: 1100px;
+.home-page { max-width: 1100px; margin: 0 auto; }
 
 // ═══ Hero ═══
 .hero {

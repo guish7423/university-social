@@ -56,7 +56,6 @@ async function handleSubmit() {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .create-page { max-width: 640px; }
 
 .card-wrap {

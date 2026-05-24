@@ -98,7 +98,6 @@ async function handleCreate() {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .create-page { max-width: 600px; }
 
 .form-wrap {

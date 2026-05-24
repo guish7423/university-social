@@ -81,7 +81,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .chat-page { max-width: 640px; }
 
 .page-header {

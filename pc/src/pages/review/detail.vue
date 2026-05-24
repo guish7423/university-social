@@ -207,8 +207,7 @@ onMounted(async () => {
 @use "@/styles/variables.scss" as *;
 @use "sass:color";
 
- margin: 0 auto;
-.detail-page { max-width: 700px; }
+.detail-page { max-width: 700px; margin: 0 auto; }
 
 .back-btn { margin-bottom: $space-4; }
 

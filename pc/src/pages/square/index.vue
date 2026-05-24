@@ -117,7 +117,6 @@ loadMore()
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
-  margin: 0 auto;
 .square-page { max-width: 680px; margin: 0 auto; }
 
 .tabs { margin-bottom: $space-5; }

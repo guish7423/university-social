@@ -53,7 +53,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .list-page { max-width: 640px; }
 .back-btn { margin-bottom: 4px; }
 

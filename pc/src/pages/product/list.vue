@@ -52,7 +52,6 @@ loadMore()
 <style scoped lang="scss">
 @use "@/styles/variables.scss" as *;
 
- margin: 0 auto;
 .products-page { max-width: 900px; }
 .page-header {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;

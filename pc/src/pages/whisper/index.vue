@@ -14,8 +14,8 @@
         <div class="author-row">
           <div v-if="w.is_anonymous" class="anon-avatar" :style="{ background: anonGradient(w.user_id) }">{{ w.content.charAt(0) }}</div>
           <template v-else-if="w.author">
-            <img :src="w.author.avatar" class="real-avatar" loading="lazy" />
-            <span class="nickname">{{ w.author.nickname }}</span>
+            <img :src="w.author?.avatar" :alt="w.author?.nickname" class="real-avatar" loading="lazy" />
+            <span class="nickname">{{ w.author?.nickname || '匿名' }}</span>
           </template>
           <span v-if="w.is_anonymous" class="whisper-id">树洞 #{{ String(w.user_id).slice(-4) }}</span>
         </div>
@@ -96,7 +96,6 @@ loadMore()
 @use "@/styles/variables.scss" as *;
 @use "sass:color";
 
- margin: 0 auto;
 .whisper-page { max-width: 640px; }
 .page-header {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
