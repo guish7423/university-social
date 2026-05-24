@@ -73,12 +73,24 @@ func (h *AdminHandler) DailyStats(c *gin.Context) {
 }
 
 func (h *AdminHandler) ListUsers(c *gin.Context) {
-	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+	q := c.Query("q")
+	offset := (page - 1) * limit
+
+	where := ""
+	args := []any{limit, offset}
+	if q != "" {
+		where = " WHERE (nickname ILIKE $3 OR open_id ILIKE $3)"
+		args = []any{limit, offset, "%" + q + "%"}
+	}
+
+	var total int
+	h.db.QueryRow("SELECT COUNT(*) FROM users"+where, args[1:]...).Scan(&total)
 
 	rows, err := h.db.Query(
-		`SELECT id, nickname, avatar, school, is_verified, created_at
-		 FROM users ORDER BY id DESC LIMIT $1 OFFSET $2`, limit, offset,
+		"SELECT id, nickname, avatar, open_id, school, is_verified, role, is_banned, created_at"+
+		" FROM users"+where+" ORDER BY id DESC LIMIT $1 OFFSET $2", args...,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取用户列表失败"})
@@ -86,18 +98,32 @@ func (h *AdminHandler) ListUsers(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	var users []*model.User
+	type UserItem struct {
+		ID         int64  `json:"id"`
+		Nickname   string `json:"nickname"`
+		Avatar     string `json:"avatar"`
+		OpenID     string `json:"open_id"`
+		School     string `json:"school"`
+		IsVerified bool   `json:"is_verified"`
+		Role       string `json:"role"`
+		IsBanned   bool   `json:"is_banned"`
+		CreatedAt  string `json:"created_at"`
+	}
+
+	var users []*UserItem
 	for rows.Next() {
-		var u model.User
-		if err := rows.Scan(&u.ID, &u.Nickname, &u.Avatar, &u.School, &u.IsVerified, &u.CreatedAt); err != nil {
+		var u UserItem
+		var createdAt string
+		if err := rows.Scan(&u.ID, &u.Nickname, &u.Avatar, &u.OpenID, &u.School, &u.IsVerified, &u.Role, &u.IsBanned, &createdAt); err != nil {
 			continue
 		}
+		u.CreatedAt = createdAt
 		users = append(users, &u)
 	}
 	if users == nil {
-		users = []*model.User{}
+		users = []*UserItem{}
 	}
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, gin.H{"users": users, "total": total})
 }
 
 func (h *AdminHandler) BanUser(c *gin.Context) {

@@ -96,25 +96,20 @@ const total = ref(0)
 const PAGE_LIMIT = 50
 
 
-async function load(reset = true) {
-  if (reset) { offset.value = 0; hasMore.value = true; page.value = 1 }
+async function load(pageNum = 1) {
+  page.value = pageNum
   loading.value = true
   try {
-    const params: any = { offset: offset.value, limit: PAGE_LIMIT }
+    const params: any = { page: pageNum, limit: PAGE_LIMIT }
     if (searchQuery.value.trim()) params.q = searchQuery.value.trim()
     const res = await api.get("/admin/users", { params })
-    if (reset) {
-      users.value = res.data
-    } else {
-      users.value = [...users.value, ...res.data]
-    }
-    hasMore.value = res.data.length >= PAGE_LIMIT
+    users.value = res.data.users
+    total.value = res.data.total
   } catch {} finally { loading.value = false }
 }
 
-function loadMore() {
-  offset.value += PAGE_LIMIT
-  load(false)
+function handlePageChange(pageNum: number) {
+  load(pageNum)
 }
 
 function showDetail(row: User) {
@@ -152,3 +147,4 @@ onMounted(() => load())
 .detail-meta h3 { margin: 0; font-size: 18px; }
 .detail-id { margin: 4px 0 0; font-size: 12px; color: #909399; }
 .pagination-wrap { text-align: center; padding: 16px 0; }
+</style>
