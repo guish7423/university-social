@@ -38,6 +38,7 @@ type CirclePost struct {
 	CreatedAt     time.Time `json:"created_at"`
 	Author        *User     `json:"author,omitempty"`
 	IsLiked       bool      `json:"is_liked,omitempty"`
+	IsPinned      bool      `json:"is_pinned"`
 }
 
 type CreateCircleRequest struct {

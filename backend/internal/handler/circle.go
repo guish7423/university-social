@@ -359,3 +359,41 @@ func (h *CircleHandler) ListActivities(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, activities)
 }
+
+func (h *CircleHandler) PinPost(c *gin.Context) {
+	userID := c.GetInt64("user_id")
+	postID, err := strconv.ParseInt(c.Param("postId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	circleID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	if err := h.repo.PinPost(postID, circleID, userID); err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "无权操作"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已置顶"})
+}
+
+func (h *CircleHandler) UnpinPost(c *gin.Context) {
+	userID := c.GetInt64("user_id")
+	postID, err := strconv.ParseInt(c.Param("postId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	circleID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	if err := h.repo.UnpinPost(postID, circleID, userID); err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "无权操作"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "已取消置顶"})
+}

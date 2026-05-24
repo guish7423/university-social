@@ -36,6 +36,7 @@ export interface CirclePostData {
   created_at: string
   author?: { nickname: string; avatar: string }
   is_liked?: boolean
+  is_pinned?: boolean
 }
 
 export function listCircles(params?: { offset?: number; limit?: number }) {
@@ -85,4 +86,12 @@ export function listJoinRequests(circleId: number) {
 
 export function handleJoinRequest(circleId: number, requestId: number, action: 'approve' | 'reject') {
   return request.post<any, { message: string }>(`/circles/join-requests/${requestId}/handle`, { action })
+}
+
+export function pinPost(circleId: number, postId: number) {
+  return request.post<any, { message: string }>(`/circles/${circleId}/posts/${postId}/pin`)
+}
+
+export function unpinPost(circleId: number, postId: number) {
+  return request.post<any, { message: string }>(`/circles/${circleId}/posts/${postId}/unpin`)
 }

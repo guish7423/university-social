@@ -148,6 +148,30 @@ func (r *CircleRepository) IsCreatorOrAdmin(circleID, userID int64) (bool, error
 	return exists, err
 }
 
+func (r *CircleRepository) PinPost(postID, circleID, userID int64) error {
+	isAdmin, err := r.IsCreatorOrAdmin(circleID, userID)
+	if err != nil {
+		return err
+	}
+	if !isAdmin {
+		return fmt.Errorf("not authorized")
+	}
+	_, err = r.db.Exec("UPDATE circle_posts SET is_pinned = true WHERE id = $1 AND circle_id = $2", postID, circleID)
+	return err
+}
+
+func (r *CircleRepository) UnpinPost(postID, circleID, userID int64) error {
+	isAdmin, err := r.IsCreatorOrAdmin(circleID, userID)
+	if err != nil {
+		return err
+	}
+	if !isAdmin {
+		return fmt.Errorf("not authorized")
+	}
+	_, err = r.db.Exec("UPDATE circle_posts SET is_pinned = false WHERE id = $1 AND circle_id = $2", postID, circleID)
+	return err
+}
+
 func (r *CircleRepository) CreateJoinRequest(circleID, userID int64) error {
 	_, err := r.db.Exec(
 		`INSERT INTO circle_join_requests (circle_id, user_id) VALUES ($1, $2)
@@ -291,14 +315,14 @@ func (r *CircleRepository) CreatePost(circleID, userID int64, content string, im
 func (r *CircleRepository) ListPosts(circleID, offset, limit int, userID int64) ([]*model.CirclePost, error) {
 	rows, err := r.db.Query(
 		`SELECT cp.id, cp.circle_id, cp.user_id, cp.content, cp.image_urls,
-		        cp.like_count, cp.comment_count, cp.created_at,
+		        cp.like_count, cp.comment_count, cp.created_at, cp.is_pinned,
 		        u.nickname, u.avatar,
 		        CASE WHEN cpl.id IS NOT NULL THEN true ELSE false END
 		 FROM circle_posts cp
 		 JOIN users u ON u.id = cp.user_id
 		 LEFT JOIN circle_post_likes cpl ON cpl.post_id = cp.id AND cpl.user_id = $4
 		 WHERE cp.circle_id = $1
-		 ORDER BY cp.created_at DESC LIMIT $2 OFFSET $3`,
+		 ORDER BY cp.is_pinned DESC, cp.created_at DESC LIMIT $2 OFFSET $3`,
 		circleID, limit, offset, userID,
 	)
 	if err != nil {
@@ -311,7 +335,7 @@ func (r *CircleRepository) ListPosts(circleID, offset, limit int, userID int64) 
 		var p model.CirclePost
 		var u model.User
 		if err := rows.Scan(&p.ID, &p.CircleID, &p.UserID, &p.Content, pq.Array(&p.ImageUrls),
-			&p.LikeCount, &p.CommentCount, &p.CreatedAt, &u.Nickname, &u.Avatar, &p.IsLiked); err != nil {
+			&p.LikeCount, &p.CommentCount, &p.CreatedAt, &p.IsPinned, &u.Nickname, &u.Avatar, &p.IsLiked); err != nil {
 			return nil, err
 		}
 		p.Author = &u

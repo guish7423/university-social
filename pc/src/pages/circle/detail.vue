@@ -69,7 +69,7 @@
 import { ref, onMounted, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user"
-import { getCircle, joinCircle, leaveCircle, listCirclePosts, createCirclePost, listJoinRequests, handleJoinRequest } from "@/api/circle"
+import { getCircle, joinCircle, leaveCircle, listCirclePosts, createCirclePost, listJoinRequests, handleJoinRequest, pinPost, unpinPost } from "@/api/circle"
 import type { CircleData, CirclePostData, JoinRequestData } from "@/api/circle"
 import { useTimeFormat } from "@/composables/useTimeFormat"
 import { ElMessage } from "element-plus"
@@ -151,6 +151,20 @@ async function handleRequestAction(requestId: number, action: 'approve' | 'rejec
   } catch { /* handled */ }
   finally { managing.value = false }
 }
+
+async function handlePin(p: CirclePostData) {
+  if (!circle.value) return
+  try {
+    if (p.is_pinned) {
+      await unpinPost(circle.value.id, p.id)
+      p.is_pinned = false
+    } else {
+      await pinPost(circle.value.id, p.id)
+      p.is_pinned = true
+    }
+  } catch { /* */ }
+}
+
 
 onMounted(async () => {
   const id = Number(route.params.id)
