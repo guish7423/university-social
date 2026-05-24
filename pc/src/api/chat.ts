@@ -11,11 +11,13 @@ export interface ConversationData {
 
 export interface MessageData {
   id: number
-  from_user_id: number
-  to_user_id: number
+  sender_id: number
+  receiver_id: number
   content: string
+  msg_type: number
   created_at: string
-  is_read: boolean
+  read_at: string | null
+  sender?: { nickname: string; avatar: string }
 }
 
 export function listConversations() {

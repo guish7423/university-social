@@ -14,9 +14,12 @@
     <div class="messages" ref="msgContainer">
       <div v-if="loading" class="loading-wrap"><el-skeleton :rows="5" animated /></div>
       <div v-else-if="!messages.length" class="empty-state"><el-empty description="开始聊天吧" /></div>
-      <div v-else v-for="m in messages" :key="m.id" :class="['msg', m.from_user_id === userId ? 'self' : 'peer']">
+      <div v-else v-for="m in messages" :key="m.id" :class="['msg', m.sender_id === userId ? 'self' : 'peer']">
         <div class="bubble">{{ m.content }}</div>
-        <div class="time">{{ formatTime(m.created_at) }}</div>
+        <div class="meta-row">
+          <span class="time">{{ formatTime(m.created_at) }}</span>
+          <span v-if="m.sender_id === userId && m.read_at" class="read-badge">已读</span>
+        </div>
       </div>
     </div>
     <div class="typing-hint" v-if="typing">对方正在输入...</div>
@@ -31,7 +34,7 @@
 import { ref, onMounted, onUnmounted, nextTick, watch } from "vue"
 import { useRoute } from "vue-router"
 import { useUserStore } from "@/stores/user"
-import { getMessages } from "@/api/chat"
+import { getMessages, markChatRead } from "@/api/chat"
 import { getUserInfo } from "@/api/auth"
 import type { MessageData } from "@/api/chat"
 import { useWebSocket } from "@/composables/useWebSocket"
@@ -106,12 +109,14 @@ onMounted(async () => {
       getUserInfo(peerId).catch(() => null)
     ])
     messages.value = msgs
+    // Mark all messages from this conversation as read
+    markChatRead(peerId).catch(() => {})
     if (profile) {
       peerName.value = profile.nickname
       peerAvatar.value = profile.avatar
     } else if (msgs.length) {
-      const peer = msgs.find(m => m.from_user_id !== userId)
-      if (peer) peerName.value = `用户 ${peer.from_user_id}`
+      const peer = msgs.find(m => m.sender_id !== userId)
+      if (peer) peerName.value = `用户 ${peer.sender_id}`
     }
   } catch { /* handled */ } finally { loading.value = false }
   nextTick(() => scrollToBottom())
@@ -154,11 +159,13 @@ onUnmounted(() => {
 
 .msg { max-width: 70%; }
 .msg .bubble { padding: 10px 14px; border-radius: $radius-md; font-size: 14px; line-height: 1.5; }
-.msg .time { font-size: 11px; color: $text-muted; margin-top: 4px; }
+.msg .meta-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.msg .time { font-size: 11px; color: var(--text-muted); }
+.msg .read-badge { font-size: 11px; color: $color-info; font-weight: 500; }
 
 .msg.self { align-self: flex-end; }
 .msg.self .bubble { background: $primary; color: white; border-bottom-right-radius: 4px; }
-.msg.self .time { text-align: right; }
+.msg.self .meta-row { justify-content: flex-end; }
 
 .msg.peer { align-self: flex-start; }
 .msg.peer .bubble { background: $bg-card; border: 1px solid $border-color; border-bottom-left-radius: 4px; }
