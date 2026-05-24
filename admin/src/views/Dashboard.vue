@@ -80,6 +80,7 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue"
 import api from "@/api"
 import * as echarts from "echarts"
+import { ElMessage } from "element-plus"
 
 const chartRef = ref<HTMLElement>()
 const lineChartRef = ref<HTMLElement>()
@@ -113,7 +114,7 @@ onMounted(async () => {
     summary.value = sumRes.data
     dailyData.value = statsRes.data || []
     weeklyActive.value = statsRes.data?.slice(0, 7).reduce((a: number, d: any) => a + (d.dau || 0), 0) || 0
-  } catch {}
+  } catch { ElMessage.error("数据加载失败") }
   await nextTick()
   initCharts()
   resizeHandler = () => { barChart?.resize(); lineChart?.resize(); pieChart?.resize() }

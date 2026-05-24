@@ -63,7 +63,7 @@ async function load() {
   try {
     const res = await api.get("/admin/banners")
     banners.value = res.data
-  } catch {} finally { loading.value = false }
+  } catch { ElMessage.error("加载失败") } finally { loading.value = false }
 }
 
 async function handleCreate() {
@@ -75,7 +75,7 @@ async function handleCreate() {
     showCreate.value = false
     Object.assign(form, { title: "", image_url: "", link_url: "", sort_order: 0 })
     load()
-  } catch {} finally { creating.value = false }
+  } catch { ElMessage.error("操作失败") } finally { creating.value = false }
 }
 
 async function handleToggle(id: number) {

@@ -33,7 +33,7 @@ async function load() {
   try {
     const res = await api.get("/admin/circles")
     circles.value = res.data
-  } catch {} finally {
+  } catch { ElMessage.error("加载失败") } finally {
     loading.value = false
   }
 }
@@ -44,7 +44,7 @@ async function handleDelete(id: number) {
     await api.delete(`/admin/circles/${id}`)
     ElMessage.success("已删除")
     load()
-  } catch {}
+  } catch { ElMessage.error("删除失败") }
 }
 
 onMounted(load)

@@ -55,7 +55,7 @@ async function load() {
   try {
     const res = await api.get("/admin/announcements")
     announcements.value = res.data
-  } catch {} finally { loading.value = false }
+  } catch { ElMessage.error("加载失败") } finally { loading.value = false }
 }
 
 async function handleCreate() {
@@ -67,7 +67,7 @@ async function handleCreate() {
     showCreate.value = false
     form.title = ""; form.content = ""
     load()
-  } catch {} finally { creating.value = false }
+  } catch { ElMessage.error("操作失败") } finally { creating.value = false }
 }
 
 async function handleToggle(id: number) {

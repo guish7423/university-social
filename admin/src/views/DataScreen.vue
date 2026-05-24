@@ -1,3 +1,4 @@
+
 <template>
   <dv-full-screen-container>
     <div class="screen-bg">
@@ -139,6 +140,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import api from "@/api"
+import { ElMessage } from "element-plus"
 
 const onlineUsers = ref({
   number: [2856, 3120, 3456, 3289, 4012],
@@ -280,7 +282,7 @@ onMounted(async () => {
     dailyActive.value.number = [dailyStats.value[0]?.dau || dailyActive.value.number[0]]
     onlineUsers.value.number = [Math.floor((dailyStats.value[0]?.dau || 0) * 0.3)]
     weeklyPosts.value.number = [dailyStats.value.slice(0,7).reduce((a:number,d:any)=>a+(d.new_posts||0),0)]
-  } catch {}
+  } catch { ElMessage.error("数据加载失败") }
 })
 </script>
 
