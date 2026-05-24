@@ -79,3 +79,7 @@ export function toggleLike(postId: number) {
 export function listTopics() {
   return request.get<any, TopicData[]>("/topics")
 }
+
+export function updatePost(id: number, data: { content: string; images?: string[]; topic_id?: number }) {
+	return request.put<any, { message: string }>(`/posts/${id}`, data)
+}

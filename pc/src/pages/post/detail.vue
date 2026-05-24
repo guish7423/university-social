@@ -14,14 +14,20 @@
             <span v-if="post.school" class="school">· {{ post.school }}</span>
           </span>
         </div>
+        <el-button v-if="post.user_id === userStore.userId && !editing" text :icon="Edit" @click="handleEdit" size="small">编辑</el-button>
         <el-button v-if="post.user_id === userStore.userId" text type="danger" :icon="Delete" @click="handleDelete" size="small">删除</el-button>
       </div>
 
       <p v-if="post.title" class="post-title">{{ post.title }}</p>
-      <p class="post-content">{{ post.content }}</p>
+      <el-input v-if="editing" v-model="editForm.content" type="textarea" :rows="4" maxlength="2000" show-word-limit />
+      <p v-else class="post-content">{{ post.content }}</p>
 
       <div v-if="post.images?.length" class="post-images">
         <img v-for="(img, i) in post.images" :key="i" :src="img" @click="lightboxIndex = i" :class="{ single: post.images.length === 1 }" />
+      </div>
+      <div v-if="editing" class="edit-actions">
+        <el-button type="primary" @click="handleSave" :disabled="!editForm.content.trim()">保存</el-button>
+        <el-button @click="handleCancel">取消</el-button>
       </div>
 
       <div class="post-actions">
@@ -70,10 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, reactive, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user"
-import { getPost, deletePost, listComments, createComment, toggleLike } from "@/api/post"
+import { getPost, deletePost, listComments, createComment, toggleLike, updatePost } from "@/api/post"
 import type { PostData, CommentData } from "@/api/post"
 import ImagePreview from "@/components/ImagePreview.vue"
 
@@ -81,9 +87,8 @@ import SkeletonCard from "@/components/SkeletonCard.vue"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import "dayjs/locale/zh-cn"
-import { ArrowLeft } from "@element-plus/icons-vue"
+import { ArrowLeft, Edit, Delete } from "@element-plus/icons-vue"
 import { ElMessageBox, ElMessage } from "element-plus"
-import { Delete } from "@element-plus/icons-vue"
 
 dayjs.extend(relativeTime)
 dayjs.locale("zh-cn")
@@ -99,6 +104,13 @@ const commentsLoading = ref(true)
 const commentText = ref("")
 const replyTo = ref<CommentData | null>(null)
 const lightboxIndex = ref<number | null>(null)
+
+const editing = ref(false)
+const editForm = reactive({
+	content: "",
+	images: [] as string[],
+	topic_id: undefined as number | undefined,
+})
 
 function formatTime(t: string) {
   const d = dayjs(t)
@@ -125,6 +137,32 @@ async function handleDelete() {
     ElMessage.success("已删除")
     router.push("/square")
   } catch { /* cancelled or error */ }
+}
+
+function handleEdit() {
+	if (!post.value) return
+	editForm.content = post.value.content
+	editForm.images = [...(post.value.images || [])]
+	editForm.topic_id = post.value.topic_id
+	editing.value = true
+}
+async function handleSave() {
+	if (!post.value || !editForm.content.trim()) return
+	try {
+		await updatePost(post.value.id, {
+			content: editForm.content.trim(),
+			images: editForm.images,
+			topic_id: editForm.topic_id,
+		})
+		post.value.content = editForm.content.trim()
+		post.value.images = editForm.images
+		post.value.topic_id = editForm.topic_id
+		editing.value = false
+		ElMessage.success("编辑成功")
+	} catch { /* handled by interceptor */ }
+}
+function handleCancel() {
+	editing.value = false
 }
 
 function startReply(comment: CommentData) {
@@ -202,6 +240,8 @@ onMounted(async () => {
     }
   }
 }
+
+.edit-actions { display: flex; gap: $space-3; margin-bottom: $space-4; }
 
 .comments-section {
   h3 { font-size: $text-base; font-weight: 600; margin-bottom: $space-4; }

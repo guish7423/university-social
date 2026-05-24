@@ -52,3 +52,9 @@ type Topic struct {
 	PostCount int       `json:"post_count"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type UpdatePostRequest struct {
+	Content string   `json:"content" binding:"required"`
+	Images  []string `json:"images"`
+	TopicID *int64   `json:"topic_id"`
+}

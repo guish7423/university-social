@@ -250,3 +250,22 @@ func (h *PostHandler) UserPosts(c *gin.Context) {
 	if posts == nil { posts = []*model.Post{} }
 	c.JSON(http.StatusOK, posts)
 }
+
+func (h *PostHandler) UpdatePost(c *gin.Context) {
+	userID := c.GetInt64("user_id")
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		return
+	}
+	var req model.UpdatePostRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "内容不能为空"})
+		return
+	}
+	if err := h.repo.Update(id, userID, &req); err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "编辑失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "ok"})
+}

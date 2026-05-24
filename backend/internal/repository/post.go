@@ -356,3 +356,23 @@ func (r *PostRepository) ListUserPosts(userID, currentUserID int64, offset, limi
 	}
 	return posts, nil
 }
+
+func (r *PostRepository) Update(id, userID int64, req *model.UpdatePostRequest) error {
+	var imagesJSON interface{}
+	if len(req.Images) > 0 {
+		j, _ := json.Marshal(req.Images)
+		imagesJSON = j
+	}
+	res, err := r.db.Exec(
+		`UPDATE posts SET content=$1, images=$2, topic_id=$3, updated_at=NOW() WHERE id=$4 AND user_id=$5`,
+		req.Content, imagesJSON, req.TopicID, id, userID,
+	)
+	if err != nil {
+		return fmt.Errorf("update post: %w", err)
+	}
+	n, _ := res.RowsAffected()
+	if n == 0 {
+		return fmt.Errorf("post not found or not owner")
+	}
+	return nil
+}
