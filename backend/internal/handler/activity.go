@@ -159,7 +159,7 @@ func (h *ActivityHandler) ListComments(c *gin.Context) {
 	if comments == nil {
 		comments = []*model.ActivityComment{}
 	}
-if comments == nil { comments = []*model.Comment{} }
+if comments == nil { comments = []*model.ActivityComment{} }
 	c.JSON(http.StatusOK, comments)
 }
 

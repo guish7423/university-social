@@ -24,7 +24,7 @@ func (h *CampusHandler) ListCalendar(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取校历失败"})
 		return
 	}
-if items == nil { items = []*model.Campus{} }
+if items == nil { items = []*model.CampusCalendar{} }
 	c.JSON(http.StatusOK, items)
 }
 
@@ -35,7 +35,7 @@ func (h *CampusHandler) ListDirectory(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取黄页失败"})
 		return
 	}
-if items == nil { items = []*model.Campus{} }
+if items == nil { items = []*model.CampusDirectory{} }
 	c.JSON(http.StatusOK, items)
 }
 
@@ -47,7 +47,7 @@ func (h *CampusHandler) ListEmptyRooms(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取空教室失败"})
 		return
 	}
-if items == nil { items = []*model.Campus{} }
+if items == nil { items = []*model.EmptyClassroom{} }
 	c.JSON(http.StatusOK, items)
 }
 
