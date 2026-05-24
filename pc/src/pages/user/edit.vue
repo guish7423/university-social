@@ -21,6 +21,16 @@
         <el-form-item label="学校">
           <el-input v-model="school" placeholder="如：洛阳师范学院" />
         </el-form-item>
+        <el-form-item label="个人简介">
+          <el-input
+            v-model="bio"
+            type="textarea"
+            :maxlength="200"
+            :rows="3"
+            placeholder="介绍一下你自己…"
+            show-word-limit
+          />
+        </el-form-item>
         <div class="form-actions">
           <el-button @click="$router.back()">取消</el-button>
           <el-button type="primary" :loading="submitting" native-type="submit">保存</el-button>
@@ -45,6 +55,7 @@ const router = useRouter()
 const userStore = useUserStore()
 const nickname = ref("")
 const school = ref("")
+const bio = ref("")
 const avatar = ref("")
 const submitting = ref(false)
 const fileInput = ref<HTMLInputElement>()
@@ -65,7 +76,11 @@ function handleFileChange(e: Event) {
 async function handleSubmit() {
   submitting.value = true
   try {
-    await updateProfile({ nickname: nickname.value.trim(), school: school.value.trim() })
+    await updateProfile({
+      nickname: nickname.value.trim(),
+      school: school.value.trim(),
+      bio: bio.value.trim(),
+    } as any)
     const updated = await getProfile()
     userStore.setUser(updated)
     router.back()
@@ -77,6 +92,7 @@ onMounted(async () => {
     const profile = await getProfile()
     nickname.value = profile.nickname
     school.value = profile.school || ""
+    bio.value = (profile as any).bio || ""
     avatar.value = profile.avatar
     userStore.setUser(profile)
   } catch { /* handled by interceptor */ }

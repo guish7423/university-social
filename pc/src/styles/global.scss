@@ -41,7 +41,7 @@ html, body, #app {
   &:active { box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
 }
 
-.post-card, .activity-card, .product-card, .found-card {
+.post-card, .activity-card, .product-card, .found-card, .circle-card {
   transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease !important;
   &:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
   &:active { transform: translateY(0); }
