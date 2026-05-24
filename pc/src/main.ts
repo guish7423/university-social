@@ -18,4 +18,15 @@ for (const [key, component] of Object.entries(icons)) {
   app.component(key, component)
 }
 
+// Global error handler
+app.config.errorHandler = (err, _instance, _info) => {
+  console.error("[App Error]", err)
+  // Runtime errors are logged; Vue keeps rendering if possible
+}
+
+// Global promise unhandled rejection handler
+window.addEventListener("unhandledrejection", (e) => {
+  console.error("[Unhandled Rejection]", e.reason)
+})
+
 app.mount("#app")

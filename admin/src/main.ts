@@ -15,4 +15,11 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus)
 app.use(DataV)
 app.use(router)
+
+app.config.errorHandler = (err, _instance, _info) => {
+  console.error("[Admin Error]", err)
+}
+window.addEventListener("unhandledrejection", (e) => {
+  console.error("[Admin Unhandled]", e.reason)
+})
 app.mount("#app")
