@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/guish/university-social/internal/model"
 	"github.com/guish/university-social/internal/repository"
 )
 
@@ -23,6 +24,7 @@ func (h *CampusHandler) ListCalendar(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取校历失败"})
 		return
 	}
+if items == nil { items = []*model.Campus{} }
 	c.JSON(http.StatusOK, items)
 }
 
@@ -33,6 +35,7 @@ func (h *CampusHandler) ListDirectory(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取黄页失败"})
 		return
 	}
+if items == nil { items = []*model.Campus{} }
 	c.JSON(http.StatusOK, items)
 }
 
@@ -44,6 +47,7 @@ func (h *CampusHandler) ListEmptyRooms(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取空教室失败"})
 		return
 	}
+if items == nil { items = []*model.Campus{} }
 	c.JSON(http.StatusOK, items)
 }
 

@@ -47,6 +47,7 @@ func (h *ActivityHandler) List(c *gin.Context) {
 	if activities == nil {
 		activities = []*model.Activity{}
 	}
+if activities == nil { activities = []*model.Activity{} }
 	c.JSON(http.StatusOK, activities)
 }
 
@@ -118,6 +119,7 @@ func (h *ActivityHandler) Participants(c *gin.Context) {
 	if users == nil {
 		users = []*model.User{}
 	}
+if users == nil { users = []*model.User{} }
 	c.JSON(http.StatusOK, users)
 }
 
@@ -157,6 +159,7 @@ func (h *ActivityHandler) ListComments(c *gin.Context) {
 	if comments == nil {
 		comments = []*model.ActivityComment{}
 	}
+if comments == nil { comments = []*model.Comment{} }
 	c.JSON(http.StatusOK, comments)
 }
 
@@ -179,5 +182,6 @@ func (h *ActivityHandler) MyActivities(c *gin.Context) {
 
 func (h *ActivityHandler) Types(c *gin.Context) {
 	types := h.activityRepo.Types()
+if types == nil { types = []string{} }
 	c.JSON(http.StatusOK, types)
 }

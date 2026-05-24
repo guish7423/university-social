@@ -59,6 +59,7 @@ func (h *PostHandler) ListPosts(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取动态失败"})
 		return
 	}
+if posts == nil { posts = []*model.Post{} }
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -129,6 +130,7 @@ func (h *PostHandler) ListComments(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取评论失败"})
 		return
 	}
+if comments == nil { comments = []*model.Comment{} }
 	c.JSON(http.StatusOK, comments)
 }
 
@@ -153,6 +155,7 @@ func (h *PostHandler) ListTopics(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取话题失败"})
 		return
 	}
+if topics == nil { topics = []*model.Topic{} }
 	c.JSON(http.StatusOK, topics)
 }
 
@@ -204,6 +207,7 @@ func (h *PostHandler) SearchPosts(c *gin.Context) {
 		return
 	}
 	if posts == nil { posts = []*model.Post{} }
+if posts == nil { posts = []*model.Post{} }
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -217,6 +221,7 @@ func (h *PostHandler) TrendingPosts(c *gin.Context) {
 		return
 	}
 	if posts == nil { posts = []*model.Post{} }
+if posts == nil { posts = []*model.Post{} }
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -230,6 +235,7 @@ func (h *PostHandler) FollowingPosts(c *gin.Context) {
 		return
 	}
 	if posts == nil { posts = []*model.Post{} }
+if posts == nil { posts = []*model.Post{} }
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -248,6 +254,7 @@ func (h *PostHandler) UserPosts(c *gin.Context) {
 		return
 	}
 	if posts == nil { posts = []*model.Post{} }
+if posts == nil { posts = []*model.Post{} }
 	c.JSON(http.StatusOK, posts)
 }
 
