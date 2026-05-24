@@ -1,6 +1,6 @@
 <template>
   <dv-border-box-13 class="view-wrapper">
-    <el-table :data="circles" border stripe v-loading="loading" style="width: 100%">
+    <el-table :data="circles" border stripe v-loading="loading" style="width: 100%" empty-text="暂无圈子数据">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="名称" min-width="160" />
       <el-table-column prop="description" label="简介" min-width="240" show-overflow-tooltip />
@@ -8,7 +8,7 @@
       <el-table-column prop="post_count" label="帖子数" width="80" />
       <el-table-column label="操作" width="120" fixed="right">
         <template #default="{ row }">
-          <el-button type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
+          <el-button type="danger" size="small" class="op-btn" @click="handleDelete(row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

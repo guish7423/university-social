@@ -2,7 +2,7 @@
   <div class="dashboard">
     <div class="db-container">
       <div class="stat-grid">
-        <dv-border-box-1 class="stat-item">
+        <dv-border-box-1 class="stat-item stat-card-hover slide-up">
           <div class="stat-inner">
             <div class="stat-icon" style="background:#e6f7ff;color:#1890ff"><User /></div>
             <div>
@@ -11,7 +11,7 @@
             </div>
           </div>
         </dv-border-box-1>
-        <dv-border-box-1 class="stat-item">
+        <dv-border-box-1 class="stat-item stat-card-hover slide-up">
           <div class="stat-inner">
             <div class="stat-icon" style="background:#fff7e6;color:#fa8c16"><Document /></div>
             <div>
@@ -20,7 +20,7 @@
             </div>
           </div>
         </dv-border-box-1>
-        <dv-border-box-1 class="stat-item">
+        <dv-border-box-1 class="stat-item stat-card-hover slide-up">
           <div class="stat-inner">
             <div class="stat-icon" style="background:#f6ffed;color:#52c41a"><Collection /></div>
             <div>

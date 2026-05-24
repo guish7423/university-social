@@ -79,3 +79,19 @@ body {
   --border-color1: rgba(64, 158, 255, 0.3);
   --border-color2: rgba(64, 158, 255, 0.6);
 }
+
+/* ── Smooth theme switching ── */
+body, .app-shell, .sidebar-section, .main-section, .content-area, .el-table, .el-card, .el-dialog, .el-drawer {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.el-table__body tr {
+  transition: background-color 0.15s ease;
+}
+.el-table__body tr:hover {
+  background: rgba(64, 158, 255, 0.04) !important;
+}
+
+.el-pagination {
+  transition: opacity 0.2s ease;
+}

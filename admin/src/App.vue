@@ -3,7 +3,7 @@
     <div class="sidebar-section">
       <dv-border-box-12 class="sidebar-box">
         <div class="logo">校园社 管理</div>
-        <el-menu router :default-active="$route.path" background-color="transparent" text-color="#bfcbd9" active-text-color="#409eff">
+        <el-menu router :default-active="$route.path" background-color="transparent" text-color="var(--admin-text-secondary, '#bfcbd9')" active-text-color="#409eff" class="sidebar-menu">
           <el-menu-item index="/dashboard">
             <el-icon><DataBoard /></el-icon>
             <span>数据看板</span>
@@ -55,7 +55,9 @@
         </div>
       </dv-border-box-7>
       <div class="content-area">
-        <router-view />
+        <transition name="fade" mode="out-in">
+          <router-view />
+        </transition>
       </div>
     </div>
   </div>
@@ -84,6 +86,8 @@ onMounted(() => {
   }
 })
 </script>
+
+@import "./styles/animations.css";
 
 <style>
 body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--admin-bg, #f0f2f5); }
