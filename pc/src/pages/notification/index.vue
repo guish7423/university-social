@@ -15,29 +15,31 @@
       </el-radio-group>
     </div>
 
-    <div v-if="loading" class="loading-wrap"><el-skeleton :rows="6" animated /></div>
-    <div v-else-if="!filtered.length" class="empty-state">
-      <el-empty :description="emptyText" :image-size="80" />
-    </div>
-    <div v-else class="notif-list">
-      <div v-for="n in filtered" :key="n.id" class="stagger-item" :class="['notif-item', { unread: !n.is_read }]" @click="handleClick(n)">
-        <div class="notif-icon" :class="n.type">
-          <el-icon :size="18"><component :is="iconMap[n.type] || iconMap.default" /></el-icon>
+    <LoadingWrapper :loading="loading" :data="filtered.length" skeleton-variant="post-card" :rows="6">
+      <template #empty>
+        <el-empty :description="emptyText" :image-size="80" />
+      </template>
+      <div class="notif-list">
+        <div v-for="n in filtered" :key="n.id" class="stagger-item" :class="['notif-item', { unread: !n.is_read }]" @click="handleClick(n)">
+          <div class="notif-icon" :class="n.type">
+            <el-icon :size="18"><component :is="iconMap[n.type] || iconMap.default" /></el-icon>
+          </div>
+          <el-avatar :size="36" :src="n.from_user?.avatar" class="notif-avatar" />
+          <div class="notif-body">
+            <div class="notif-content">{{ n.content }}</div>
+            <div class="notif-time">{{ smartTime(n.created_at) }}</div>
+          </div>
+          <div v-if="!n.is_read" class="unread-dot" />
         </div>
-        <el-avatar :size="36" :src="n.from_user?.avatar" class="notif-avatar" />
-        <div class="notif-body">
-          <div class="notif-content">{{ n.content }}</div>
-          <div class="notif-time">{{ smartTime(n.created_at) }}</div>
-        </div>
-        <div v-if="!n.is_read" class="unread-dot" />
       </div>
-    </div>
+    </LoadingWrapper>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue"
 import { useRouter } from "vue-router"
+import LoadingWrapper from "@/components/LoadingWrapper.vue"
 import { listNotifications, markNotificationsRead } from "@/api/social"
 import type { NotificationData } from "@/api/social"
 import { Star, ChatDotSquare, User, Bell, Reading } from "@element-plus/icons-vue"

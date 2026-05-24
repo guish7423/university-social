@@ -4,9 +4,10 @@
       <h1>二手</h1>
       <el-button type="primary" @click="$router.push('/product/create')">发布闲置</el-button>
     </div>
-    <div v-if="loading && !products.length" class="loading-wrap"><el-skeleton :rows="4" animated /></div>
-    <div v-else-if="!products.length" class="empty-state"><el-empty description="暂无商品" /></div>
-    <template v-else>
+    <LoadingWrapper :loading="loading && !products.length" :data="products.length" skeleton-variant="post-card" :rows="4">
+      <template #empty>
+        <el-empty description="暂无商品" />
+      </template>
       <div class="product-grid">
         <div v-for="p in products" class="product-card stagger-item" :key="p.id" @click="$router.push('/products/' + p.id)">
           <div class="img-wrap">
@@ -30,8 +31,7 @@
         <el-button :loading="loading" @click="loadMore" text>加载更多</el-button>
       </div>
       <div v-if="!hasMore && products.length > 0" class="no-more">没有更多了</div>
-</template>
-
+    </LoadingWrapper>
   </div>
 </template>
 
@@ -40,6 +40,7 @@
 import type { ProductData } from "@/api/product"
 import { usePagination } from "@/composables/usePagination"
 import { listProducts } from "@/api/product"
+import LoadingWrapper from "@/components/LoadingWrapper.vue"
 
 const { items: products, loading, hasMore, loadMore } = usePagination<ProductData>({
   fetchFn: (offset, limit) => listProducts({ offset, limit }),

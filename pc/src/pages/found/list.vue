@@ -4,9 +4,10 @@
       <h1>失物招领</h1>
       <el-button type="primary" @click="$router.push('/found/create')">发布信息</el-button>
     </div>
-    <div v-if="loading && !items.length" class="loading-wrap"><el-skeleton :rows="4" animated /></div>
-    <div v-else-if="!items.length" class="empty-state"><el-empty description="暂无失物信息" /></div>
-    <template v-else>
+    <LoadingWrapper :loading="loading && !items.length" :data="items.length" skeleton-variant="post-card" :rows="4">
+      <template #empty>
+        <el-empty description="暂无失物信息" />
+      </template>
       <div class="found-grid">
         <div v-for="item in items" class="found-card stagger-item" :key="item.id" @click="$router.push('/found/' + item.id)">
           <div class="card-header">
@@ -25,14 +26,14 @@
         <el-button :loading="loading" @click="loadMore" text>加载更多</el-button>
       </div>
       <div v-if="!hasMore && items.length > 0" class="no-more">没有更多了</div>
-</template>
-
+    </LoadingWrapper>
   </div>
 </template>
 
 
 <script setup lang="ts">
 import type { LostItemData } from "@/api/found"
+import LoadingWrapper from "@/components/LoadingWrapper.vue"
 import { usePagination } from "@/composables/usePagination"
 import { useTimeFormat } from "@/composables/useTimeFormat"
 import { listLostItems } from "@/api/found"

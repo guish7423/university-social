@@ -12,6 +12,7 @@ html, body, #app {
   font-family: "DM Sans", "Noto Sans SC", "PingFang SC", sans-serif;
   background: $bg-app;
   color: $text-primary;
+  scroll-behavior: smooth;
 }
 
 ::-webkit-scrollbar { width: 6px; }
@@ -34,7 +35,7 @@ html, body, #app {
 
 .el-button {
   transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-  &:active { transform: translateY(2px); }
+  &:active { transform: translateY(2px) scale(0.97); }
 }
 
 .el-button--primary {
@@ -102,7 +103,28 @@ html, body, #app {
 .stagger-item:nth-child(8) { animation-delay: 420ms; }
 .stagger-item:nth-child(9) { animation-delay: 480ms; }
 .stagger-item:nth-child(10) { animation-delay: 540ms; }
+.stagger-item:nth-child(11) { animation-delay: 600ms; }
+.stagger-item:nth-child(12) { animation-delay: 660ms; }
 
+.fade-in { animation: fade-in 0.3s ease-out forwards; }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animated-count {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+.text-link {
+  color: $brand-primary;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 0.3s ease;
+  &:hover { background-size: 100% 1px; }
+}
 /* ═══ Element Plus Overrides ═══ */
 :root {
   --shadow-color: rgba(0,0,0,0.35);

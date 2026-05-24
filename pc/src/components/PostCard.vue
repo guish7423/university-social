@@ -28,11 +28,11 @@
         @click.stop="emit('like', post)"
       >
         <el-icon><Goods /></el-icon>
-        <span>{{ post.like_count || 0 }}</span>
+        <span class="animated-count">{{ likeDisplay || 0 }}</span>
       </span>
       <span class="action" @click.stop="emit('comment', post)">
         <el-icon><ChatDotSquare /></el-icon>
-        <span>{{ post.comment_count || 0 }}</span>
+        <span class="animated-count">{{ commentDisplay || 0 }}</span>
       </span>
       <span
         :class="['action', { favorited: post.is_favorited }]"
@@ -52,11 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTimeFormat } from "@/composables/useTimeFormat"
 import ImagePreview from "@/components/ImagePreview.vue"
 import AppImage from '@/components/AppImage.vue'
+import { useAnimatedNumber } from '@/composables/useAnimatedNumber'
 
 export interface PostCardData {
   id: number
@@ -87,6 +88,8 @@ const emit = defineEmits<{
 const router = useRouter()
 const { formatTime } = useTimeFormat()
 const lightboxIndex = ref<number | null>(null)
+const likeDisplay = useAnimatedNumber(computed(() => props.post.like_count), 400)
+const commentDisplay = useAnimatedNumber(computed(() => props.post.comment_count), 400)
 
 function handleClick() {
   router.push(`/post/${props.post.id}`)

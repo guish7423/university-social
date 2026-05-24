@@ -5,16 +5,11 @@
       <el-button type="primary" @click="showCreate = true">倾诉</el-button>
     </div>
 
-    <div v-if="loading && !whispers.length" class="loading-wrap">
-      <div v-for="n in 3" :key="n" class="skeleton-card">
-        <div class="skeleton-row skeleton-author" />
-        <div class="skeleton-row skeleton-line" />
-        <div class="skeleton-row skeleton-line skeleton-line-short" />
-        <div class="skeleton-row skeleton-footer" />
-      </div>
-    </div>
-    <div v-else-if="!whispers.length" class="empty-state"><el-empty description="暂无树洞消息" /></div>
-    <div v-else class="whisper-list">
+    <LoadingWrapper :loading="loading && !whispers.length" :data="whispers.length" skeleton-variant="post-card" :rows="3">
+      <template #empty>
+        <el-empty description="暂无树洞消息" />
+      </template>
+      <div class="whisper-list">
       <div v-for="w in whispers" class="whisper-card stagger-item" :key="w.id" @click="$router.push('/whispers/' + w.id)">
         <div class="author-row">
           <div v-if="w.is_anonymous" class="anon-avatar" :style="{ background: anonGradient(w.user_id) }">{{ w.content.charAt(0) }}</div>
@@ -35,7 +30,8 @@
         <el-button :loading="loading" @click="loadMore" text>加载更多</el-button>
       </div>
       <div v-if="!hasMore && whispers.length > 0" class="no-more">没有更多了</div>
-    </div>
+      </div>
+    </LoadingWrapper>
 
     <el-dialog v-model="showCreate" title="说点什么" width="480">
       <el-input v-model="text" type="textarea" :rows="4" placeholder="匿名倾诉你的心声..." maxlength="500" show-word-limit />
@@ -48,6 +44,7 @@
   </div>
 </template>
 
+import LoadingWrapper from "@/components/LoadingWrapper.vue"
 <script setup lang="ts">
 import { ref } from "vue"
 import { createWhisper } from "@/api/whisper"
