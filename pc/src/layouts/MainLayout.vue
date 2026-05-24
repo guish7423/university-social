@@ -178,6 +178,7 @@ const navGroups = computed(() => [
       { path: "/home", icon: HomeFilled, label: "首页" },
       { path: "/square", icon: MessageBox, label: "广场" },
       { path: "/search", icon: Search, label: "搜索" },
+	      { path: "/university", icon: School, label: "高校" },
     ],
   },
   {

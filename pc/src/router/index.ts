@@ -61,8 +61,10 @@ const router = createRouter({
 
         { path: "announcements", name: "Announcements", meta: { title: "公告" }, component: () => import("@/pages/announcement/index.vue") },
         { path: "circles/:id/members", name: "CircleMembers", meta: { title: "成员" }, component: () => import("@/pages/circle/members.vue") },
+        { path: "university/:id", name: "UniversityDetail", meta: { title: "高校详情" }, component: () => import("@/pages/university/detail.vue") },
 
         { path: "invite", name: "Invite", meta: { title: "邀请码" }, component: () => import("@/pages/invite/index.vue") },
+        { path: "university", name: "Universities", meta: { title: "高校" }, component: () => import("@/pages/university/index.vue") },
         { path: "/:pathMatch(.*)*", name: "NotFound", component: () => import("@/pages/error/NotFound.vue") },
       ],
     },

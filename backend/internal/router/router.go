@@ -63,6 +63,8 @@ blockRepo := repository.NewBlockRepository(db)
 blockHandler := handler.NewBlockHandler(blockRepo)
 	favRepo := repository.NewFavoriteRepository(db)
 	favHandler := handler.NewFavoriteHandler(favRepo, userRepo)
+	uniRepo := repository.NewUniversityRepository(db)
+	uniHandler := handler.NewUniversityHandler(uniRepo)
 
 
 
@@ -214,6 +216,12 @@ blockHandler := handler.NewBlockHandler(blockRepo)
 			auth.DELETE("/users/:id/block", blockHandler.Unblock)
 			auth.GET("/users/:id/block-status", blockHandler.BlockStatus)
 			auth.GET("/users/blocked", blockHandler.ListBlocked)
+			auth.GET("/universities", uniHandler.List)
+			auth.GET("/universities/:id", uniHandler.GetByID)
+			auth.POST("/universities/:id/join", uniHandler.Join)
+			auth.POST("/universities/:id/leave", uniHandler.Leave)
+			auth.GET("/universities/:id/members", uniHandler.Members)
+			auth.GET("/university/my", uniHandler.MyUniversity)
 
 		}
 			auth.POST("/posts/:id/favorite", favHandler.Add)
