@@ -17,7 +17,7 @@
     <div v-if="post.images?.length" class="post-images">
       <img
         v-for="(img, i) in post.images" :key="i"
-        :src="img" @click.stop
+        :src="img" @click.stop="lightboxIndex = i"
         :class="{ 'single': post.images.length === 1 }"
       />
     </div>
@@ -40,11 +40,15 @@
       </span>
     </div>
   </div>
+
+    <ImagePreview :images="post.images || []" v-model="lightboxIndex" />
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useTimeFormat } from "@/composables/useTimeFormat"
+import ImagePreview from "@/components/ImagePreview.vue"
 
 export interface PostCardData {
   id: number
@@ -72,6 +76,7 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const { formatTime } = useTimeFormat()
+const lightboxIndex = ref<number | null>(null)
 
 function handleClick() {
   router.push(`/post/${props.post.id}`)
