@@ -8,6 +8,7 @@ import Announcements from "@/views/Announcements.vue"
 import SensitiveWords from "@/views/SensitiveWords.vue"
 import Reports from "@/views/Reports.vue"
 import DataScreen from "@/views/DataScreen.vue"
+import OperationLogs from "@/views/OperationLogs.vue"
 
 
 const routes = [
@@ -20,6 +21,7 @@ const routes = [
   { path: "/announcements", component: Announcements, meta: { title: "公告管理" } },
   { path: "/sensitive-words", component: SensitiveWords, meta: { title: "敏感词管理" } },
   { path: "/reports", component: Reports, meta: { title: "举报管理" } },
+  { path: "/operation-logs", component: OperationLogs, meta: { title: "操作日志" } },
   { path: "/datascreen", component: DataScreen, meta: { title: "数据大屏" } },
   { path: "/login", component: () => import("@/views/Login.vue"), meta: { title: "登录", hideInMenu: true } },
 ]
