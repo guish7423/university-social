@@ -34,6 +34,13 @@
         <el-icon><ChatDotSquare /></el-icon>
         <span>{{ post.comment_count || 0 }}</span>
       </span>
+      <span
+        :class="['action', { favorited: post.is_favorited }]"
+        @click.stop="emit('favorite', post)"
+      >
+        <el-icon><Star /></el-icon>
+        <span>{{ post.is_favorited ? '已收藏' : '收藏' }}</span>
+      </span>
       <span v-if="post.circle" class="circle-tag" @click.stop="emit('circle', post)">
         <el-icon><Connection /></el-icon>
         {{ post.circle.name }}
@@ -58,6 +65,7 @@ export interface PostCardData {
   like_count: number
   comment_count: number
   is_liked?: boolean
+  is_favorited?: boolean
   created_at: string
   school?: string
   author?: { nickname?: string; avatar?: string }
@@ -71,6 +79,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   like: [post: any]
   comment: [post: any]
+  favorite: [post: any]
   circle: [post: any]
 }>()
 
@@ -185,6 +194,7 @@ function handleClick() {
 
   &:hover { color: $brand-primary; }
   &.liked { color: $brand-primary; }
+  &.favorited { color: $campus-gold; }
 }
 
 .circle-tag {

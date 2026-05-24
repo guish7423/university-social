@@ -43,6 +43,7 @@ const router = createRouter({
         { path: "user/:id/following", name: "UserFollowing", meta: { title: "关注" }, component: () => import("@/pages/user/following.vue") },
         { path: "profile/edit", name: "EditProfile", meta: { title: "编辑资料" }, component: () => import("@/pages/user/edit.vue") },
         { path: "points", name: "Points", meta: { title: "积分" }, component: () => import("@/pages/points/index.vue") },
+        { path: "favorites", name: "Favorites", meta: { title: "收藏" }, component: () => import("@/pages/favorite/index.vue") },
         { path: "whispers", name: "Whispers", meta: { title: "树洞" }, component: () => import("@/pages/whisper/index.vue") },
         { path: "whispers/:id", name: "WhisperDetail", meta: { title: "树洞详情" }, component: () => import("@/pages/whisper/detail.vue") },
         { path: "courses", name: "Courses", meta: { title: "课程" }, component: () => import("@/pages/course/index.vue") },

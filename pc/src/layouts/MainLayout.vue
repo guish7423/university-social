@@ -132,7 +132,7 @@ import {
   HomeFilled, MessageBox, Connection, Calendar, ShoppingCart,
   WarningFilled, ChatDotSquare, UserFilled, ChatLineSquare,
   Reading, Coin, School, Link, Bell, Edit, Search,
-  ArrowRight, ArrowDown, ArrowUp, Notebook, InfoFilled, Key, Expand, Fold, Moon, Sunny
+  ArrowRight, ArrowDown, ArrowUp, Notebook, InfoFilled, Key, Expand, Fold, Moon, Sunny, Star
 } from "@element-plus/icons-vue"
 
 const route = useRoute()
@@ -202,6 +202,7 @@ const navGroups = computed(() => [
       { path: "/activities", icon: Calendar, label: "活动" },
       { path: "/products", icon: ShoppingCart, label: "二手" },
       { path: "/found", icon: WarningFilled, label: "失物招领" },
+      { path: "/favorites", icon: Star, label: "收藏" },
       { path: "/whispers", icon: ChatDotSquare, label: "树洞" },
       { path: "/points", icon: Coin, label: "积分" },
     ],

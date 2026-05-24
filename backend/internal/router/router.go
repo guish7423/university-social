@@ -61,6 +61,9 @@ func Setup(db *sql.DB, cfg *config.Config, rdb *cache.Cache) *gin.Engine {
 	campusHandler := handler.NewCampusHandler(campusRepo)
 blockRepo := repository.NewBlockRepository(db)
 blockHandler := handler.NewBlockHandler(blockRepo)
+	favRepo := repository.NewFavoriteRepository(db)
+	favHandler := handler.NewFavoriteHandler(favRepo, userRepo)
+
 
 
 
@@ -209,6 +212,10 @@ blockHandler := handler.NewBlockHandler(blockRepo)
 			auth.GET("/users/blocked", blockHandler.ListBlocked)
 
 		}
+			auth.POST("/posts/:id/favorite", favHandler.Add)
+			auth.DELETE("/posts/:id/favorite", favHandler.Remove)
+			auth.GET("/posts/:id/favorite-status", favHandler.Status)
+			auth.GET("/favorites", favHandler.List)
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthRequired(cfg))
 		admin.Use(middleware.AdminRequired(cfg))
